@@ -452,3 +452,125 @@ def test_viewer_payload_structure(tmp_path):
     again = _json.loads((tmp_path / "v" / "scene.json").read_text(
         encoding="utf-8"))
     assert again == _json.loads(_json.dumps(payload))  # deterministic JSON
+
+
+# --- universal formats ---------------------------------------------------------
+
+def test_format_exports_and_roundtrip(tmp_path):
+    from solidsight.report import build_model
+    m = tmp_path / "m.py"
+    m.write_text("from solidsight import *\n"
+                 "emit(box(20, 10, 5), name='plate', color='#4a708b')\n"
+                 "emit(cylinder(h=8, d=6).translate(40, 0, 0), name='pin')\n",
+                 encoding="utf-8")
+    report = build_model(m, out_dir=tmp_path / "out", views=["iso"],
+                         export_obj=True, export_glb=True,
+                         export_dxf=True, export_svg=True,
+                         slices=[("z", 2.5)])
+    exports = {e.replace("\\", "/") for e in report["files"]["exports"]}
+    rel = {e.split("out/")[-1] for e in exports}
+    assert {"obj/plate.obj", "obj/pin.obj", "obj/combined.obj",
+            "glb/plate.glb", "glb/pin.glb", "glb/combined.glb",
+            "dxf/slice_z_2p5.dxf", "svg/slice_z_2p5.svg"} <= rel
+
+    import trimesh
+    back = trimesh.load(str(tmp_path / "out" / "obj" / "plate.obj"),
+                        force="mesh")
+    assert back.is_watertight and back.volume == pytest.approx(1000, rel=1e-3)
+    # combined GLB keeps the assembly structure: 2 named geometries
+    sc = trimesh.load(str(tmp_path / "out" / "glb" / "combined.glb"))
+    assert set(sc.geometry.keys()) == {"plate", "pin"}
+    # from_mesh() reimports the GLB part
+    m2 = tmp_path / "m2.py"
+    m2.write_text("from solidsight import *\n"
+                  "emit(from_mesh('out/glb/plate.glb'), name='again')\n",
+                  encoding="utf-8")
+    from solidsight.runner import run_model
+    sc2 = run_model(m2)
+    assert sc2.parts[0].solid.volume == pytest.approx(1000, rel=1e-3)
+
+
+def test_convert_cli(tmp_path):
+    from solidsight.cli import main
+    import trimesh
+    src = tmp_path / "cube.stl"
+    trimesh.creation.box(extents=[10, 10, 10]).export(src)
+    dst = tmp_path / "cube.obj"
+    assert main(["convert", str(src), str(dst)]) == 0
+    assert dst.exists()
+    assert main(["convert", str(src), str(tmp_path / "cube.step")]) == 1
+
+
+# --- engineering components catalog --------------------------------------------
+
+def test_components_single_shell_and_exact_dims():
+    cases = {
+        "washer": parts.washer(5),                    # ISO 7089: 5.3/10/1.0
+        "bearing": parts.bearing("608"),              # 8 x 22 x 7
+        "shaft": parts.shaft(5, 60, flat=0.5),
+        "pulley": parts.timing_pulley(20, bore=5),
+        "spring": parts.spring(d=12, wire=1.6, length=30, coils=7),
+        "nema17": parts.nema_motor(17),
+        "servo": parts.micro_servo(),
+        "extrusion": parts.extrusion_profile(80),
+        "lead_screw": parts.lead_screw(8, 40),
+        "rail": parts.linear_rail(60, size=9),
+        "carriage": parts.linear_carriage(9),
+        "chain": parts.cable_chain_link(),
+    }
+    for name, s in cases.items():
+        shells = [p for p in s.manifold.decompose() if p.volume() > 1e-9]
+        assert len(shells) == 1, f"{name} is {len(shells)} shells"
+    w = cases["washer"]
+    assert w.size[0] == pytest.approx(10, abs=0.01)       # OD
+    assert w.size[2] == pytest.approx(1.0, abs=0.01)      # thickness
+    b = cases["bearing"]
+    assert b.size[0] == pytest.approx(22, abs=0.01)
+    assert b.size[2] == pytest.approx(7, abs=0.01)
+    n = cases["nema17"]
+    assert n.size[0] == pytest.approx(42.3, abs=0.01)     # faceplate
+    e = cases["extrusion"]
+    assert e.size[0] == pytest.approx(20, abs=0.01)
+    assert e.size[2] == pytest.approx(80, abs=0.01)
+    # GT2 20T pulley: pitch diameter 20*2/pi = 12.73 -> flange od ~15.7
+    p = cases["pulley"]
+    assert p.size[0] == pytest.approx(20 * 2 / 3.14159 + 3, abs=0.1)
+
+
+def test_component_determinism():
+    a = parts.nema_motor(17).to_trimesh()
+    b = parts.nema_motor(17).to_trimesh()
+    assert np.array_equal(a.vertices, b.vertices)
+
+
+# --- component database ---------------------------------------------------------
+
+def test_component_db_search_and_instantiate():
+    from solidsight.components_db import DATABASE, component, search
+    hits = search("m4 socket head")
+    assert hits and hits[0]["id"] == "iso4762_m4"
+    hits = search("608 bearing")
+    assert hits and hits[0]["id"] == "bearing_608"
+    assert search("nema17")[0]["id"] == "nema17"
+    # instantiation via parts.component with a free param
+    s = component("iso4762_m4", length=16)
+    assert s.size[2] == pytest.approx(20, abs=0.1)     # 16 shank + 4 head
+    assert s.size[0] == pytest.approx(7.0, abs=0.2)    # exact ISO head od
+    b = component("bearing_608")
+    assert b.size[0] == pytest.approx(22, abs=0.01)
+    # free param required -> actionable error
+    from solidsight.errors import SolidsightError
+    with pytest.raises(SolidsightError):
+        component("iso4762_m4")
+    with pytest.raises(SolidsightError):
+        component("does_not_exist")
+    # every db entry maps to a real catalog generator
+    from solidsight import parts as P
+    for e in DATABASE.values():
+        assert hasattr(P, e["fn"]), e["id"]
+
+
+def test_cap_screw_single_shell():
+    s = parts.cap_screw(4, 16)
+    shells = [p for p in s.manifold.decompose() if p.volume() > 1e-9]
+    assert len(shells) == 1

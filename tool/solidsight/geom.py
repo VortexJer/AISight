@@ -131,6 +131,11 @@ class Solid:
         return (f"<Solid {self.desc} size={tuple(round(s, 3) for s in self.size)} "
                 f"volume={round(self.volume, 3)}mm3>")
 
+    def describe(self, desc: str) -> "Solid":
+        """Give this solid a short name for warnings and error messages —
+        composed descriptions get long; parts name their results."""
+        return Solid(self._m, desc)
+
     # -- transforms ---------------------------------------------------------
 
     def translate(self, x: float = 0, y: float = 0, z: float = 0) -> "Solid":

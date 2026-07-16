@@ -61,6 +61,17 @@ def main(argv: list[str] | None = None) -> int:
     c = sub.add_parser("catalog", help="list the parametric parts catalog")
     c.add_argument("name", nargs="?", help="show full docs for one part")
 
+    co = sub.add_parser("components",
+                        help="search the offline real-world component "
+                             "database (fasteners, bearings, motors ...)")
+    cosub = co.add_subparsers(dest="cop", required=True)
+    cos = cosub.add_parser("search", help="rank components against a query")
+    cos.add_argument("query", nargs="+", help='e.g. "m4 socket head"')
+    cos.add_argument("--json", action="store_true")
+    coh = cosub.add_parser("show", help="datasheet + model call for one id")
+    coh.add_argument("id")
+    coh.add_argument("--json", action="store_true")
+
     df = sub.add_parser("diff",
                         help="compare two build reports: what did my change "
                              "actually change?")
@@ -75,6 +86,12 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("uninstall",
                    help="remove the Claude Code skill AND the solidsight "
                         "package")
+
+    cv = sub.add_parser("convert",
+                        help="convert between mesh formats "
+                             "(stl/obj/ply/3mf/glb/off)")
+    cv.add_argument("src", help="input mesh file")
+    cv.add_argument("dst", help="output mesh file (format from extension)")
 
     _add_query_parser(sub)
 
@@ -110,6 +127,15 @@ def _add_build_flags(b) -> None:
     b.add_argument("--3mf", dest="threemf", action="store_true",
                    help="export 3MF per part + combined (units + colors "
                         "aware format)")
+    b.add_argument("--obj", action="store_true",
+                   help="export OBJ per part + combined")
+    b.add_argument("--glb", action="store_true",
+                   help="export GLB per part + a combined scene that keeps "
+                        "part names and colors")
+    b.add_argument("--dxf", action="store_true",
+                   help="export each --slice outline as DXF (2D CAD)")
+    b.add_argument("--svg", action="store_true",
+                   help="export each --slice outline as SVG")
     b.add_argument("--exploded", action="store_true",
                    help="also render an exploded view of multi-part scenes")
     b.add_argument("--focus", default=None, metavar="X,Y,Z,R",
@@ -188,8 +214,12 @@ def _dispatch(parser, args) -> int:
         return 0
     if args.command == "diff":
         return _diff(Path(args.report_a), Path(args.report_b))
+    if args.command == "convert":
+        return _convert(Path(args.src), Path(args.dst))
     if args.command == "catalog":
         return _catalog(args.name)
+    if args.command == "components":
+        return _components(args)
     if args.command == "query":
         try:
             return _query(args)
@@ -262,6 +292,10 @@ def _parse_build_kwargs(args) -> dict | None:
                     if args.part else None),
         export_stl=args.stl,
         export_3mf=args.threemf,
+        export_obj=args.obj,
+        export_glb=args.glb,
+        export_dxf=args.dxf,
+        export_svg=args.svg,
         size=args.size,
         min_wall=args.min_wall,
         max_overhang=args.max_overhang,
@@ -552,6 +586,76 @@ def _diff(path_a: Path, path_b: Path) -> int:
                         else f"{changed:.1f}% of pixels differ"))
             except Exception as e:
                 _say(f"  render {name}: could not compare ({e})")
+    return 0
+
+
+def _components(args) -> int:
+    from .components_db import DATABASE, make_expression, search
+    if args.cop == "search":
+        hits = search(" ".join(args.query))
+        if args.json:
+            print(json.dumps(hits, indent=2))
+            return 0
+        if not hits:
+            _say("no matches. Try broader words (e.g. 'bearing', 'm4', "
+                 "'nema17', 'pulley', 'rail').", err=True)
+            return 1
+        for e in hits:
+            _say(f"  {e['id']:20s} {e['name']}  [{e['standard']}]")
+            _say(f"  {'':20s} -> {make_expression(e)}"
+                 + (f"   | {e['note']}" if e["note"] else ""))
+        return 0
+    if args.cop == "show":
+        e = DATABASE.get(args.id)
+        if e is None:
+            hits = search(args.id.replace("_", " "), limit=3)
+            _say(f"no component {args.id!r}."
+                 + (" Close: " + ", ".join(h["id"] for h in hits)
+                    if hits else ""), err=True)
+            return 1
+        if args.json:
+            print(json.dumps(e, indent=2))
+            return 0
+        _say(f"{e['id']}: {e['name']}  [{e['standard']}]")
+        _say(f"  kind: {e['kind']}")
+        if e["note"]:
+            _say(f"  dims: {e['note']}")
+        for k, v in e["free_params"].items():
+            _say(f"  free: {k} — {v}")
+        _say(f"  model: {make_expression(e)}")
+        _say(f'  or:    parts.component("{e["id"]}"'
+             + (", length=...)" if "length" in e["free_params"] else ")"))
+        return 0
+    return 1
+
+
+def _convert(src: Path, dst: Path) -> int:
+    """Mesh format conversion via trimesh (STEP/IGES need a BREP kernel —
+    out of core scope; a plugin can register them)."""
+    import trimesh
+    brep = {".step", ".stp", ".iges", ".igs"}
+    if src.suffix.lower() in brep or dst.suffix.lower() in brep:
+        _say("CONVERT FAILED\nSTEP/IGES are BREP formats - the mesh kernel "
+             "cannot read or write them faithfully\n"
+             "  try: a BREP tool (FreeCAD, build123d) or a solidsight "
+             "plugin that registers a STEP exporter", err=True)
+        return 1
+    if not src.exists():
+        _say(f"CONVERT FAILED\nno such file: {src}", err=True)
+        return 1
+    try:
+        mesh = trimesh.load(str(src), force="mesh")
+        if mesh.is_empty or len(mesh.faces) == 0:
+            raise ValueError("no triangles in input")
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        mesh.export(str(dst))
+    except Exception as e:
+        _say(f"CONVERT FAILED\n{type(e).__name__}: {e}\n"
+             "  try: supported formats are stl, obj, ply, 3mf, glb, off",
+             err=True)
+        return 1
+    _say(f"converted {src.name} -> {dst}  "
+         f"({len(mesh.faces)} triangles, watertight: {mesh.is_watertight})")
     return 0
 
 

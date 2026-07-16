@@ -4,6 +4,11 @@ compose with instead of re-deriving geometry from scratch.
 `solidsight catalog` lists everything here with signatures and docs.
 """
 
+from ..components_db import component
+from .components import (bearing, cable_chain_link, cap_screw,
+                         extrusion_profile, lead_screw, linear_carriage,
+                         linear_rail, micro_servo, nema_motor, shaft,
+                         spring, timing_pulley, washer)
 from .enclosures import (box_with_lid, container, hex_grid, honeycomb_panel,
                          standoff)
 from .features import bolt_circle, hole
@@ -36,6 +41,20 @@ CATALOG = {
     "linear_pattern": linear_pattern,
     "grid_pattern": grid_pattern,
     "circular_pattern": circular_pattern,
+    "component": component,
+    "cap_screw": cap_screw,
+    "washer": washer,
+    "bearing": bearing,
+    "shaft": shaft,
+    "timing_pulley": timing_pulley,
+    "spring": spring,
+    "nema_motor": nema_motor,
+    "micro_servo": micro_servo,
+    "extrusion_profile": extrusion_profile,
+    "lead_screw": lead_screw,
+    "linear_rail": linear_rail,
+    "linear_carriage": linear_carriage,
+    "cable_chain_link": cable_chain_link,
 }
 
 __all__ = [*CATALOG.keys(), "CATALOG", "ISO_COARSE_PITCH"]

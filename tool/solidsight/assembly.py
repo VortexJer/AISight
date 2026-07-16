@@ -115,9 +115,16 @@ def from_model(path: str, part: str | None = None) -> Solid:
     return scene.get(part).solid
 
 
+def from_mesh(path: str) -> Solid:
+    """Import an external mesh (STL/OBJ/PLY/3MF/GLB/OFF) as a Solid. The
+    mesh must be watertight — solidsight will not guess at holes.
+    (`from_stl` is the historical alias; both accept every format.)"""
+    return from_stl(path)
+
+
 def from_stl(path: str) -> Solid:
-    """Import an external STL/OBJ/3MF/PLY mesh as a Solid. The mesh must be
-    watertight — solidsight will not guess at holes."""
+    """Import an external STL/OBJ/3MF/PLY/GLB mesh as a Solid. The mesh must
+    be watertight — solidsight will not guess at holes."""
     import numpy as np
     import trimesh
     from manifold3d import Manifold, Mesh

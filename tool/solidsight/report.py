@@ -22,6 +22,8 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
                 slices: list[tuple[str, float]] | None = None,
                 only_parts: list[str] | None = None,
                 export_stl: bool = False, export_3mf: bool = False,
+                export_obj: bool = False, export_glb: bool = False,
+                export_dxf: bool = False, export_svg: bool = False,
                 size: int = 900,
                 min_wall: float = 1.2, max_overhang: float = 50.0,
                 allow_multiple_shells: bool = False,
@@ -102,10 +104,12 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
 
     export_files: list[str] = []
     solid_parts = [p for p in scene.parts if not p.ghost]
-    n_exports = sum(1 for e in (export_stl, export_3mf) if e) * (
+    formats = [(export_stl, "stl"), (export_3mf, "3mf"),
+               (export_obj, "obj"), (export_glb, "glb")]
+    n_exports = sum(1 for e, _ in formats if e) * (
         len(solid_parts) + (1 if len(solid_parts) > 1 else 0))
     with BUS.stage("export", total=n_exports or None) as st:
-        for enabled, ext in ((export_stl, "stl"), (export_3mf, "3mf")):
+        for enabled, ext in formats:
             if not enabled:
                 continue
             mesh_dir = out_dir / ext
@@ -116,15 +120,37 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
                         and target.exists()):
                     st.tick(f"{part.name}.{ext} (reused, unchanged)")
                 else:
-                    part.solid.to_trimesh().export(target)
+                    _export_mesh(part.solid.to_trimesh(), target,
+                                 name=part.name, color=part.color)
                     st.tick(f"{part.name}.{ext}")
                 export_files.append(f"{ext}/{part.name}.{ext}")
             if len(solid_parts) > 1:
-                from .geom import union as _union
-                _union(*[p.solid for p in solid_parts]).to_trimesh().export(
-                    mesh_dir / f"combined.{ext}")
+                target = mesh_dir / f"combined.{ext}"
+                if ext == "glb":
+                    # GLB keeps the assembly structure: named parts + colors
+                    _export_glb_scene(solid_parts, target)
+                else:
+                    from .geom import union as _union
+                    _union(*[p.solid for p in solid_parts]).to_trimesh(
+                        ).export(target)
                 export_files.append(f"{ext}/combined.{ext}")
                 st.tick(f"combined.{ext}")
+
+        for axis, value in (slices if (export_dxf or export_svg) else []):
+            for enabled, ext in ((export_dxf, "dxf"), (export_svg, "svg")):
+                if not enabled:
+                    continue
+                path2d = _slice_path(combined, axis, value)
+                if path2d is None:
+                    BUS.warn("export", f"slice {axis}={value:g} does not "
+                                       "intersect the model; no {ext}")
+                    continue
+                mesh_dir = out_dir / ext
+                mesh_dir.mkdir(exist_ok=True)
+                fname = f"slice_{axis}_{_slug(value)}.{ext}"
+                path2d.export(str(mesh_dir / fname))
+                export_files.append(f"{ext}/{fname}")
+                st.tick(fname)
 
     has_fail = any(c["level"] == "fail" for c in checks)
     has_warn = any(c["level"] == "warn" for c in checks)
@@ -159,6 +185,50 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
     (out_dir / "report.json").write_text(
         json.dumps(on_disk, indent=2) + "\n", encoding="utf-8")
     return report
+
+
+def _export_mesh(tm, target: Path, name: str, color: str) -> None:
+    """Single-mesh export by extension; GLB carries the name + color."""
+    if target.suffix == ".glb":
+        import trimesh
+        tm = tm.copy()
+        tm.visual = trimesh.visual.TextureVisuals(
+            material=trimesh.visual.material.PBRMaterial(
+                name=name, baseColorFactor=_rgba(color)))
+        sc = trimesh.Scene({name: tm})
+        sc.export(target)
+    else:
+        tm.export(target)
+
+
+def _export_glb_scene(parts, target: Path) -> None:
+    import trimesh
+    sc = trimesh.Scene()
+    for p in parts:
+        tm = p.solid.to_trimesh()
+        tm.visual = trimesh.visual.TextureVisuals(
+            material=trimesh.visual.material.PBRMaterial(
+                name=p.name, baseColorFactor=_rgba(p.color)))
+        sc.add_geometry(tm, node_name=p.name, geom_name=p.name)
+    sc.export(target)
+
+
+def _rgba(hexcolor: str) -> list[float]:
+    h = hexcolor.lstrip("#")
+    return [int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)] + [1.0]
+
+
+def _slice_path(combined, axis: str, value: float):
+    """Planar outline of a cross-section as a trimesh Path2D (DXF/SVG)."""
+    import numpy as np
+    normal = {"x": [1, 0, 0], "y": [0, 1, 0], "z": [0, 0, 1]}[axis]
+    origin = np.array(normal, dtype=float) * value
+    sec = combined.to_trimesh().section(plane_origin=origin,
+                                        plane_normal=normal)
+    if sec is None:
+        return None
+    planar, _ = sec.to_2D()
+    return planar
 
 
 def _exploded_scene(scene: Scene) -> Scene:
