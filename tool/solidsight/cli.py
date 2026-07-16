@@ -207,6 +207,10 @@ def _add_build_flags(b) -> None:
                         "disconnected pieces")
     b.add_argument("--json", action="store_true",
                    help="print the full report JSON to stdout")
+    b.add_argument("--skip-pairs", action="store_true",
+                   help="skip the O(n^2) pair collision/clearance analysis "
+                        "(quick iteration on huge assemblies; declared "
+                        "expect() specs then FAIL as unverifiable)")
     b.add_argument("--progress", action="store_true",
                    help="stream live per-stage progress lines to stderr "
                         "(model, metrics, pairs, renders, exports)")
@@ -452,6 +456,7 @@ def _parse_build_kwargs(args) -> dict | None:
         allow_multiple_shells=args.allow_multiple_shells,
         exploded=args.exploded,
         focus=focus,
+        skip_pairs=getattr(args, "skip_pairs", False),
     )
 
 

@@ -35,8 +35,9 @@ def check(level: str, id_: str, message: str, part: str | None = None,
             "where": where, "suggestion": suggestion}
 
 
-def analyze_scene(scene: Scene,
-                  opts: ValidationOptions) -> tuple[dict, list[dict], list[dict]]:
+def analyze_scene(scene: Scene, opts: ValidationOptions,
+                  skip_pairs: bool = False
+                  ) -> tuple[dict, list[dict], list[dict]]:
     """Returns (parts_metrics, checks, pairs). pairs holds the assembly
     collision/clearance analysis for every combination of named parts."""
     checks: list[dict] = []
@@ -70,6 +71,15 @@ def analyze_scene(scene: Scene,
         part_stage.tick(f"part '{part.name}'")
     part_stage.__exit__(None, None, None)
 
+    if skip_pairs:
+        if scene.expectations:
+            checks.append(check(
+                "fail", "expectation-skipped",
+                "--skip-pairs was passed but the model declares expect() "
+                "specs — they cannot be verified",
+                suggestion="drop --skip-pairs, or remove the expect() "
+                           "declarations"))
+        return metrics, checks, []
     from .assembly import pair_analysis
     pairs, pair_checks = pair_analysis(scene, mode=opts.mode)
     checks.extend(pair_checks)

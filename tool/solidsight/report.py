@@ -30,7 +30,8 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
                 exploded: bool = False,
                 focus: tuple | None = None,
                 scene: Scene | None = None,
-                unchanged_parts: set[str] | None = None) -> dict:
+                unchanged_parts: set[str] | None = None,
+                skip_pairs: bool = False) -> dict:
     """scene: pass a pre-executed Scene to skip re-running the model (watch
     mode does this to fingerprint first). unchanged_parts: export files for
     these parts are reused if already on disk (incremental rebuilds)."""
@@ -55,7 +56,8 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
                              max_overhang=max_overhang,
                              allow_multiple_shells=allow_multiple_shells)
     with BUS.stage("validate", "metrics + checks + pair analysis"):
-        metrics, checks, pairs = analyze_scene(scene, opts)
+        metrics, checks, pairs = analyze_scene(scene, opts,
+                                               skip_pairs=skip_pairs)
 
     combined = scene.combined()
     lo, hi = combined.bbox
@@ -69,14 +71,20 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
     n_renders = (len(views) + len(slices) + max(turntable, 0)
                  + (1 if exploded and len(scene.parts) > 1 else 0))
     with BUS.stage("render", total=n_renders) as st:
-        for i, view in enumerate(views, start=1):
-            img = render_view(scene, view, size=size, title=title,
-                              subtitle=mode, focus=focus)
-            fname = (f"{i:02d}_{view}_focus.png" if focus
-                     else f"{i:02d}_{view}.png")
-            img.save(renders_dir / fname)
-            render_files.append(f"renders/{fname}")
-            st.tick(f"view {view}")
+        # named views render in parallel (independent framebuffers ->
+        # byte-identical to sequential); files are saved in view order
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=min(4, len(views))) as pool:
+            futures = [pool.submit(render_view, scene, view, size=size,
+                                   title=title, subtitle=mode, focus=focus)
+                       for view in views]
+            for i, (view, fut) in enumerate(zip(views, futures), start=1):
+                img = fut.result()
+                fname = (f"{i:02d}_{view}_focus.png" if focus
+                         else f"{i:02d}_{view}.png")
+                img.save(renders_dir / fname)
+                render_files.append(f"renders/{fname}")
+                st.tick(f"view {view}")
 
         for axis, value in slices:
             img = render_slice(scene, axis, value, size=size, title=title)
