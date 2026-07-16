@@ -87,6 +87,21 @@ def main(argv: list[str] | None = None) -> int:
                    help="remove the Claude Code skill AND the solidsight "
                         "package")
 
+    cq = sub.add_parser("critique",
+                        help="design review: prioritized findings with "
+                             "meaning + fix menus, and what is verifiably "
+                             "good")
+    cq.add_argument("model", help="path to the .py model file")
+    cq.add_argument("--min-wall", type=float, default=1.2)
+    cq.add_argument("--json", action="store_true")
+
+    cst = sub.add_parser("cost",
+                         help="material + machine-time estimate per part")
+    cst.add_argument("model", help="path to the .py model file")
+    cst.add_argument("--process", default="fdm",
+                     help="fdm | fdm-petg | sla | cnc-alu (default fdm)")
+    cst.add_argument("--json", action="store_true")
+
     asm = sub.add_parser("assembly",
                          help="BOM, per-axis play and a suggested assembly "
                               "sequence for a multi-part model")
@@ -309,6 +324,48 @@ def _dispatch(parser, args) -> int:
         return _convert(Path(args.src), Path(args.dst))
     if args.command == "assembly":
         return _assembly(args)
+    if args.command in ("critique", "cost"):
+        from .runner import run_model
+        try:
+            scene = run_model(Path(args.model))
+            if args.command == "cost":
+                from .review import cost_estimate
+                res = cost_estimate(scene, args.process)
+                if args.json:
+                    print(json.dumps(res, indent=2))
+                    return 0
+                _say(f"cost estimate ({res['process']}) — {res['note']}")
+                for r in res["parts"]:
+                    _say(f"  {r['part']}: {r['material_g']} g, "
+                         f"~{r['time_min']} min -> "
+                         f"{r['material_eur']} material + "
+                         f"{r['machine_eur']} machine = "
+                         f"{r['total_eur']} EUR")
+                _say(f"  TOTAL ~{res['total_eur']} EUR")
+                return 0
+            from .review import critique
+            from .validate import ValidationOptions
+            res = critique(scene, ValidationOptions(
+                mode="print-safe", min_wall=args.min_wall))
+            if args.json:
+                print(json.dumps(res, indent=2))
+                return 0
+            _say(f"DESIGN REVIEW: {res['verdict']}")
+            for f in res["findings"]:
+                _say(f"  [{f['level'].upper()}] {f['id']}: {f['finding']}")
+                if f.get("where"):
+                    _say(f"      where: {f['where']}")
+                if f.get("meaning"):
+                    _say(f"      means: {f['meaning']}")
+                for i, fx in enumerate(f.get("fix_menu", []), 1):
+                    _say(f"      fix {i}: {fx}")
+            _say("  VERIFIED GOOD:")
+            for g in res["verified_good"]:
+                _say(f"    + {g}")
+            return 0
+        except SolidsightError as e:
+            _say(f"{args.command.upper()} FAILED\n{e.render()}", err=True)
+            return 1
     if args.command == "fit":
         from .fits import fit
         try:

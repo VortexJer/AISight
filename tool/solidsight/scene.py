@@ -44,6 +44,7 @@ class Part:
     solid: Solid
     color: str
     ghost: bool = False
+    features: list = field(default_factory=list)
 
 
 @dataclass
@@ -54,7 +55,7 @@ class Scene:
     joints: list[dict] = field(default_factory=list)
 
     def emit(self, solid: Solid, name: str, color: str | None = None,
-             ghost: bool = False) -> Solid:
+             ghost: bool = False, features: list | None = None) -> Solid:
         if not isinstance(solid, Solid):
             got = type(solid).__name__
             hint = ("call .extrude(height) on the Sketch first"
@@ -79,8 +80,9 @@ class Scene:
                            "construction of this part")
         resolved = (GHOST_COLOR if ghost and color is None
                     else _resolve_color(color, len(self.parts)))
+        feats = _validate_features(name, features)
         self.parts.append(Part(name=name, solid=solid, color=resolved,
-                               ghost=ghost))
+                               ghost=ghost, features=feats))
         return solid
 
     def warn(self, code: str, message: str, where: str | None = None,
@@ -107,6 +109,24 @@ class Scene:
         if len(self.parts) == 1:
             return self.parts[0].solid
         return union(*[p.solid for p in self.parts])
+
+
+def _validate_features(part_name: str, features: list | None) -> list:
+    """Semantic feature metadata: what the geometry MEANS, not just what
+    it is. Each entry is a dict with at least a 'type' (hole, boss, rib,
+    fillet, shaft, gear, hinge, window, thread, slot, ...) and whatever
+    parameters make it useful (at=[x,y,z], d=, count=, axis=...). Stored
+    verbatim in report.json parts[].features."""
+    if features is None:
+        return []
+    if not isinstance(features, list) or not all(
+            isinstance(f, dict) and f.get("type") for f in features):
+        raise SceneError(
+            f'emit(features=...) for "{part_name}" must be a list of '
+            "dicts, each with a 'type' key",
+            suggestion='e.g. features=[{"type": "hole", "d": 5, '
+                       '"at": [10, 0, 0], "thru": True}]')
+    return features
 
 
 def _resolve_color(color: str | None, index: int) -> str:
@@ -155,18 +175,25 @@ def deactivate() -> None:
 
 
 def emit(solid: Solid, name: str, color: str | None = None,
-         ghost: bool = False) -> Solid:
+         ghost: bool = False, features: list | None = None) -> Solid:
     """Register a finished part under a name. Call once per part, at the end
     of the model file. Returns the solid unchanged so it can be reused.
 
     ghost=True makes it a REFERENCE volume: it participates fully in the
     pair collision/clearance analysis (keep-out zones, swept insertion
     paths, board outlines) but is rendered as an X-ray outline and excluded
-    from print checks, material totals and STL/3MF exports."""
+    from print checks, material totals and STL/3MF exports.
+
+    features=[...] attaches SEMANTIC metadata — what the geometry means:
+    [{"type": "hole", "d": 5, "at": [10, 0, 0], "thru": True},
+     {"type": "boss", "d": 8, "at": [0, 0, 12]}]. Stored verbatim in
+    report.json parts[].features so downstream consumers reason about
+    named features instead of raw triangles."""
     sc = current()
     if sc is None:
         raise SceneError(
             "emit() called outside a solidsight build",
             suggestion="run the model through `solidsight build model.py`; "
                        "for ad-hoc scripts create a Scene and call scene.emit()")
-    return sc.emit(solid, name=name, color=color, ghost=ghost)
+    return sc.emit(solid, name=name, color=color, ghost=ghost,
+                   features=features)

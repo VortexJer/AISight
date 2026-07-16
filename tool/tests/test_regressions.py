@@ -767,3 +767,49 @@ def test_bench_fast_references(tmp_path):
     for name in ("01-washer", "05-cavity-trap"):
         res = run_benchmark(root / name)
         assert res["passed"], res["results"]
+
+
+# --- semantic feature metadata ----------------------------------------------------
+
+def test_emit_features_reach_the_report(tmp_path):
+    from solidsight.report import build_model
+    m = tmp_path / "m.py"
+    m.write_text(
+        "from solidsight import *\n"
+        "p = box(30, 20, 6) - parts.hole(5, 8).translate(10, 0, 6)\n"
+        "emit(p, name='plate', features=[\n"
+        "    {'type': 'hole', 'd': 5, 'at': [10, 0, 6], 'thru': True}])\n",
+        encoding="utf-8")
+    report = build_model(m, out_dir=tmp_path / "out", views=["iso"])
+    feats = report["parts"]["plate"]["features"]
+    assert feats == [{"type": "hole", "d": 5, "at": [10, 0, 6],
+                      "thru": True}]
+    # malformed features -> actionable SceneError
+    m.write_text("from solidsight import *\n"
+                 "emit(box(5, 5, 5), name='p', features=['hole'])\n",
+                 encoding="utf-8")
+    from solidsight.errors import SolidsightError
+    with pytest.raises(SolidsightError, match="type"):
+        build_model(m, out_dir=tmp_path / "out2", views=["iso"])
+
+
+# --- critique + cost --------------------------------------------------------------
+
+def test_critique_and_cost():
+    from solidsight.review import cost_estimate, critique
+    sc = make_scene()
+    hollow = box(30, 30, 30) - box(20, 20, 20).translate(0, 0, 5)
+    sc.emit(hollow, name="trap")
+    res = critique(sc)
+    assert res["verdict"] == "REVISE"
+    cavity = [f for f in res["findings"] if f["id"] == "internal-cavity"]
+    assert cavity and cavity[0]["fix_menu"]          # explain() attached
+    assert any("watertight" in g for g in res["verified_good"])
+    est = cost_estimate(sc, "fdm")
+    # 30^3 - 20^3 = 19000 mm3 -> 23.6 g PLA
+    assert est["parts"][0]["material_g"] == pytest.approx(23.6, abs=0.5)
+    cnc = cost_estimate(sc, "cnc-alu")
+    assert cnc["parts"][0]["material_g"] == pytest.approx(72.9, abs=1)
+    from solidsight.errors import SolidsightError
+    with pytest.raises(SolidsightError):
+        cost_estimate(sc, "laser")

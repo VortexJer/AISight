@@ -27,7 +27,7 @@ from .scene import emit
 
 def place(solid: Solid, name: str, at: tuple = (0, 0, 0),
           rotate: tuple = (0, 0, 0), color: str | None = None,
-          ghost: bool = False) -> Solid:
+          ghost: bool = False, features: list | None = None) -> Solid:
     """Position a part in the assembly: rotate (degrees, X then Y then Z,
     around the origin), THEN translate by `at`. Registers it under `name`
     like emit() does, and returns the placed solid.
@@ -47,7 +47,8 @@ def place(solid: Solid, name: str, at: tuple = (0, 0, 0),
     rx, ry, rz = rotate
     x, y, z = at
     placed = solid.rotate(rx, ry, rz).translate(x, y, z)
-    return emit(placed, name=name, color=color, ghost=ghost)
+    return emit(placed, name=name, color=color, ghost=ghost,
+                features=features)
 
 
 def _resolve(path: str) -> Path:

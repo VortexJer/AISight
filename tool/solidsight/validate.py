@@ -66,6 +66,8 @@ def analyze_scene(scene: Scene, opts: ValidationOptions,
             }
             continue
         m, cs = _analyze_part(part, opts)
+        if part.features:
+            m["features"] = part.features
         metrics[part.name] = m
         checks.extend(cs)
         part_stage.tick(f"part '{part.name}'")
