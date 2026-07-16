@@ -1,5 +1,5 @@
 {
-  "tool": "solidsight 0.2.0",
+  "tool": "solidsight 0.4.0",
   "model": "model_collision.py",
   "mode": "free",
   "units": "mm",
@@ -80,6 +80,16 @@
         "res_mm": null,
         "voids": []
       },
+      "print_estimate": {
+        "material_g_pla": 15.5,
+        "material_g_petg": 15.9,
+        "rough_time_min": 21,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": true,
+        "com_margin_mm": 17.0
+      },
       "color": "#5b7c99"
     },
     "lid": {
@@ -136,6 +146,17 @@
         "res_mm": null,
         "voids": []
       },
+      "print_estimate": {
+        "material_g_pla": 6.9,
+        "material_g_petg": 7.1,
+        "rough_time_min": 9,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": null,
+        "com_margin_mm": null,
+        "note": "part does not rest on the build plate"
+      },
       "color": "#c2884e"
     },
     "card": {
@@ -187,6 +208,17 @@
         "count": 0,
         "res_mm": null,
         "voids": []
+      },
+      "print_estimate": {
+        "material_g_pla": 1.9,
+        "material_g_petg": 2.0,
+        "rough_time_min": 3,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": null,
+        "com_margin_mm": null,
+        "note": "part does not rest on the build plate"
       },
       "color": "#7a9471"
     }
@@ -252,7 +284,7 @@
       "part": null,
       "message": "parts \"lid\" and \"card\" occupy the same space (160 mm3 of overlap)",
       "where": "overlap bbox x -20..20, y 4.2..5.8, z 24..26.5",
-      "suggestion": "'card' does not fit here: clearing 'lid' needs 12.6 mm of travel in z (24 mm part). Shrink 'card' where it presses into 'lid', and render --slice z=25.25 through the overlap to see the contact; separate parts must never intersect"
+      "suggestion": "'card' does not fit here: clearing 'lid' needs 12.6 mm of travel in z (24 mm part). Shrink 'card' where it presses into 'lid', and render --slice z=25.25 through the overlap to see the contact; separate parts must never intersect. Inspect: solidsight build <model> --views iso,iso_back --focus 0.0,5.0,25.2,40.0 --slice z=25.2 --out out_focus"
     }
   ],
   "files": {

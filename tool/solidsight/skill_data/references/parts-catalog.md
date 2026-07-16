@@ -146,12 +146,20 @@ hole = cylinder(h=plate_t + 2, d=4.5).translate(0, 0, -1)
 plate = plate - parts.grid_pattern(hole, 2, 2, 44, 28).translate(-22, -14, 0)
 ```
 
-## Sweeps
+## Sweeps, lofts, curved text
 
 ```python
 parts.tube_path(points_3d, d, segments=24)
     # round tube along a 3D polyline (chained capsule hulls): hooks,
     # handles, wire guides, curved feet. Sample curves every few degrees.
+
+parts.loft(profiles, heights)
+    # smooth transition through CONVEX sections stacked in Z: funnels,
+    # ducts, adapters. loft([circle(d=40), ngon(6, d=28)], [0, 30])
+
+parts.wrapped_text(string, d, size=10, depth=1, outward=0.5)
+    # text wrapped around a d-cylinder, centered on +X. Subtract to
+    # engrave; emboss with depth=0.3, outward=1.5 and union.
 ```
 
 For flat/ribbon curved shapes prefer the 2D `stroke()` + extrude (see

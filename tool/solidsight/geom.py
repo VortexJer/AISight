@@ -324,6 +324,50 @@ class Solid:
         opened.desc = f"fillet({self.desc}, r={fmt_num(r)})"
         return opened
 
+    # -- freeform ---------------------------------------------------------------
+
+    def refine(self, edge_mm: float) -> "Solid":
+        """Subdivide the mesh until no edge is longer than edge_mm. Do this
+        BEFORE warp() so large flat faces actually bend instead of staying
+        planar between far-apart vertices."""
+        _positive("refine", edge_mm=edge_mm)
+        return Solid(self._m.refine_to_length(float(edge_mm)), self.desc)
+
+    def warp(self, fn) -> "Solid":
+        """Freeform deformation: fn(x, y, z) -> (x, y, z) is applied to every
+        vertex. MUST be a pure deterministic function (no randomness). Combine
+        with refine() for smooth results:
+
+            def bulge(x, y, z):
+                s = 1 + 0.25 * math.sin(math.pi * z / H)
+                return x * s, y * s, z
+            vase = vase.refine(3).warp(bulge)
+
+        Keep deformations gentle — extreme warps can self-intersect, which
+        the report will surface as broken geometry."""
+        if not callable(fn):
+            raise BadArgumentError("warp() needs a function (x, y, z) -> "
+                                   "(x, y, z)")
+
+        def _wrapped(v):
+            out = fn(float(v[0]), float(v[1]), float(v[2]))
+            return (float(out[0]), float(out[1]), float(out[2]))
+
+        try:
+            m = self._m.warp(_wrapped)
+        except Exception as e:
+            raise BadArgumentError(
+                f"warp() function failed while deforming '{self.desc}': {e}",
+                suggestion="fn must accept three floats and return three "
+                           "floats, with no randomness") from e
+        out = Solid(m, f"warp({_short(self.desc)})")
+        if out.is_empty:
+            raise EmptyGeometryError(
+                f"warp() collapsed '{self.desc}' into nothing",
+                suggestion="the deformation inverted or flattened the solid; "
+                           "reduce its strength")
+        return out
+
     # -- export ----------------------------------------------------------------
 
     def to_trimesh(self):

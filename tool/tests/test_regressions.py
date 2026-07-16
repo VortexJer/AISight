@@ -182,6 +182,82 @@ def test_tube_path_single_shell():
     assert len([s for s in t.manifold.decompose() if s.volume() > 1e-9]) == 1
 
 
+# --- declared assembly expectations ----------------------------------------
+
+def test_expectation_met_and_violated():
+    from solidsight.assembly import expect, pair_analysis
+    sc = make_scene()
+    sc.emit(box(20, 20, 10), name="base")
+    sc.emit(box(10, 10, 5).translate(0, 0, 10), name="top")     # touching
+    sc.emit(box(5, 5, 5).translate(30, 0, 0), name="far")       # 15 clear
+    expect("top", "base", status="touching")                    # met
+    expect("far", "base", clearance=(20, 30))                   # violated
+    pairs, checks = pair_analysis(sc, mode="free")
+    by = {frozenset((p["a"], p["b"])): p for p in pairs}
+    assert by[frozenset(("top", "base"))]["expectation"] == "met"
+    assert by[frozenset(("far", "base"))]["expectation"] == "violated"
+    assert any(c["id"] == "expectation-violated" and c["level"] == "fail"
+               for c in checks)
+
+
+def test_expectation_unknown_part_fails():
+    from solidsight.assembly import expect, pair_analysis
+    sc = make_scene()
+    sc.emit(box(10, 10, 10), name="only")
+    expect("only", "ghost", clearance=1)
+    _pairs, checks = pair_analysis(sc, mode="free")
+    assert any(c["id"] == "expectation-unknown-part" for c in checks)
+
+
+# --- freeform + lofts + curved text ------------------------------------------
+
+def test_loft_rejects_concave_profile():
+    from solidsight import circle
+    star = polygon([(10, 0), (2, 2), (0, 10), (-2, 2), (-10, 0),
+                    (-2, -2), (0, -10), (2, -2)])
+    with pytest.raises(Exception) as e:
+        parts.loft([circle(d=20), star], [0, 10])
+    assert "convex" in str(e.value)
+
+
+def test_loft_single_shell():
+    from solidsight import circle, ngon
+    f = parts.loft([circle(d=40), ngon(6, d=28), circle(d=16)], [0, 30, 55])
+    assert len([s for s in f.manifold.decompose() if s.volume() > 1e-9]) == 1
+
+
+def test_wrapped_text_engraves():
+    pot = cylinder(h=40, d=60)
+    engraved = pot - parts.wrapped_text("AB", d=60, size=10).translate(0, 0, 20)
+    assert engraved.volume < pot.volume - 5
+
+
+def test_warp_deterministic_and_bulges():
+    import math as m
+
+    def bulge(x, y, z):
+        s = 1 + 0.2 * m.sin(m.pi * z / 40)
+        return x * s, y * s, z
+    a = cylinder(h=40, d=30).refine(2).warp(bulge)
+    b = cylinder(h=40, d=30).refine(2).warp(bulge)
+    assert a.volume == b.volume
+    assert a.size[0] > 30.5           # it actually bulged
+
+
+# --- stability ---------------------------------------------------------------
+
+def test_stability_detects_tippy_part():
+    sc = make_scene()
+    # heavy head on a tiny off-center foot: COM far outside the footprint
+    tippy = (box(4, 4, 2)
+             + box(30, 30, 6).translate(12, 0, 1.5))
+    sc.emit(tippy.on_ground(), name="tippy")
+    metrics, checks, _ = analyze_scene(sc, ValidationOptions(mode="free"))
+    st = metrics["tippy"]["stability"]
+    assert st["standing"] is False
+    assert any(c["id"] == "unstable" for c in checks)
+
+
 # --- skill self-hosting -----------------------------------------------------
 
 def test_skill_install_and_remove(tmp_path):

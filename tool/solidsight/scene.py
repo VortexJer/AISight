@@ -46,6 +46,7 @@ class Part:
 class Scene:
     parts: list[Part] = field(default_factory=list)
     warnings: list[dict] = field(default_factory=list)
+    expectations: list[dict] = field(default_factory=list)
 
     def emit(self, solid: Solid, name: str, color: str | None = None) -> Solid:
         if not isinstance(solid, Solid):

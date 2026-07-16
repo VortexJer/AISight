@@ -20,7 +20,8 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
                 views: list[str] | None = None, turntable: int = 0,
                 slices: list[tuple[str, float]] | None = None,
                 only_parts: list[str] | None = None,
-                export_stl: bool = False, size: int = 900,
+                export_stl: bool = False, export_3mf: bool = False,
+                size: int = 900,
                 min_wall: float = 1.2, max_overhang: float = 50.0,
                 allow_multiple_shells: bool = False,
                 exploded: bool = False,
@@ -32,7 +33,10 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
 
     if only_parts:
         keep = [scene.get(name) for name in only_parts]  # errors on bad names
-        scene = Scene(parts=keep, warnings=scene.warnings)
+        kept_names = {p.name for p in keep}
+        scene = Scene(parts=keep, warnings=scene.warnings,
+                      expectations=[e for e in scene.expectations
+                                    if {e["a"], e["b"]} <= kept_names])
 
     opts = ValidationOptions(mode=mode, min_wall=min_wall,
                              max_overhang=max_overhang,
@@ -77,17 +81,17 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
             render_files.append(f"renders/{fname}")
 
     export_files: list[str] = []
-    if export_stl:
-        stl_dir = out_dir / "stl"
-        stl_dir.mkdir(exist_ok=True)
+    for enabled, ext in ((export_stl, "stl"), (export_3mf, "3mf")):
+        if not enabled:
+            continue
+        mesh_dir = out_dir / ext
+        mesh_dir.mkdir(exist_ok=True)
         for part in scene.parts:
-            p = stl_dir / f"{part.name}.stl"
-            part.solid.to_trimesh().export(p)
-            export_files.append(f"stl/{part.name}.stl")
+            part.solid.to_trimesh().export(mesh_dir / f"{part.name}.{ext}")
+            export_files.append(f"{ext}/{part.name}.{ext}")
         if len(scene.parts) > 1:
-            p = stl_dir / "combined.stl"
-            combined.to_trimesh().export(p)
-            export_files.append("stl/combined.stl")
+            combined.to_trimesh().export(mesh_dir / f"combined.{ext}")
+            export_files.append(f"{ext}/combined.{ext}")
 
     has_fail = any(c["level"] == "fail" for c in checks)
     has_warn = any(c["level"] == "warn" for c in checks)

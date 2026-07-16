@@ -1,5 +1,5 @@
 {
-  "tool": "solidsight 0.2.0",
+  "tool": "solidsight 0.4.0",
   "model": "model.py",
   "mode": "print-safe",
   "units": "mm",
@@ -76,6 +76,16 @@
         "res_mm": null,
         "voids": []
       },
+      "print_estimate": {
+        "material_g_pla": 9.3,
+        "material_g_petg": 9.5,
+        "rough_time_min": 12,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": true,
+        "com_margin_mm": 21.81
+      },
       "color": "#5b7c99"
     },
     "pinion": {
@@ -127,6 +137,16 @@
         "count": 0,
         "res_mm": null,
         "voids": []
+      },
+      "print_estimate": {
+        "material_g_pla": 4.0,
+        "material_g_petg": 4.1,
+        "rough_time_min": 5,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": true,
+        "com_margin_mm": 13.64
       },
       "color": "#c2884e"
     }

@@ -8,6 +8,7 @@ from .enclosures import (box_with_lid, container, hex_grid, honeycomb_panel,
                          standoff)
 from .features import bolt_circle, hole
 from .gears import spur_gear
+from .lofts import loft, wrapped_text
 from .mechanisms import hinge, snap_clip, snap_slot
 from .paths import tube_path
 from .patterns import circular_pattern, grid_pattern, linear_pattern
@@ -28,6 +29,8 @@ CATALOG = {
     "standoff": standoff,
     "hex_grid": hex_grid,
     "tube_path": tube_path,
+    "loft": loft,
+    "wrapped_text": wrapped_text,
     "honeycomb_panel": honeycomb_panel,
     "linear_pattern": linear_pattern,
     "grid_pattern": grid_pattern,

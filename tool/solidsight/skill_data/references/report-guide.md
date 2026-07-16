@@ -37,6 +37,8 @@ match the spec?) -> per-part numbers.
 | `wall_thickness.min_mm` + `.at` | thinnest PLATE-LIKE wall measured by inward rays. Knife wedges that thin to zero by construction (thread chamfer feathers, blade edges) are excluded — they are geometry, not defects; when only such tapers exist, `min_mm` is `null` with a `note` | below printer limits -> thicken at the given coordinates. `null` = no plate-like wall found (chunky convex part, or taper-only geometry — read the note) |
 | `overhangs.max_deg`, `.area_mm2`, `.worst_at` | downward faces steeper than the threshold (90 = horizontal ceiling) | reorient, chamfer at 45 deg, or accept supports |
 | `internal_voids` | sealed cavities (count, bbox, ~volume) | almost always a bug; add a drain hole or remove |
+| `print_estimate` | grams (PLA/PETG at 100% infill) + rough minutes (+-50%) | sanity-check material cost; real values are slicer-dependent |
+| `stability` | `standing` + `com_margin_mm`: does the COM project inside the base footprint, and by how much | negative margin = tips over; small margin = nudge-sensitive. `null` for stacked/floating parts |
 
 ## Check ids
 
@@ -51,6 +53,9 @@ match the spec?) -> per-part numbers.
 | `not-watertight` | fail | open surface (should never happen) | rebuild step by step, report the breaking op |
 | `union-touching` | warn | union pieces share faces but no volume | overlap >= 0.1 mm |
 | `noop-difference` | warn | a subtraction removed nothing | cutter is misplaced; its bbox is in `where` |
+| `expectation-violated` | fail (any mode) | an expect() declaration does not hold (wrong status, clearance out of band, or collision) | fix the geometry to meet the declared spec, or update the expect() if the intent changed |
+| `expectation-unknown-part` | fail | expect() names a part that was never emitted/placed | match the names |
+| `unstable` / `barely-stable` | warn | COM outside / marginally inside the base footprint | widen the base, add feet, lower the mass |
 
 `status` mapping: any fail -> `failed` (exit 2 under --print-safe); any warn
 -> `warnings`; else `ok`.
@@ -70,6 +75,11 @@ match the spec?) -> per-part numbers.
 - `touching` (< 0.05 mm) -> right only for faces meant to press together.
 - `clear` -> check the number is an INTENDED clearance: 0.15-0.3 mm for
   fits that slide or snap; more for free space.
+
+When the model declared `expect()` for a pair, the entry also carries
+`"expected"` (the declared spec) and `"expectation": "met" | "violated"`;
+violations surface as FAIL checks in any mode. Declare every fit that
+matters — it removes the judgment call from the loop.
 
 ## Query output
 

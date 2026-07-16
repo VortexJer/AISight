@@ -1,5 +1,5 @@
 {
-  "tool": "solidsight 0.2.0",
+  "tool": "solidsight 0.4.0",
   "model": "model.py",
   "mode": "print-safe",
   "units": "mm",
@@ -80,6 +80,16 @@
         "res_mm": null,
         "voids": []
       },
+      "print_estimate": {
+        "material_g_pla": 15.5,
+        "material_g_petg": 15.9,
+        "rough_time_min": 21,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": true,
+        "com_margin_mm": 17.0
+      },
       "color": "#5b7c99"
     },
     "lid": {
@@ -132,6 +142,16 @@
         "res_mm": null,
         "voids": []
       },
+      "print_estimate": {
+        "material_g_pla": 6.9,
+        "material_g_petg": 7.1,
+        "rough_time_min": 9,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": true,
+        "com_margin_mm": 17.0
+      },
       "color": "#c2884e"
     }
   },
@@ -153,7 +173,7 @@
       "part": "box",
       "message": "part \"box\" has 17 mm2 of faces steeper than 50 deg overhang (worst: 90 deg)",
       "where": "worst face near (23.167, -1.417, 16.05)",
-      "suggestion": "reorient the part, chamfer the underside (45 deg cones under bosses), or accept support material. Flat roofs spanning an opening wall-to-wall (port slots, windows) are BRIDGES and usually print fine despite this warning"
+      "suggestion": "reorient the part, chamfer the underside (45 deg cones under bosses), or accept support material. Flat roofs spanning an opening wall-to-wall (port slots, windows) are BRIDGES and usually print fine despite this warning. Inspect: solidsight build <model> --views iso,iso_back --focus 23.2,-1.4,16.1,12.0 --slice z=16.1 --out out_focus"
     }
   ],
   "files": {

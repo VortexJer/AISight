@@ -51,6 +51,43 @@ def _resolve(path: str) -> Path:
     return p
 
 
+def expect(a: str, b: str, clearance=None, status: str | None = None) -> None:
+    """Declare the INTENDED relationship between two named parts — turns the
+    pair analysis into a pass/fail spec test instead of numbers you have to
+    judge by eye:
+
+        expect("lid", "box", status="touching")        # meant to rest on it
+        expect("gear_a", "gear_b", clearance=(0.15, 0.35))   # backlash band
+        expect("card", "lid", clearance=0.5)           # at least 0.5 mm
+
+    clearance: a float (minimum mm) or a (min, max) pair.
+    status: "touching" (surfaces meant to contact) or "clear".
+    The build FAILS (any mode) when reality violates a declared expectation;
+    met expectations silence the generic touching/clearance advice."""
+    from . import scene as scene_mod
+    sc = scene_mod.current()
+    if sc is None:
+        raise SceneError(
+            "expect() called outside a solidsight build",
+            suggestion="use it inside a model/assembly file, after place()")
+    if clearance is None and status is None:
+        raise BadArgumentError(
+            "expect() needs clearance= and/or status=",
+            suggestion='e.g. expect("lid", "box", status="touching")')
+    if status is not None and status not in ("touching", "clear"):
+        raise BadArgumentError(
+            f'expect() status must be "touching" or "clear", got {status!r}')
+    lo = hi = None
+    if clearance is not None:
+        if isinstance(clearance, (int, float)):
+            lo = float(clearance)
+        else:
+            lo = float(clearance[0])
+            hi = float(clearance[1]) if len(clearance) > 1 else None
+    sc.expectations.append({"a": str(a), "b": str(b), "min": lo, "max": hi,
+                            "status": status})
+
+
 def from_model(path: str, part: str | None = None) -> Solid:
     """Load a named part from another solidsight model file. Relative paths
     resolve against the calling model file's directory. With part=None the
@@ -132,10 +169,35 @@ def pair_analysis(scene, mode: str = "free",
     checks: list[dict] = []
     parts = scene.parts
     ps = mode == "print-safe"
+
+    exps = {frozenset((e["a"], e["b"])): e for e in scene.expectations}
+    seen_exp: set[frozenset] = set()
+    part_names = {p.name for p in parts}
+    for e in scene.expectations:
+        missing = {e["a"], e["b"]} - part_names
+        if missing:
+            checks.append(check(
+                "fail", "expectation-unknown-part",
+                "expect() references unknown part(s): "
+                + ", ".join(sorted(repr(m) for m in missing)),
+                where=f"emitted parts: {', '.join(sorted(part_names)) or '(none)'}",
+                suggestion="match expect() names to the emit()/place() names"))
+            seen_exp.add(frozenset((e["a"], e["b"])))
+
     if len(parts) < 2:
         return pairs, checks
 
     diag = max(scene.combined().size) * 2 + 1
+
+    def _exp_text(e) -> str:
+        bits = []
+        if e["status"]:
+            bits.append(e["status"])
+        if e["min"] is not None and e["max"] is not None:
+            bits.append(f"clearance {fmt_num(e['min'])}..{fmt_num(e['max'])} mm")
+        elif e["min"] is not None:
+            bits.append(f"clearance >= {fmt_num(e['min'])} mm")
+        return " and ".join(bits)
 
     for i in range(len(parts)):
         for j in range(i + 1, len(parts)):
@@ -193,7 +255,8 @@ def pair_analysis(scene, mode: str = "free",
                     where = (f"overlap bbox x {fmt_num(bb[0])}..{fmt_num(bb[3])}, "
                              f"y {fmt_num(bb[1])}..{fmt_num(bb[4])}, "
                              f"z {fmt_num(bb[2])}..{fmt_num(bb[5])}")
-                pairs.append({
+                exp = exps.get(frozenset((a.name, b.name)))
+                entry = {
                     "a": a.name, "b": b.name, "status": "collision",
                     "overlap_volume_mm3": round(vol, 3),
                     "overlap_bbox": {
@@ -205,7 +268,21 @@ def pair_analysis(scene, mode: str = "free",
                         for pb in patch_boxes],
                     "min_clearance_mm": None,
                     "suggestion": suggestion,
-                })
+                }
+                if exp is not None:
+                    seen_exp.add(frozenset((a.name, b.name)))
+                    entry["expected"] = _exp_text(exp)
+                    entry["expectation"] = "violated"
+                    checks.append(check(
+                        "fail", "expectation-violated",
+                        f'pair "{a.name}" / "{b.name}" was declared '
+                        f"'{_exp_text(exp)}' but the parts COLLIDE "
+                        f"({fmt_num(vol)} mm3 of overlap)",
+                        where=where, suggestion=suggestion))
+                pairs.append(entry)
+                mid = [(bb[k] + bb[3 + k]) / 2 for k in range(3)]
+                r_focus = max(8.0, max(bb[3 + k] - bb[k] for k in range(3)))
+                from .validate import _inspect_cmd
                 checks.append(check(
                     "fail" if ps else "warn", "parts-overlap",
                     f'parts "{a.name}" and "{b.name}" occupy the same space '
@@ -213,12 +290,13 @@ def pair_analysis(scene, mode: str = "free",
                     + (f" in {len(pieces)} patches)" if len(pieces) > 1 else ")"),
                     where=where,
                     suggestion=suggestion + "; separate parts must never "
-                                            "intersect"))
+                                            "intersect. Inspect: "
+                    + _inspect_cmd(mid, r=r_focus)))
             else:
                 gap = float(a.solid.manifold.min_gap(b.solid.manifold, diag))
                 gap = round(gap, 3)
                 touching = gap <= touch_tol
-                pairs.append({
+                entry = {
                     "a": a.name, "b": b.name,
                     "status": "touching" if touching else "clear",
                     "overlap_volume_mm3": 0.0,
@@ -229,5 +307,48 @@ def pair_analysis(scene, mode: str = "free",
                         "must slide or snap need real clearance (0.15-0.3 mm "
                         "printed); if they should be one rigid piece, union "
                         "them into a single part",
-                })
+                }
+                exp = exps.get(frozenset((a.name, b.name)))
+                if exp is not None:
+                    seen_exp.add(frozenset((a.name, b.name)))
+                    entry["expected"] = _exp_text(exp)
+                    problems = []
+                    if exp["status"] == "touching" and not touching:
+                        problems.append(f"expected touching, but the gap is "
+                                        f"{fmt_num(gap)} mm")
+                    if exp["status"] == "clear" and touching:
+                        problems.append("expected clear, but the surfaces "
+                                        "touch")
+                    if exp["min"] is not None and gap < exp["min"] - 1e-9:
+                        problems.append(f"clearance {fmt_num(gap)} mm is "
+                                        f"below the declared minimum "
+                                        f"{fmt_num(exp['min'])} mm")
+                    if exp["max"] is not None and gap > exp["max"] + 1e-9:
+                        problems.append(f"clearance {fmt_num(gap)} mm exceeds "
+                                        f"the declared maximum "
+                                        f"{fmt_num(exp['max'])} mm")
+                    if problems:
+                        entry["expectation"] = "violated"
+                        checks.append(check(
+                            "fail", "expectation-violated",
+                            f'pair "{a.name}" / "{b.name}" violates its '
+                            f"declared spec: " + "; ".join(problems),
+                            where=f"declared: {_exp_text(exp)}; measured "
+                                  f"clearance {fmt_num(gap)} mm",
+                            suggestion="adjust the geometry until the "
+                                       "declared relationship holds, or fix "
+                                       "the expect() if the intent changed"))
+                    else:
+                        entry["expectation"] = "met"
+                        entry["suggestion"] = None   # intent declared and met
+                pairs.append(entry)
+
+    for key, e in exps.items():
+        if key not in seen_exp and not ({e["a"], e["b"]} - part_names):
+            # both parts exist but the pair loop never saw them: can only
+            # happen with a==b
+            checks.append(check(
+                "fail", "expectation-self-pair",
+                f"expect() needs two DIFFERENT parts, got '{e['a']}' twice",
+                suggestion="declare expectations between distinct parts"))
     return pairs, checks

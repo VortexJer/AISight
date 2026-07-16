@@ -60,6 +60,9 @@ def main(argv: list[str] | None = None) -> int:
                    help="build only these named parts (comma list)")
     b.add_argument("--stl", action="store_true",
                    help="export binary STL per part + combined")
+    b.add_argument("--3mf", dest="threemf", action="store_true",
+                   help="export 3MF per part + combined (units + colors "
+                        "aware format)")
     b.add_argument("--exploded", action="store_true",
                    help="also render an exploded view of multi-part scenes")
     b.add_argument("--focus", default=None, metavar="X,Y,Z,R",
@@ -207,6 +210,7 @@ def _build(args) -> int:
         slices=slices,
         only_parts=[p.strip() for p in args.part.split(",")] if args.part else None,
         export_stl=args.stl,
+        export_3mf=args.threemf,
         size=args.size,
         min_wall=args.min_wall,
         max_overhang=args.max_overhang,
@@ -239,8 +243,12 @@ def _print_summary(report: dict) -> None:
               f"{t if t is not None else 'n/a'} mm")
     for pr in report.get("pairs", []):
         if pr["status"] != "collision":
+            exp = ""
+            if pr.get("expectation"):
+                exp = (f"  [spec {pr['expectation'].upper()}: "
+                       f"{pr.get('expected')}]")
             _say(f"  pair '{pr['a']}' <-> '{pr['b']}': {pr['status']}, "
-                 f"clearance {pr['min_clearance_mm']} mm")
+                 f"clearance {pr['min_clearance_mm']} mm{exp}")
     fails = [c for c in report["checks"] if c["level"] == "fail"]
     warns = [c for c in report["checks"] if c["level"] == "warn"]
     for chk in fails + warns:

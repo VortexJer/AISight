@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.4.0 — 2026-07-16
+
+Spec-driven assemblies, freeform shapes, manufacturing sanity.
+
+- `expect(a, b, clearance=|status=)` — declare the INTENDED relationship
+  between parts (touching / clear / clearance band, e.g. gear backlash
+  0.15..0.35). The report becomes a pass/fail spec test: violations FAIL in
+  any mode; met expectations silence generic advice. `pairs[]` gains
+  `expected` / `expectation` fields.
+- Every thin-wall / overhang / overlap finding now ends with a ready-to-run
+  close-up command (`--focus` + `--slice` at the exact coordinates).
+- Freeform: `Solid.warp(fn)` + `Solid.refine(edge_mm)` (deterministic
+  vertex deformation), `parts.loft(profiles, heights)` (convex sections:
+  funnels, ducts, adapters), `parts.wrapped_text(...)` (engrave/emboss text
+  around cylinders).
+- Report: `print_estimate` (PLA/PETG grams, rough minutes) and `stability`
+  (COM vs base-footprint margin) per part, with `unstable`/`barely-stable`
+  warnings for parts that would tip over.
+- Model files can now import sibling modules — share assembly dimensions in
+  a `params.py` instead of duplicating constants that drift.
+- `--3mf` export alongside `--stl`.
+- 7 new regression tests (25 total).
+
 ## v0.3.0 — 2026-07-16
 
 Close the last inspection gaps.

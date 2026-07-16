@@ -1,5 +1,5 @@
 {
-  "tool": "solidsight 0.2.0",
+  "tool": "solidsight 0.4.0",
   "model": "model.py",
   "mode": "print-safe",
   "units": "mm",
@@ -80,6 +80,16 @@
         "res_mm": null,
         "voids": []
       },
+      "print_estimate": {
+        "material_g_pla": 26.9,
+        "material_g_petg": 27.5,
+        "rough_time_min": 36,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": true,
+        "com_margin_mm": 12.36
+      },
       "color": "#5b7c99"
     }
   },
@@ -91,7 +101,7 @@
       "part": "bracket",
       "message": "part \"bracket\" has 30.91 mm2 of faces steeper than 50 deg overhang (worst: 87.2 deg)",
       "where": "worst face near (-18.147, 16.667, 30.243)",
-      "suggestion": "reorient the part, chamfer the underside (45 deg cones under bosses), or accept support material. Flat roofs spanning an opening wall-to-wall (port slots, windows) are BRIDGES and usually print fine despite this warning"
+      "suggestion": "reorient the part, chamfer the underside (45 deg cones under bosses), or accept support material. Flat roofs spanning an opening wall-to-wall (port slots, windows) are BRIDGES and usually print fine despite this warning. Inspect: solidsight build <model> --views iso,iso_back --focus -18.1,16.7,30.2,12.0 --slice z=30.2 --out out_focus"
     }
   ],
   "files": {

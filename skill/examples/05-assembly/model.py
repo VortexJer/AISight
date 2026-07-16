@@ -17,3 +17,8 @@ card = box(40, 1.6, 16).translate(0, 5, 2.5)   # top at z=18.5, under the lip
 place(body, name="box", color="steel")
 place(cover, name="lid", color="amber")
 place(card, name="card", color="sage")
+
+# declared intent: the report FAILS if any of these stop holding
+expect("lid", "box", status="touching")     # lid plate rests on the rim
+expect("card", "box", status="touching")    # card stands on the floor
+expect("card", "lid", clearance=0.15)       # must never bind on the clips

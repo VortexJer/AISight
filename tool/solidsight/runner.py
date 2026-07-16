@@ -24,8 +24,9 @@ _SUGGESTIONS: list[tuple[type, str]] = [
                      "rotate()/fillet()"),
     (ZeroDivisionError, "a parameter expression divided by zero — guard "
                         "derived values like pitch = length / count"),
-    (ImportError, "model files may only import solidsight and the Python "
-                  "standard library (math, itertools, ...)"),
+    (ImportError, "model files may import solidsight, the Python standard "
+                  "library (math, itertools, ...) and sibling .py files "
+                  "next to the model (e.g. a shared params.py)"),
 ]
 
 
@@ -41,7 +42,13 @@ def run_model(path: str | Path) -> Scene:
     sc = Scene()
     prev = scene_mod.current()  # re-entrant: from_model() runs models nested
     scene_mod.activate(sc)
-    scene_mod.model_dir_stack.append(p.resolve().parent)
+    model_dir = p.resolve().parent
+    scene_mod.model_dir_stack.append(model_dir)
+    # allow `from params import *` — shared dimension files next to the model
+    import sys
+    path_added = str(model_dir) not in sys.path
+    if path_added:
+        sys.path.insert(0, str(model_dir))
     model_globals: dict = {"__name__": "__solidsight_model__",
                            "__file__": str(p)}
     exec("from solidsight import *", model_globals)
@@ -71,6 +78,11 @@ def run_model(path: str | Path) -> Scene:
             suggestion=suggestion) from e
     finally:
         scene_mod.model_dir_stack.pop()
+        if path_added:
+            try:
+                sys.path.remove(str(model_dir))
+            except ValueError:
+                pass
         if prev is not None:
             scene_mod.activate(prev)
         else:

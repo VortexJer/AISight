@@ -116,6 +116,24 @@ Cheapest first:
 4. `solid.grow(r)` / `solid.shrink(r)` — Minkowski dilate/erode when you
    need an offset shell.
 
+## Freeform deformation
+
+```python
+s.refine(edge_mm)      # subdivide long edges (do it BEFORE warp)
+s.warp(fn)             # fn(x, y, z) -> (x, y, z), pure and deterministic
+```
+
+```python
+def bulge(x, y, z):
+    s = 1 + 0.25 * math.sin(math.pi * z / H)
+    return x * s, y * s, z
+vase = vase.refine(3).warp(bulge)
+```
+
+Keep deformations gentle — extreme warps self-intersect. For transitions
+between sections use `parts.loft`; for text on cylinders,
+`parts.wrapped_text` (both in the catalog).
+
 ## Named parts
 
 ```python
@@ -139,6 +157,20 @@ place(part, name="bracket", at=(0, 0, 8), rotate=(0, 0, 90))
 `place()` rotates around the origin FIRST, then translates. Positions are in
 one shared coordinate space; report.json `pairs[]` then gives collisions
 (exact overlap bbox + volume + move suggestion) or min clearance per pair.
+
+**Declare the intent** with `expect()` so the build FAILS when a fit drifts,
+instead of you re-judging numbers every iteration:
+
+```python
+expect("lid", "box", status="touching")            # meant to rest on it
+expect("gear_a", "gear_b", clearance=(0.15, 0.35)) # backlash band
+expect("card", "lid", clearance=0.5)               # at least 0.5 mm
+```
+
+**Shared dimensions** across the files of an assembly: put them in a
+`params.py` next to the models and `from params import *` in each one.
+Duplicate constants that drift between box.py and lid.py are how printed
+fits die silently.
 
 ## Parametric style
 

@@ -95,6 +95,14 @@ def _analyze_part(part: Part, opts: ValidationOptions) -> tuple[dict, list[dict]
         "wall_thickness": thickness,
         "overhangs": overhang,
         "internal_voids": voids,
+        "print_estimate": {
+            "material_g_pla": round(solid.volume * 0.00124, 1),
+            "material_g_petg": round(solid.volume * 0.00127, 1),
+            "rough_time_min": int(round(solid.volume / 600)),
+            "note": "solid part at 100% infill; time is +-50%, "
+                    "slicer-dependent",
+        },
+        "stability": _stability(mesh, lo, com),
         "color": part.color,
     }
 
@@ -125,24 +133,26 @@ def _analyze_part(part: Part, opts: ValidationOptions) -> tuple[dict, list[dict]
 
     tmin = thickness["min_mm"]
     if tmin is not None:
+        spot = thickness["at"]
+        inspect_cmd = _inspect_cmd(spot, r=max(8.0, tmin * 6))
         if ps and tmin < opts.min_wall:
             checks.append(check(
                 "fail", "thin-wall",
                 f'part "{part.name}" has a {fmt_num(tmin)} mm wall — below '
                 f"the {fmt_num(opts.min_wall)} mm print-safe minimum",
                 part=part.name,
-                where=f"thinnest point near {fmt_vec(thickness['at'])}",
+                where=f"thinnest point near {fmt_vec(spot)}",
                 suggestion="thicken that region, or lower --min-wall if your "
-                           "printer really handles it"))
+                           f"printer really handles it. Inspect: {inspect_cmd}"))
         elif not ps and tmin < 0.4:
             checks.append(check(
                 "warn", "thin-wall",
                 f'part "{part.name}" has a {fmt_num(tmin)} mm wall — thinner '
                 f"than any printer/CNC can produce",
                 part=part.name,
-                where=f"thinnest point near {fmt_vec(thickness['at'])}",
-                suggestion="probably an accidental sliver from a boolean; "
-                           "render a --slice through that point to see it"))
+                where=f"thinnest point near {fmt_vec(spot)}",
+                suggestion="probably an accidental sliver from a boolean. "
+                           f"Inspect: {inspect_cmd}"))
 
     if voids["count"] > 0:
         if voids["voids"]:
@@ -180,7 +190,31 @@ def _analyze_part(part: Part, opts: ValidationOptions) -> tuple[dict, list[dict]
                        "cones under bosses), or accept support material. "
                        "Flat roofs spanning an opening wall-to-wall (port "
                        "slots, windows) are BRIDGES and usually print fine "
-                       "despite this warning"))
+                       "despite this warning. Inspect: "
+                       f"{_inspect_cmd(overhang['worst_at'], r=12)}"))
+
+    st = metrics["stability"]
+    if st["standing"] is False:
+        checks.append(check(
+            "warn", "unstable",
+            f'part "{part.name}" will TIP OVER standing on its base: the '
+            f"center of mass projects {fmt_num(-st['com_margin_mm'])} mm "
+            f"OUTSIDE the footprint",
+            part=part.name,
+            where=f"center of mass {fmt_vec(com)}; footprint spans the "
+                  f"contact at z={fmt_num(lo[2])}",
+            suggestion="widen the base, add feet, or shift mass toward the "
+                       "footprint center"))
+    elif (st["standing"] and st["com_margin_mm"] is not None
+          and st["com_margin_mm"] < max(2.0, 0.04 * float(hi[2] - lo[2]))):
+        checks.append(check(
+            "warn", "barely-stable",
+            f'part "{part.name}" is barely stable: the center of mass sits '
+            f"only {fmt_num(st['com_margin_mm'])} mm inside the footprint "
+            f"edge",
+            part=part.name,
+            suggestion="a nudge will tip it; widen the base or lower the "
+                       "center of mass"))
 
     if ps:
         if lo[2] < -0.05:
@@ -285,6 +319,35 @@ def _wall_thickness(mesh, n_samples: int) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# static stability: does the part stand on its footprint?
+# ---------------------------------------------------------------------------
+
+def _stability(mesh, lo, com) -> dict:
+    """For parts resting on the plate: is the center of mass over the base?
+    com_margin_mm > 0: distance from the COM projection to the nearest
+    footprint edge (bigger = more stable); < 0: it will tip."""
+    z0 = float(lo[2])
+    if z0 > 0.5:      # floating/stacked part: standing is not evaluable
+        return {"standing": None, "com_margin_mm": None,
+                "note": "part does not rest on the build plate"}
+    verts = np.asarray(mesh.vertices)
+    base = verts[verts[:, 2] < z0 + 0.5][:, :2]
+    if len(base) < 3:
+        return {"standing": None, "com_margin_mm": None,
+                "note": "contact region too small to evaluate"}
+    try:
+        from scipy.spatial import ConvexHull
+        hull = ConvexHull(base)
+    except Exception:
+        return {"standing": None, "com_margin_mm": None,
+                "note": "footprint is degenerate (a line or point)"}
+    # hull.equations: A @ p + b <= 0 inside; margin = -max(A @ com + b)
+    p = np.array([float(com[0]), float(com[1])])
+    margin = float(-(hull.equations[:, :2] @ p + hull.equations[:, 2]).max())
+    return {"standing": bool(margin > 0), "com_margin_mm": round(margin, 2)}
+
+
+# ---------------------------------------------------------------------------
 # internal cavities: exact topological test, voxel localization on demand
 # ---------------------------------------------------------------------------
 
@@ -352,3 +415,11 @@ def _overhangs(mesh, threshold_deg: float) -> dict:
 
 def _r3(v) -> list[float]:
     return [round(float(x), 3) for x in v]
+
+
+def _inspect_cmd(at, r: float) -> str:
+    """Ready-to-run close-up command for a reported location."""
+    x, y, z = (round(float(v), 1) for v in at)
+    return (f"solidsight build <model> --views iso,iso_back "
+            f"--focus {x},{y},{z},{round(float(r), 1)} "
+            f"--slice z={z} --out out_focus")

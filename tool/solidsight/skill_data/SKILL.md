@@ -23,6 +23,7 @@ solidsight build model.py --turntable 8          # 8 orbit frames
 solidsight build model.py --slice z=5 --slice x=0   # cross-section renders (repeatable)
 solidsight build model.py --part lid             # build/validate only one named part
 solidsight build model.py --stl                  # export binary STL per part + combined
+solidsight build model.py --3mf                  # export 3MF per part + combined
 solidsight build model.py --exploded             # exploded view render of multi-part scenes
 solidsight build model.py --focus 70,43,24,25    # zoom all views onto a sphere (X,Y,Z,R) — inspect one feature up close
 solidsight build model.py --min-wall 0.8 --max-overhang 45 --allow-multiple-shells
@@ -185,14 +186,21 @@ body  = from_model("../box/model.py", "box")   # reuse another model's part
 motor = from_stl("nema17.stl")                 # import external mesh
 place(body,  name="body")
 place(motor, name="motor", at=(0, 0, 8), rotate=(0, 0, 90))
+expect("motor", "body", status="touching")     # declare the INTENT
+expect("motor", "lid", clearance=1.0)          # build FAILS if violated
 ```
 
 Every multi-part build writes `pairs[]` into report.json: for each pair of
 parts either the exact collision (overlap bbox + volume + a concrete move
-suggestion) or the minimum clearance between their surfaces. Iterate until:
+suggestion) or the minimum clearance between their surfaces. **Declare every
+fit that matters with `expect()`** (touching / clear / clearance range —
+e.g. gear backlash `clearance=(0.15, 0.35)`): the report then answers
+pass/fail against your intent instead of numbers you must re-judge each
+iteration. Share dimensions between the assembly's model files through a
+`params.py` next to them (`from params import *`). Iterate until:
 - zero collisions, and
-- clearances are intentional: sliding/snapping fits need 0.15-0.3 mm printed;
-  0.0 mm ("touching") is only right for parts meant to press together.
+- every declared expectation is met (clearances 0.15-0.3 mm for printed
+  sliding/snapping fits; "touching" only for parts meant to press together).
 
 Use `--exploded` to render mating faces, and `--slice` through the joint to
 see engagement. Example of the full loop: `examples/05-assembly/`.

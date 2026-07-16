@@ -1,5 +1,5 @@
 {
-  "tool": "solidsight 0.2.0",
+  "tool": "solidsight 0.4.0",
   "model": "model.py",
   "mode": "free",
   "units": "mm",
@@ -79,6 +79,16 @@
         "count": 0,
         "res_mm": null,
         "voids": []
+      },
+      "print_estimate": {
+        "material_g_pla": 1555.3,
+        "material_g_petg": 1592.9,
+        "rough_time_min": 2090,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": true,
+        "com_margin_mm": 53.28
       },
       "color": "#8b8b88"
     }
