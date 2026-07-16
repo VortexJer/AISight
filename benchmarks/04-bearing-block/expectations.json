@@ -1,0 +1,40 @@
+{
+  "mode": "print-safe",
+  "min_wall": 2.0,
+  "asserts": [
+    {
+      "path": "status",
+      "in": [
+        "ok",
+        "warnings"
+      ]
+    },
+    {
+      "path": "parts.block.shells",
+      "equals": 1
+    },
+    {
+      "path": "parts.bearing.ghost",
+      "equals": true
+    },
+    {
+      "check_absent": "internal-cavity"
+    },
+    {
+      "check_absent": "thin-wall"
+    },
+    {
+      "check_absent": "parts-overlap"
+    },
+    {
+      "pair": [
+        "block",
+        "bearing"
+      ],
+      "clearance_between": [
+        0.0,
+        0.2
+      ]
+    }
+  ]
+}

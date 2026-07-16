@@ -1,0 +1,20 @@
+{
+  "mode": "free",
+  "asserts": [
+    {
+      "path": "parts.float.shells",
+      "equals": 1
+    },
+    {
+      "path": "parts.float.watertight",
+      "equals": true
+    },
+    {
+      "path": "parts.float.internal_voids.count",
+      "equals": 1
+    },
+    {
+      "check_present": "internal-cavity"
+    }
+  ]
+}

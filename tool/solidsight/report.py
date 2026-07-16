@@ -155,6 +155,9 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
     from .bom import bom as _bom
     _bom_rows = _bom(scene)
 
+    from .plugins import run_validators
+    checks = checks + run_validators(scene)
+
     has_fail = any(c["level"] == "fail" for c in checks)
     has_warn = any(c["level"] == "warn" for c in checks)
     status = "failed" if has_fail else ("warnings" if has_warn else "ok")

@@ -1,0 +1,31 @@
+{
+  "mode": "free",
+  "asserts": [
+    {
+      "path": "scene.part_count",
+      "equals": 2
+    },
+    {
+      "path": "parts.gear_a.shells",
+      "equals": 1
+    },
+    {
+      "path": "parts.gear_b.shells",
+      "equals": 1
+    },
+    {
+      "check_absent": "parts-overlap"
+    },
+    {
+      "pair": [
+        "gear_a",
+        "gear_b"
+      ],
+      "status": "clear",
+      "clearance_between": [
+        0.05,
+        0.45
+      ]
+    }
+  ]
+}

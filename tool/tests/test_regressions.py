@@ -702,3 +702,68 @@ def test_explain_covers_every_emitted_check_id():
     assert core_ids <= set(EXPLANATIONS)
     for e in EXPLANATIONS.values():
         assert e["meaning"] and e["fixes"]
+
+
+# --- plugin system ---------------------------------------------------------------
+
+def test_plugins_isolation_and_checks(tmp_path):
+    import solidsight.plugins as PL
+    from solidsight.report import build_model
+
+    api = PL.PluginAPI("testplug")
+    api.add_validator("envelope", lambda scene: [
+        {"message": f"scene has {len(scene.parts)} part(s)"}])
+    api.add_validator("boom", lambda scene: 1 / 0)      # must not crash
+    api.add_exporter("manifest", lambda scene, out: ["x"])
+    old = PL._registry
+    PL._registry = [api]
+    try:
+        m = tmp_path / "m.py"
+        m.write_text("from solidsight import *\n"
+                     "emit(box(10, 10, 10), name='cube')\n",
+                     encoding="utf-8")
+        report = build_model(m, out_dir=tmp_path / "out", views=["iso"])
+        ids = [c["id"] for c in report["checks"]]
+        assert "plugin-testplug-envelope" in ids       # validator ran
+        assert "plugin-error" in ids                   # crash -> warning
+        assert report["status"] != "failed"            # never fails a build
+    finally:
+        PL._registry = old
+
+
+# --- benchmark suite --------------------------------------------------------------
+
+def test_bench_grader_logic():
+    from solidsight.bench import grade
+    report = {"status": "ok", "scene": {"part_count": 2},
+              "parts": {"a": {"shells": 1}},
+              "pairs": [{"a": "a", "b": "b", "status": "clear",
+                         "min_clearance_mm": 0.2}],
+              "checks": [{"id": "overhang"}]}
+    spec = {"asserts": [
+        {"path": "status", "in": ["ok", "warnings"]},
+        {"path": "parts.a.shells", "equals": 1},
+        {"path": "scene.part_count", "between": [1, 3]},
+        {"check_absent": "internal-cavity"},
+        {"check_present": "overhang"},
+        {"pair": ["a", "b"], "status": "clear",
+         "clearance_between": [0.1, 0.3]},
+    ]}
+    results = grade(report, spec)
+    assert all(r["ok"] for r in results)
+    bad = grade(report, {"asserts": [{"path": "parts.a.shells",
+                                      "equals": 2}]})
+    assert not bad[0]["ok"]
+
+
+def test_bench_fast_references(tmp_path):
+    # the two fastest benchmarks self-test in CI; the full suite runs
+    # via `solidsight bench run` (see benchmarks/README.md)
+    from pathlib import Path
+    from solidsight.bench import run_benchmark
+    root = Path(__file__).parents[2] / "benchmarks"
+    if not root.is_dir():
+        pytest.skip("benchmarks live in the repo, not the wheel")
+    for name in ("01-washer", "05-cavity-trap"):
+        res = run_benchmark(root / name)
+        assert res["passed"], res["results"]

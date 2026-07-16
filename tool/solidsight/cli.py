@@ -133,6 +133,22 @@ def main(argv: list[str] | None = None) -> int:
 
     _add_query_parser(sub)
 
+    bn = sub.add_parser("bench",
+                        help="run the graded benchmark suite (self-test "
+                             "references or grade a solution)")
+    bnsub = bn.add_subparsers(dest="bop", required=True)
+    bnr = bnsub.add_parser("run")
+    bnr.add_argument("name", nargs="?", help="one benchmark (default: all)")
+    bnr.add_argument("--dir", default="benchmarks",
+                     help="benchmarks root (default ./benchmarks)")
+    bnr.add_argument("--solution", default=None,
+                     help="grade this model instead of the reference")
+    bnr.add_argument("--json", action="store_true")
+
+    sub.add_parser("plugins",
+                   help="list installed solidsight plugins (entry-point "
+                        "group 'solidsight.plugins')")
+
     sub.add_parser("version", help="print version")
 
     args = parser.parse_args(argv)
@@ -254,6 +270,34 @@ def _dispatch(parser, args) -> int:
 
     if args.command == "version":
         print(f"solidsight {__version__}")
+        return 0
+    if args.command == "bench":
+        from .bench import run_all
+        root = Path(args.dir)
+        if not root.is_dir():
+            _say(f"BENCH FAILED\nno benchmarks directory at {root}\n"
+                 "  try: --dir path/to/benchmarks", err=True)
+            return 1
+        return run_all(root, args.name,
+                       Path(args.solution) if args.solution else None,
+                       say=_say, as_json=args.json)
+    if args.command == "plugins":
+        from .plugins import discover
+        found = discover(refresh=True)
+        if not found:
+            _say("no plugins installed. A plugin is a pip package with an "
+                 "entry point in group 'solidsight.plugins' — see "
+                 "docs/plugins/example in the repository.")
+            return 0
+        for api in found:
+            err = getattr(api, "error", None)
+            if err:
+                _say(f"  {api.plugin}: FAILED TO LOAD ({err})")
+                continue
+            _say(f"  {api.plugin}: "
+                 f"exporters [{', '.join(api.exporters) or '-'}], "
+                 f"validators [{', '.join(api.validators) or '-'}], "
+                 f"parts [{', '.join(api.parts) or '-'}]")
         return 0
     if args.command == "diff":
         return _diff(Path(args.report_a), Path(args.report_b))

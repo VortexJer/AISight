@@ -1,0 +1,38 @@
+{
+  "mode": "print-safe",
+  "min_wall": 2.0,
+  "asserts": [
+    {
+      "path": "scene.part_count",
+      "equals": 1
+    },
+    {
+      "path": "parts.block.shells",
+      "equals": 1
+    },
+    {
+      "path": "parts.block.watertight",
+      "equals": true
+    },
+    {
+      "check_absent": "internal-cavity"
+    },
+    {
+      "check_absent": "thin-wall"
+    },
+    {
+      "path": "parts.block.wall_thickness.min_mm",
+      "between": [
+        2.0,
+        50
+      ]
+    },
+    {
+      "path": "scene.total_volume_mm3",
+      "between": [
+        150000,
+        400000
+      ]
+    }
+  ]
+}

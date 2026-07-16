@@ -1,0 +1,38 @@
+{
+  "mode": "print-safe",
+  "asserts": [
+    {
+      "path": "status",
+      "in": [
+        "ok",
+        "warnings"
+      ]
+    },
+    {
+      "path": "scene.part_count",
+      "equals": 1
+    },
+    {
+      "path": "parts.washer.shells",
+      "equals": 1
+    },
+    {
+      "path": "scene.total_volume_mm3",
+      "between": [
+        110,
+        145
+      ]
+    },
+    {
+      "path": "parts.washer.bbox.size",
+      "equals": [
+        12.0,
+        12.0,
+        1.6
+      ]
+    },
+    {
+      "check_absent": "internal-cavity"
+    }
+  ]
+}
