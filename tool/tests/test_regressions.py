@@ -651,3 +651,54 @@ def test_urdf_tree_validation_errors(tmp_path):
         export_urdf(sc, tmp_path, "bot.py", say=lambda *a, **k: None)
     joint("a", "c")
     export_urdf(sc, tmp_path, "bot.py", say=lambda *a, **k: None)  # now ok
+
+
+# --- assembly intelligence + reasoning API ---------------------------------------
+
+def test_bom_groups_identical_parts():
+    from solidsight.bom import assembly_sequence, axis_play, bom
+    from solidsight.assembly import pair_analysis
+    sc = make_scene()
+    leg = cylinder(h=30, d=8)
+    sc.emit(box(80, 40, 5).translate(0, 0, 30), name="table")
+    for i, (x, y) in enumerate([(-30, -12), (30, -12), (-30, 12), (30, 12)]):
+        sc.emit(leg.translate(x, y, 0), name=f"leg_{i}")
+    rows = bom(sc)
+    legs = [r for r in rows if r["count"] == 4]
+    assert len(legs) == 1 and sorted(legs[0]["names"]) == \
+        ["leg_0", "leg_1", "leg_2", "leg_3"]
+    pairs, _ = pair_analysis(sc)
+    seq = assembly_sequence(sc, pairs)
+    assert seq[0]["part"].startswith("leg")      # legs start at z=0
+    assert seq[-1]["part"] == "table" or any(
+        s["part"] == "table" and "registers" in s["note"] for s in seq)
+    play = axis_play(sc)
+    assert play["z"]["total_play_mm"] == pytest.approx(0, abs=0.01)
+
+
+def test_iso_fits_textbook_values():
+    from solidsight.fits import fit
+    r = fit(8, "H7", "g6")                       # classic slide fit
+    assert r["type"] == "clearance"
+    assert r["clearance_min_mm"] == pytest.approx(0.005, abs=1e-4)
+    assert r["clearance_max_mm"] == pytest.approx(0.029, abs=1e-4)
+    r = fit(22, "H7", "p6")                      # press fit
+    assert r["type"] == "interference"
+    r = fit(10, "H7", "k6")
+    assert r["type"] == "transition"
+    from solidsight.errors import SolidsightError
+    with pytest.raises(SolidsightError):
+        fit(8, "G7", "g6")                       # only H-basis holes
+    with pytest.raises(SolidsightError):
+        fit(500, "H7", "g6")                     # out of table
+
+
+def test_explain_covers_every_emitted_check_id():
+    from solidsight.explain import EXPLANATIONS
+    core_ids = {"thin-wall", "internal-cavity", "multiple-shells",
+                "not-watertight", "overhang", "parts-overlap",
+                "expectation-violated", "union-touching",
+                "noop-difference", "floating", "unstable"}
+    assert core_ids <= set(EXPLANATIONS)
+    for e in EXPLANATIONS.values():
+        assert e["meaning"] and e["fixes"]

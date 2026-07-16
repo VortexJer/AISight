@@ -152,6 +152,9 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
                 export_files.append(f"{ext}/{fname}")
                 st.tick(fname)
 
+    from .bom import bom as _bom
+    _bom_rows = _bom(scene)
+
     has_fail = any(c["level"] == "fail" for c in checks)
     has_warn = any(c["level"] == "warn" for c in checks)
     status = "failed" if has_fail else ("warnings" if has_warn else "ok")
@@ -172,6 +175,7 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
         "parts": metrics,
         "pairs": pairs,
         "checks": checks,
+        "bom": _bom_rows,
         "files": {
             "report": str(out_dir / "report.json"),
             "renders": [str(out_dir / r) for r in render_files],

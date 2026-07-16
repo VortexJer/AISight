@@ -87,6 +87,25 @@ def main(argv: list[str] | None = None) -> int:
                    help="remove the Claude Code skill AND the solidsight "
                         "package")
 
+    asm = sub.add_parser("assembly",
+                         help="BOM, per-axis play and a suggested assembly "
+                              "sequence for a multi-part model")
+    asm.add_argument("model", help="path to the .py model file")
+    asm.add_argument("--json", action="store_true")
+
+    ft = sub.add_parser("fit",
+                        help="ISO 286 limits & fits: solidsight fit 8 H7 g6")
+    ft.add_argument("nominal", type=float, help="nominal size in mm")
+    ft.add_argument("hole", help="hole grade, H-basis (H6/H7/H8)")
+    ft.add_argument("shaft", help="shaft grade (e/f/g/h/k/n/p + 6/7/8)")
+    ft.add_argument("--json", action="store_true")
+
+    ex = sub.add_parser("explain",
+                        help="design review: what a check id means, the "
+                             "evidence to gather, and the fix menu")
+    ex.add_argument("check_id", nargs="?",
+                    help="a check id from report.json (omit to list all)")
+
     rb = sub.add_parser("robot",
                         help="export declared joint()s as URDF (+SDF) with "
                              "real inertials and collision meshes")
@@ -211,6 +230,11 @@ def _add_query_parser(sub) -> None:
     qs.add_argument("--res", type=float, default=None,
                     help="cell size in mm (default: auto ~78 columns)")
 
+    qd = qsub.add_parser("distance", parents=[common],
+                         help="exact minimum distance between two parts")
+    qd.add_argument("a", help="first part name")
+    qd.add_argument("b", help="second part name")
+
     qv = qsub.add_parser("voxels", parents=[common],
                          help="boolean voxel grid + sealed-cavity detection")
     qv.add_argument("--res", type=float, default=None,
@@ -235,6 +259,44 @@ def _dispatch(parser, args) -> int:
         return _diff(Path(args.report_a), Path(args.report_b))
     if args.command == "convert":
         return _convert(Path(args.src), Path(args.dst))
+    if args.command == "assembly":
+        return _assembly(args)
+    if args.command == "fit":
+        from .fits import fit
+        try:
+            res = fit(args.nominal, args.hole, args.shaft)
+        except SolidsightError as e:
+            _say(f"FIT FAILED\n{e.render()}", err=True)
+            return 1
+        if args.json:
+            print(json.dumps(res, indent=2))
+            return 0
+        _say(f"fit {args.nominal:g} {args.hole}/{args.shaft}: "
+             f"{res['type'].upper()}")
+        _say(f"  hole:  {res['hole']}")
+        _say(f"  shaft: {res['shaft']}")
+        _say(f"  clearance: {res['clearance_min_mm']} .. "
+             f"{res['clearance_max_mm']} mm "
+             + ("(negative = interference)"
+                if res['clearance_min_mm'] < 0 else ""))
+        _say(f"  note: {res['printing_note']}")
+        return 0
+    if args.command == "explain":
+        from .explain import all_ids, explain
+        if not args.check_id:
+            _say("check ids: " + ", ".join(all_ids()))
+            return 0
+        e = explain(args.check_id)
+        if e is None:
+            _say(f"no explanation for {args.check_id!r}. Known: "
+                 + ", ".join(all_ids()), err=True)
+            return 1
+        _say(f"{args.check_id}")
+        _say(f"  meaning:  {e['meaning']}")
+        _say(f"  evidence: {e['evidence']}")
+        for i, f in enumerate(e["fixes"], 1):
+            _say(f"  fix {i}:    {f}")
+        return 0
     if args.command == "robot":
         from .robot import export_urdf
         from .runner import run_model
@@ -450,6 +512,35 @@ def _query(args) -> int:
     from .runner import run_model
 
     scene = run_model(Path(args.model))
+
+    if args.op == "distance":
+        pa, pb = scene.get(args.a).solid, scene.get(args.b).solid
+        inter = pa.manifold ^ pb.manifold
+        vol = float(inter.volume())
+        if vol > 1e-3:
+            bb = inter.bounding_box()
+            res = {"a": args.a, "b": args.b, "status": "collision",
+                   "overlap_volume_mm3": round(vol, 3),
+                   "overlap_bbox": {
+                       "min": [round(float(v), 3) for v in bb[:3]],
+                       "max": [round(float(v), 3) for v in bb[3:]]}}
+        else:
+            diag = max(scene.combined().size) * 2 + 1
+            gap = round(float(pa.manifold.min_gap(pb.manifold, diag)), 4)
+            res = {"a": args.a, "b": args.b,
+                   "status": "touching" if gap <= 0.05 else "clear",
+                   "min_distance_mm": gap}
+        if args.json:
+            print(json.dumps(res, indent=2))
+        elif res["status"] == "collision":
+            _say(f"'{args.a}' and '{args.b}' COLLIDE: "
+                 f"{res['overlap_volume_mm3']} mm3 of overlap at "
+                 f"{res['overlap_bbox']['min']}..{res['overlap_bbox']['max']}")
+        else:
+            _say(f"'{args.a}' <-> '{args.b}': {res['status']}, minimum "
+                 f"distance {res['min_distance_mm']} mm")
+        return 0
+
     if args.part:
         solid = scene.get(args.part).solid
         scope = f"part '{args.part}'"
@@ -630,6 +721,41 @@ def _diff(path_a: Path, path_b: Path) -> int:
                         else f"{changed:.1f}% of pixels differ"))
             except Exception as e:
                 _say(f"  render {name}: could not compare ({e})")
+    return 0
+
+
+def _assembly(args) -> int:
+    from .assembly import pair_analysis
+    from .bom import assembly_sequence, axis_play, bom
+    from .runner import run_model
+    try:
+        scene = run_model(Path(args.model))
+        pairs, _checks = pair_analysis(scene)
+        rows = bom(scene)
+        play = axis_play(scene)
+        seq = assembly_sequence(scene, pairs)
+    except SolidsightError as e:
+        _say(f"ASSEMBLY FAILED\n{e.render()}", err=True)
+        return 1
+    if args.json:
+        print(json.dumps({"bom": rows, "axis_play": play,
+                          "sequence": seq}, indent=2))
+        return 0
+    _say("BILL OF MATERIALS")
+    for r in rows:
+        ghost = "  (ghost/reference)" if r["ghost"] else ""
+        _say(f"  {r['count']} x {r['item']}  "
+             f"[{', '.join(r['names'])}]  "
+             f"{r['grams_pla_each']} g PLA each{ghost}")
+    _say("AXIS PLAY (bbox gaps between consecutive parts)")
+    for axis, d in play.items():
+        gaps = "; ".join(f"{g['after']} -> {g['before']}: {g['gap_mm']} mm"
+                         for g in d["gaps"]) or "none"
+        _say(f"  {axis}: total {d['total_play_mm']} mm  ({gaps})")
+    _say("SUGGESTED SEQUENCE (bottom-up heuristic; check the exploded "
+         "render)")
+    for s in seq:
+        _say(f"  {s['step']}. {s['part']} — {s['note']}")
     return 0
 
 
