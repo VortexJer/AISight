@@ -63,6 +63,36 @@ scripts; nothing else is touched.
 `<tool> uninstall` removes the skill AND the pip package. No telemetry,
 no services, no accounts.
 
+## The showcase: one robot through all five tools
+
+[`showcase/`](showcase/) takes **Vigía**, a desk robot, from nothing to
+a printable enclosure, a routed controller board, a simulation-ready
+URDF, a textured game asset, validated materials and a reviewed hop
+animation — entirely by an AI agent, entirely through measurements. The
+enclosure does not copy the board's dimensions: it **imports pcbsight
+and reads them from the .kicad_pcb**, so the standoffs sit at the
+board's own mounting pads.
+
+Every stage caught real defects the agent could not see — 31 board
+findings (both USB nets open with swapped ends), five enclosure
+iterations (servos placed where the servo *headers* are, a neck ring
+floating over the open shell), a flipped UV island, a boosted copper
+emitting 53% more light than it receives, a hop at 0.496x gravity —
+and every fix ends in a diff that proves it.
+
+<p align="center">
+  <img src="showcase/robot/out/renders/01_iso.png" width="41%">
+  <img src="showcase/robot/out/renders/exploded.png" width="41%">
+</p>
+<p align="center">
+  <img src="showcase/board/out/board.png" width="27%">
+  <img src="showcase/materials/out_accent/compare.png" width="27%">
+  <img src="showcase/motion/out_floaty/flight_0_arc.png" width="27%">
+</p>
+<p align="center"><em>the assembly with its electronics as X-ray ghosts · the board pcbsight took from 31 findings to 0 · the boosted-vs-physical copper · the 0.496x-gravity hop, caught by its arc</em></p>
+
+Full narrative and the defect scoreboard: [showcase/README.md](showcase/README.md).
+
 ## The standard every tool holds itself to
 
 - **Known ground truth**: every example is synthetic on purpose, with
@@ -87,6 +117,7 @@ animationsight/  motion clips as measurement
 texturesight/    UVs + texture maps
 shadersight/     materials + node graphs
 pcbsight/        board layouts
+showcase/        Vigia: one robot through all five tools (the flagship demo)
 docs/            the blind-vs-loop comparison study, plugins, family roadmap
 ```
 

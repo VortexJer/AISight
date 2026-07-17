@@ -1,0 +1,2 @@
+  robot: out\robot\model.urdf  (7 links, 6 joints, density 1.24 g/cm3)
+  robot: out\robot\model.sdf

@@ -1,0 +1,182 @@
+{
+  "status": "ok",
+  "board": {
+    "source": "vigia_board.kicad_pcb",
+    "nets": 7,
+    "tracks": 41,
+    "vias": 7,
+    "pads": 22,
+    "copper_um": 35.0
+  },
+  "rules": {
+    "min_clearance_mm": 0.2,
+    "delta_t_c": 10.0
+  },
+  "connectivity": [
+    {
+      "net": "+5V",
+      "net_id": 1,
+      "tracks": 8,
+      "vias": 0,
+      "pads": 4,
+      "islands": 1,
+      "routed": true,
+      "unconnected_pads": [],
+      "total_track_mm": 69.103
+    },
+    {
+      "net": "GND",
+      "net_id": 2,
+      "tracks": 13,
+      "vias": 3,
+      "pads": 9,
+      "islands": 1,
+      "routed": true,
+      "unconnected_pads": [],
+      "total_track_mm": 155.3
+    },
+    {
+      "net": "SERVO1_PWM",
+      "net_id": 3,
+      "tracks": 5,
+      "vias": 2,
+      "pads": 2,
+      "islands": 1,
+      "routed": true,
+      "unconnected_pads": [],
+      "total_track_mm": 39.804
+    },
+    {
+      "net": "SERVO2_PWM",
+      "net_id": 4,
+      "tracks": 3,
+      "vias": 0,
+      "pads": 2,
+      "islands": 1,
+      "routed": true,
+      "unconnected_pads": [],
+      "total_track_mm": 24.514
+    },
+    {
+      "net": "USB_P",
+      "net_id": 5,
+      "tracks": 4,
+      "vias": 2,
+      "pads": 2,
+      "islands": 1,
+      "routed": true,
+      "unconnected_pads": [],
+      "total_track_mm": 22.831
+    },
+    {
+      "net": "USB_N",
+      "net_id": 6,
+      "tracks": 7,
+      "vias": 0,
+      "pads": 2,
+      "islands": 1,
+      "routed": true,
+      "unconnected_pads": [],
+      "total_track_mm": 22.819
+    },
+    {
+      "net": "XTAL",
+      "net_id": 7,
+      "tracks": 1,
+      "vias": 0,
+      "pads": 1,
+      "islands": 1,
+      "routed": true,
+      "unconnected_pads": [],
+      "total_track_mm": 4.4
+    }
+  ],
+  "clearance_findings": [],
+  "current_capacity": [
+    {
+      "net": "+5V",
+      "min_width_mm": 1.0,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 2.392,
+      "note": "IPC-2221, at the net's narrowest track"
+    },
+    {
+      "net": "GND",
+      "min_width_mm": 0.5,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 1.447,
+      "note": "IPC-2221, at the net's narrowest track"
+    },
+    {
+      "net": "SERVO1_PWM",
+      "min_width_mm": 0.3,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 0.999,
+      "note": "IPC-2221, at the net's narrowest track"
+    },
+    {
+      "net": "SERVO2_PWM",
+      "min_width_mm": 0.3,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 0.999,
+      "note": "IPC-2221, at the net's narrowest track"
+    },
+    {
+      "net": "USB_P",
+      "min_width_mm": 0.25,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 0.875,
+      "note": "IPC-2221, at the net's narrowest track"
+    },
+    {
+      "net": "USB_N",
+      "min_width_mm": 0.25,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 0.875,
+      "note": "IPC-2221, at the net's narrowest track"
+    },
+    {
+      "net": "XTAL",
+      "min_width_mm": 0.25,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 0.875,
+      "note": "IPC-2221, at the net's narrowest track"
+    }
+  ],
+  "diff_pairs": [
+    {
+      "pair": "USB_P / USB_N",
+      "length_mm": [
+        22.831,
+        22.819
+      ],
+      "skew_mm": 0.012,
+      "skew_ps_fr4": 0.1,
+      "widths_mm": [
+        0.25
+      ],
+      "width_matched": true
+    }
+  ],
+  "checks": [],
+  "files": {
+    "report": "report.json",
+    "renders": [
+      "board.png"
+    ]
+  }
+}

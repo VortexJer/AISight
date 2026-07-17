@@ -1,0 +1,196 @@
+{
+  "status": "failed",
+  "checks": [
+    {
+      "id": "uv-flipped-faces",
+      "level": "fail",
+      "message": "2 face(s) have inverted UV winding",
+      "where": "first at face 8",
+      "try": "mirror those UV islands back: a flipped face samples normal maps mirrored, so lighting is wrong in a way no texture edit can fix"
+    },
+    {
+      "id": "uv-packing-loose",
+      "level": "warn",
+      "message": "the UV layout uses 19% of the square",
+      "where": "5 island(s)",
+      "try": "tighter packing = more texels per asset at the same memory; below ~50% you are paying for empty pixels"
+    }
+  ],
+  "files": {
+    "report": "report.json",
+    "renders": [
+      "uv_layout.png",
+      "uv_density.png"
+    ]
+  },
+  "uv": {
+    "mesh": {
+      "source": "faceplate_broken.obj",
+      "faces": 10,
+      "vertices": 20,
+      "uv_coords": 20,
+      "materials": [
+        "faceplate"
+      ]
+    },
+    "assumed_texture_px": 1024,
+    "texel_density": {
+      "px_per_unit": {
+        "area_weighted_mean": 12.73,
+        "p2": 8.53,
+        "p98": 13.3,
+        "min": 8.53,
+        "max": 13.3
+      },
+      "spread_ratio": 1.56,
+      "worst_face": 8,
+      "note": "texels per world unit at the given texture size; the mean is area-weighted, and spread_ratio is p98/p2 (robust to a few stray faces)"
+    },
+    "distortion": {
+      "anisotropy": {
+        "median": 1.333,
+        "p95": 1.333,
+        "max": 1.333,
+        "worst_face": 1
+      },
+      "stretched_faces": [],
+      "stretched_face_count": 0,
+      "stretched_area_fraction": 0.0,
+      "flipped_faces": [
+        8,
+        9
+      ],
+      "flipped_face_count": 2,
+      "note": "anisotropy = sigma_max/sigma_min of the per-face UV Jacobian: 1.0 is conformal, >2 is visibly smeared. Flipped = UV winding opposite to the mesh majority"
+    },
+    "islands": {
+      "uv_islands": 5,
+      "mesh_shells": 5,
+      "seam_edges": 0,
+      "seam_length_3d": 0.0,
+      "largest_island_uv_area": 0.06075,
+      "smallest_island_uv_area": 0.01,
+      "island_uv_areas": [
+        0.06075,
+        0.06075,
+        0.02835,
+        0.02835,
+        0.01
+      ],
+      "note": "an island is a UV-connected face set; a seam is a 3D edge whose two faces land in different islands - so seams are counted, not guessed",
+      "detail": [
+        {
+          "island": 0,
+          "faces": [
+            0,
+            1
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.03,
+            0.03,
+            0.48,
+            0.165
+          ],
+          "mean_density_px_per_unit": 13.3,
+          "surface_mm2": 360.0
+        },
+        {
+          "island": 1,
+          "faces": [
+            2,
+            3
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.03,
+            0.4,
+            0.48,
+            0.535
+          ],
+          "mean_density_px_per_unit": 13.3,
+          "surface_mm2": 360.0
+        },
+        {
+          "island": 2,
+          "faces": [
+            4,
+            5
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.03,
+            0.77,
+            0.1875,
+            0.95
+          ],
+          "mean_density_px_per_unit": 13.3,
+          "surface_mm2": 168.0
+        },
+        {
+          "island": 3,
+          "faces": [
+            6,
+            7
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.52,
+            0.03,
+            0.6775,
+            0.21
+          ],
+          "mean_density_px_per_unit": 13.3,
+          "surface_mm2": 168.0
+        },
+        {
+          "island": 4,
+          "faces": [
+            8,
+            9
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.55,
+            0.45,
+            0.65,
+            0.55
+          ],
+          "mean_density_px_per_unit": 8.53,
+          "surface_mm2": 144.0
+        }
+      ]
+    },
+    "packing": {
+      "uv_bbox": [
+        0.03,
+        0.03,
+        0.6775,
+        0.95
+      ],
+      "used_uv_area": 0.1882,
+      "utilization": 0.1882,
+      "faces_outside_0_1": 0,
+      "overlap_cells": 0,
+      "overlap_grid": 256,
+      "note": "utilization is the summed UV area of all faces (1.0 = the whole square, wasted space excluded); overlap is measured on a 256x256 grid, so it finds stacked islands, not sub-texel touching"
+    },
+    "checks": [
+      {
+        "id": "uv-flipped-faces",
+        "level": "fail",
+        "message": "2 face(s) have inverted UV winding",
+        "where": "first at face 8",
+        "try": "mirror those UV islands back: a flipped face samples normal maps mirrored, so lighting is wrong in a way no texture edit can fix"
+      },
+      {
+        "id": "uv-packing-loose",
+        "level": "warn",
+        "message": "the UV layout uses 19% of the square",
+        "where": "5 island(s)",
+        "try": "tighter packing = more texels per asset at the same memory; below ~50% you are paying for empty pixels"
+      }
+    ]
+  },
+  "textures": []
+}

@@ -1,0 +1,797 @@
+{
+  "status": "failed",
+  "board": {
+    "source": "vigia_board.kicad_pcb",
+    "nets": 7,
+    "tracks": 36,
+    "vias": 7,
+    "pads": 22,
+    "copper_um": 35.0
+  },
+  "rules": {
+    "min_clearance_mm": 0.2,
+    "delta_t_c": 10.0
+  },
+  "connectivity": [
+    {
+      "net": "+5V",
+      "net_id": 1,
+      "tracks": 6,
+      "vias": 0,
+      "pads": 4,
+      "islands": 1,
+      "routed": true,
+      "unconnected_pads": [],
+      "total_track_mm": 63.183
+    },
+    {
+      "net": "GND",
+      "net_id": 2,
+      "tracks": 17,
+      "vias": 7,
+      "pads": 9,
+      "islands": 1,
+      "routed": true,
+      "unconnected_pads": [],
+      "total_track_mm": 141.874
+    },
+    {
+      "net": "SERVO1_PWM",
+      "net_id": 3,
+      "tracks": 5,
+      "vias": 0,
+      "pads": 2,
+      "islands": 1,
+      "routed": true,
+      "unconnected_pads": [],
+      "total_track_mm": 64.376
+    },
+    {
+      "net": "SERVO2_PWM",
+      "net_id": 4,
+      "tracks": 3,
+      "vias": 0,
+      "pads": 2,
+      "islands": 1,
+      "routed": true,
+      "unconnected_pads": [],
+      "total_track_mm": 24.514
+    },
+    {
+      "net": "USB_P",
+      "net_id": 5,
+      "tracks": 2,
+      "vias": 0,
+      "pads": 2,
+      "islands": 2,
+      "routed": false,
+      "unconnected_pads": [
+        "J1.3"
+      ],
+      "total_track_mm": 21.55
+    },
+    {
+      "net": "USB_N",
+      "net_id": 6,
+      "tracks": 2,
+      "vias": 0,
+      "pads": 2,
+      "islands": 2,
+      "routed": false,
+      "unconnected_pads": [
+        "J1.4"
+      ],
+      "total_track_mm": 20.817
+    },
+    {
+      "net": "XTAL",
+      "net_id": 7,
+      "tracks": 1,
+      "vias": 0,
+      "pads": 1,
+      "islands": 1,
+      "routed": true,
+      "unconnected_pads": [],
+      "total_track_mm": 4.4
+    }
+  ],
+  "clearance_findings": [
+    {
+      "kind": "track-track",
+      "a": "+5V",
+      "b": "GND",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        5.62,
+        16.0
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "+5V",
+      "b": "GND",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        44.0,
+        19.23
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "+5V",
+      "b": "GND",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        44.5,
+        13.73
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "+5V",
+      "b": "SERVO1_PWM",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        43.5,
+        16.37
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "GND",
+      "b": "SERVO2_PWM",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        42.5,
+        28.76
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "GND",
+      "b": "SERVO1_PWM",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        43.5,
+        18.13
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "GND",
+      "b": "SERVO2_PWM",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        42.5,
+        24.76
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "GND",
+      "b": "SERVO1_PWM",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        18.35,
+        22.88
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "GND",
+      "b": "USB_P",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        19.15,
+        24.38
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "GND",
+      "b": "USB_N",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        19.27,
+        22.88
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "GND",
+      "b": "SERVO2_PWM",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        31.5,
+        24.62
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "GND",
+      "b": "XTAL",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        31.4,
+        20.62
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "SERVO1_PWM",
+      "b": "USB_N",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        19.62,
+        21.5
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "SERVO1_PWM",
+      "b": "USB_P",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        18.15,
+        26.12
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "SERVO1_PWM",
+      "b": "USB_N",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        18.27,
+        24.62
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "SERVO1_PWM",
+      "b": "SERVO2_PWM",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        41.5,
+        26.76
+      ]
+    },
+    {
+      "kind": "track-track",
+      "a": "SERVO2_PWM",
+      "b": "USB_P",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        21.5,
+        25.0
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "+5V",
+      "b": "GND (pad J2.2)",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        44.0,
+        12.0
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "+5V",
+      "b": "SERVO1_PWM (pad J2.3)",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        44.0,
+        14.54
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "GND",
+      "b": "SERVO2_PWM (pad J3.3)",
+      "layer": "B.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        44.0,
+        30.54
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "GND",
+      "b": "SERVO2_PWM (pad J3.3)",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        44.0,
+        30.54
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "GND",
+      "b": "SERVO1_PWM (pad J2.3)",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        44.0,
+        14.54
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "GND",
+      "b": "+5V (pad J3.1)",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        44.0,
+        25.46
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "GND",
+      "b": "SERVO2_PWM (pad J3.3)",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        44.0,
+        30.54
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "GND",
+      "b": "SERVO2_PWM (pad J3.3)",
+      "layer": "B.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        44.0,
+        30.54
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "GND",
+      "b": "+5V (pad J1.1)",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        6.0,
+        17.0
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "GND",
+      "b": "+5V (pad J2.1)",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        44.0,
+        9.46
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "USB_P",
+      "b": "SERVO2_PWM (pad U1.4)",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        21.4,
+        24.5
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "USB_P",
+      "b": "USB_N (pad J1.4)",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        8.5,
+        21.0
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "USB_N",
+      "b": "SERVO1_PWM (pad U1.3)",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        21.4,
+        21.5
+      ]
+    },
+    {
+      "kind": "track-pad",
+      "a": "USB_N",
+      "b": "USB_P (pad J1.3)",
+      "layer": "F.Cu",
+      "clearance_mm": 0.0,
+      "required_mm": 0.2,
+      "near": [
+        8.5,
+        19.0
+      ]
+    }
+  ],
+  "current_capacity": [
+    {
+      "net": "+5V",
+      "min_width_mm": 1.0,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 2.392,
+      "note": "IPC-2221, at the net's narrowest track"
+    },
+    {
+      "net": "GND",
+      "min_width_mm": 0.5,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 1.447,
+      "note": "IPC-2221, at the net's narrowest track"
+    },
+    {
+      "net": "SERVO1_PWM",
+      "min_width_mm": 0.3,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 0.999,
+      "note": "IPC-2221, at the net's narrowest track"
+    },
+    {
+      "net": "SERVO2_PWM",
+      "min_width_mm": 0.3,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 0.999,
+      "note": "IPC-2221, at the net's narrowest track"
+    },
+    {
+      "net": "USB_P",
+      "min_width_mm": 0.25,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 0.875,
+      "note": "IPC-2221, at the net's narrowest track"
+    },
+    {
+      "net": "USB_N",
+      "min_width_mm": 0.25,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 0.875,
+      "note": "IPC-2221, at the net's narrowest track"
+    },
+    {
+      "net": "XTAL",
+      "min_width_mm": 0.25,
+      "copper_um": 35.0,
+      "layer_model": "external",
+      "dt_c": 10.0,
+      "i_max_a": 0.875,
+      "note": "IPC-2221, at the net's narrowest track"
+    }
+  ],
+  "diff_pairs": [
+    {
+      "pair": "USB_P / USB_N",
+      "length_mm": [
+        21.55,
+        20.817
+      ],
+      "skew_mm": 0.733,
+      "skew_ps_fr4": 4.8,
+      "widths_mm": [
+        0.25
+      ],
+      "width_matched": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "net-open",
+      "level": "fail",
+      "message": "net 'USB_P' is 2 separate island(s) - it is not routed, unconnected pad(s): J1.3",
+      "where": "2 pad(s), 2 track(s)",
+      "try": "route the missing connection(s); an open net is a board that does not work, not a style issue"
+    },
+    {
+      "id": "net-open",
+      "level": "fail",
+      "message": "net 'USB_N' is 2 separate island(s) - it is not routed, unconnected pad(s): J1.4",
+      "where": "2 pad(s), 2 track(s)",
+      "try": "route the missing connection(s); an open net is a board that does not work, not a style issue"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: '+5V' to 'GND' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (5.62, 16.0)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: '+5V' to 'GND' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (44.0, 19.23)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: '+5V' to 'GND' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (44.5, 13.73)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: '+5V' to 'SERVO1_PWM' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (43.5, 16.37)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: 'GND' to 'SERVO2_PWM' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (42.5, 28.76)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: 'GND' to 'SERVO1_PWM' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (43.5, 18.13)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: 'GND' to 'SERVO2_PWM' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (42.5, 24.76)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: 'GND' to 'SERVO1_PWM' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (18.35, 22.88)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: 'GND' to 'USB_P' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (19.15, 24.38)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: 'GND' to 'USB_N' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (19.27, 22.88)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: 'GND' to 'SERVO2_PWM' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (31.5, 24.62)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: 'GND' to 'XTAL' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (31.4, 20.62)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: 'SERVO1_PWM' to 'USB_N' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (19.62, 21.5)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: 'SERVO1_PWM' to 'USB_P' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (18.15, 26.12)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: 'SERVO1_PWM' to 'USB_N' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (18.27, 24.62)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: 'SERVO1_PWM' to 'SERVO2_PWM' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (41.5, 26.76)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-track: 'SERVO2_PWM' to 'USB_P' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (21.5, 25.0)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: '+5V' to 'GND (pad J2.2)' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (44.0, 12.0)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: '+5V' to 'SERVO1_PWM (pad J2.3)' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (44.0, 14.54)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: 'GND' to 'SERVO2_PWM (pad J3.3)' at 0.0 mm (required 0.2)",
+      "where": "B.Cu near (44.0, 30.54)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: 'GND' to 'SERVO2_PWM (pad J3.3)' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (44.0, 30.54)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: 'GND' to 'SERVO1_PWM (pad J2.3)' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (44.0, 14.54)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: 'GND' to '+5V (pad J3.1)' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (44.0, 25.46)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: 'GND' to 'SERVO2_PWM (pad J3.3)' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (44.0, 30.54)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: 'GND' to 'SERVO2_PWM (pad J3.3)' at 0.0 mm (required 0.2)",
+      "where": "B.Cu near (44.0, 30.54)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: 'GND' to '+5V (pad J1.1)' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (6.0, 17.0)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: 'GND' to '+5V (pad J2.1)' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (44.0, 9.46)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: 'USB_P' to 'SERVO2_PWM (pad U1.4)' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (21.4, 24.5)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: 'USB_P' to 'USB_N (pad J1.4)' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (8.5, 21.0)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: 'USB_N' to 'SERVO1_PWM (pad U1.3)' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (21.4, 21.5)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "clearance",
+      "level": "fail",
+      "message": "track-pad: 'USB_N' to 'USB_P (pad J1.3)' at 0.0 mm (required 0.2)",
+      "where": "F.Cu near (8.5, 19.0)",
+      "try": "move the copper apart or drop the fab's clearance class; below ~50% of spec this risks shorts after etch, hence FAIL"
+    },
+    {
+      "id": "diff-pair-skew",
+      "level": "warn",
+      "message": "pair USB_P / USB_N is skewed 0.733 mm (~4.8 ps on FR4)",
+      "try": "length-match the pair (serpentine the short side); relevant above ~100 MHz signals"
+    }
+  ],
+  "files": {
+    "report": "report.json",
+    "renders": [
+      "board.png"
+    ]
+  }
+}

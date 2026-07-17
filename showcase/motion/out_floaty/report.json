@@ -1,0 +1,351 @@
+{
+  "status": "warnings",
+  "clip": {
+    "source": "hop_floaty.bvh",
+    "frames": 58,
+    "fps": 30.0003,
+    "duration_s": 1.9333,
+    "joints": 11,
+    "unit": "cm",
+    "up_axis": "y",
+    "floor_mm": 180.0,
+    "floor_inferred": true,
+    "floor_estimate": {
+      "method": "10th percentile of the per-frame lowest point",
+      "clip_min_mm": 180.0,
+      "frames_below_floor": 0,
+      "spread_mm": 111.82
+    }
+  },
+  "skeleton": {
+    "root": "Body",
+    "joint_names": [
+      "Body",
+      "Head",
+      "Head_end",
+      "ArmL",
+      "ArmL_end",
+      "ArmR",
+      "ArmR_end",
+      "FootL",
+      "FootL_end",
+      "FootR",
+      "FootR_end"
+    ]
+  },
+  "com": {
+    "anthropometric_weights": true,
+    "trajectory_file": "com_trajectory.csv",
+    "height_mm": {
+      "min": 482.31,
+      "max": 671.04,
+      "mean": 546.37
+    }
+  },
+  "ballistics": {
+    "flights": [
+      {
+        "frames": [
+          25,
+          40
+        ],
+        "duration_s": 0.5333,
+        "apex_rise_mm": 147.6,
+        "effective_gravity_mm_s2": 4863.9,
+        "gravity_ratio": 0.496,
+        "fit_rms_mm": 2.29
+      }
+    ],
+    "note": "effective gravity from a parabola fit to the COM height over each airborne span; 1.0 = physical, <0.75 reads floaty, >1.3 reads heavy. ~0.1 or ~10 usually means --unit is wrong"
+  },
+  "kind": "oneshot",
+  "peaks": {
+    "Body": {
+      "peak_speed_mm_s": 1103.3,
+      "peak_speed_frame": 39,
+      "peak_accel_mm_s2": 23546.7,
+      "peak_angular_deg_s": 0.0
+    },
+    "Head": {
+      "peak_speed_mm_s": 1103.3,
+      "peak_speed_frame": 39,
+      "peak_accel_mm_s2": 23546.7,
+      "peak_angular_deg_s": 240.0
+    },
+    "Head_end": {
+      "peak_speed_mm_s": 1104.4,
+      "peak_speed_frame": 39,
+      "peak_accel_mm_s2": 23505.4,
+      "peak_angular_deg_s": 240.0
+    },
+    "ArmL": {
+      "peak_speed_mm_s": 1103.3,
+      "peak_speed_frame": 39,
+      "peak_accel_mm_s2": 23546.7,
+      "peak_angular_deg_s": 1725.0
+    },
+    "ArmL_end": {
+      "peak_speed_mm_s": 1491.2,
+      "peak_speed_frame": 26,
+      "peak_accel_mm_s2": 26206.6,
+      "peak_angular_deg_s": 1725.0
+    },
+    "ArmR": {
+      "peak_speed_mm_s": 1103.3,
+      "peak_speed_frame": 39,
+      "peak_accel_mm_s2": 23546.7,
+      "peak_angular_deg_s": 1725.0
+    },
+    "ArmR_end": {
+      "peak_speed_mm_s": 1491.2,
+      "peak_speed_frame": 26,
+      "peak_accel_mm_s2": 26206.6,
+      "peak_angular_deg_s": 1725.0
+    },
+    "FootL": {
+      "peak_speed_mm_s": 933.6,
+      "peak_speed_frame": 27,
+      "peak_accel_mm_s2": 13227.3,
+      "peak_angular_deg_s": 0.0
+    },
+    "FootL_end": {
+      "peak_speed_mm_s": 933.6,
+      "peak_speed_frame": 27,
+      "peak_accel_mm_s2": 13227.3,
+      "peak_angular_deg_s": 0.0
+    },
+    "FootR": {
+      "peak_speed_mm_s": 933.6,
+      "peak_speed_frame": 27,
+      "peak_accel_mm_s2": 13227.3,
+      "peak_angular_deg_s": 0.0
+    },
+    "FootR_end": {
+      "peak_speed_mm_s": 933.6,
+      "peak_speed_frame": 27,
+      "peak_accel_mm_s2": 13227.3,
+      "peak_angular_deg_s": 0.0
+    }
+  },
+  "contacts": {
+    "foot_joints": [
+      "FootL",
+      "FootL_end",
+      "FootR",
+      "FootR_end"
+    ],
+    "events": [
+      {
+        "frame": 25,
+        "joint": "FootL_end",
+        "event": "lift",
+        "t_s": 0.8333
+      },
+      {
+        "frame": 25,
+        "joint": "FootR_end",
+        "event": "lift",
+        "t_s": 0.8333
+      },
+      {
+        "frame": 41,
+        "joint": "FootL_end",
+        "event": "plant",
+        "t_s": 1.3667
+      },
+      {
+        "frame": 41,
+        "joint": "FootR_end",
+        "event": "plant",
+        "t_s": 1.3667
+      }
+    ],
+    "sliding": [],
+    "note": null
+  },
+  "balance": {
+    "com_to_support_mm": {
+      "max": 3.49,
+      "mean": 2.6,
+      "at_frame": 15
+    },
+    "airborne_frames": [
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40
+    ],
+    "airborne_ratio": 0.2759,
+    "note": "distance from the COM's ground projection to the support base; large values in flight//dynamic frames are expected - read them with airborne_frames"
+  },
+  "penetration": [],
+  "smoothness": {
+    "jerk_rms_mm_s3": {
+      "Body": 101886.2,
+      "Head": 101886.2,
+      "Head_end": 103924.3,
+      "ArmL": 101886.2,
+      "ArmL_end": 173922.8,
+      "ArmR": 101886.2,
+      "ArmR_end": 173922.8,
+      "FootL": 68202.7,
+      "FootL_end": 68202.7,
+      "FootR": 68202.7,
+      "FootR_end": 68202.7
+    },
+    "roughest_joint": "ArmL_end",
+    "roughest_jerk_rms_mm_s3": 173922.8,
+    "pops": [
+      {
+        "frames": [
+          39,
+          40,
+          41
+        ],
+        "joints_hit": 11,
+        "kind": "pose snap",
+        "t_s": 1.3333,
+        "worst_joint": "FootL",
+        "worst_accel_mm_s2": 13227.3,
+        "worst_robust_z": 473.7
+      },
+      {
+        "frames": [
+          24,
+          25,
+          26
+        ],
+        "joints_hit": 6,
+        "kind": "pose snap",
+        "t_s": 0.8333,
+        "worst_joint": "FootL",
+        "worst_accel_mm_s2": 11910.6,
+        "worst_robust_z": 426.6
+      },
+      {
+        "frames": [
+          27,
+          28,
+          29
+        ],
+        "joints_hit": 4,
+        "kind": "pose snap",
+        "t_s": 0.9333,
+        "worst_joint": "FootL",
+        "worst_accel_mm_s2": 5005.2,
+        "worst_robust_z": 179.3
+      },
+      {
+        "frames": [
+          30,
+          31,
+          32
+        ],
+        "joints_hit": 4,
+        "kind": "pose snap",
+        "t_s": 1.0,
+        "worst_joint": "FootL",
+        "worst_accel_mm_s2": 5005.5,
+        "worst_robust_z": 179.3
+      },
+      {
+        "frames": [
+          33,
+          34,
+          35
+        ],
+        "joints_hit": 4,
+        "kind": "pose snap",
+        "t_s": 1.1333,
+        "worst_joint": "FootL",
+        "worst_accel_mm_s2": 5005.2,
+        "worst_robust_z": 179.3
+      },
+      {
+        "frames": [
+          36,
+          37,
+          38
+        ],
+        "joints_hit": 4,
+        "kind": "pose snap",
+        "t_s": 1.2,
+        "worst_joint": "FootL",
+        "worst_accel_mm_s2": 5005.2,
+        "worst_robust_z": 179.3
+      }
+    ],
+    "pop_count": 6,
+    "raw_spike_count": 83,
+    "note": "a pop is a single-frame acceleration spike (robust z > 12, MAD floored at 10% of the clip's own scale), clustered by frame: a 'pose snap' hits many joints at once (blocking pass or splice), a 'joint pop' is one bad key"
+  },
+  "loop": {
+    "pose_gap_mm": {
+      "max": 6.47,
+      "mean": 1.18,
+      "worst_joint": "ArmL_end"
+    },
+    "typical_frame_motion_mm": 2.9,
+    "velocity_gap_mm_frame": {
+      "max": 0.13,
+      "worst_joint": "ArmL_end"
+    },
+    "root_travel_mm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "convention": "discontinuous",
+    "loops_cleanly": false,
+    "note": "the seam gap is judged against this clip's own median per-frame motion, because a full loop is SUPPOSED to differ from frame 0 by one step; root travel is removed"
+  },
+  "checks": [
+    {
+      "id": "motion-pop",
+      "level": "warn",
+      "message": "6 discontinuity event(s) (6 full pose snap(s) - a blocking pass or splice); worst is a pose snap at frame 39",
+      "where": "t=1.3333s, 11 joint(s) hit, worst 'FootL' at 13227.3 mm/s2 (robust z 473.7)",
+      "try": "a pose snap needs inbetweens/easing at that frame; a single joint pop is one bad key or tangent"
+    },
+    {
+      "id": "floaty-flight",
+      "level": "warn",
+      "message": "flight at frames [25, 40] falls at 0.50x gravity: it will read as floaty",
+      "where": "apex +147.6 mm over 0.5333s; at 1 g that apex takes 0.35s of airtime",
+      "try": "physics fixes it two ways: shorten the airtime to match the apex, or raise the apex to match the airtime (T = 2*sqrt(2h/g)); or accept the stylised float and say so"
+    }
+  ],
+  "files": {
+    "report": "report.json",
+    "frames": [
+      "frames/frame_0000.png",
+      "frames/frame_0011.png",
+      "frames/frame_0022.png",
+      "frames/frame_0024.png",
+      "frames/frame_0027.png",
+      "frames/frame_0034.png",
+      "frames/frame_0039.png",
+      "frames/frame_0045.png",
+      "frames/frame_0057.png"
+    ],
+    "tracks": [
+      "track_com_height.png",
+      "track_foot_speed.png"
+    ],
+    "flight_arcs": [
+      "flight_0_arc.png"
+    ]
+  }
+}

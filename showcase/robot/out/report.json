@@ -1,0 +1,709 @@
+{
+  "tool": "solidsight 0.7.0",
+  "model": "model.py",
+  "mode": "free",
+  "units": "mm",
+  "status": "ok",
+  "scene": {
+    "part_count": 7,
+    "bbox": {
+      "min": [
+        -39.0,
+        -47.0,
+        0.0
+      ],
+      "max": [
+        44.0,
+        47.0,
+        68.0
+      ]
+    },
+    "size": [
+      83.0,
+      94.0,
+      68.0
+    ],
+    "total_volume_mm3": 65107.404
+  },
+  "parts": {
+    "body": {
+      "volume_mm3": 44048.11,
+      "surface_area_mm2": 38747.062,
+      "bbox": {
+        "min": [
+          -39.0,
+          -31.0,
+          0.0
+        ],
+        "max": [
+          39.0,
+          31.0,
+          46.2
+        ],
+        "size": [
+          78.0,
+          62.0,
+          46.2
+        ]
+      },
+      "center_of_mass": [
+        0.141,
+        -0.0,
+        22.241
+      ],
+      "triangles": 4426,
+      "shells": 1,
+      "watertight": true,
+      "genus": 16,
+      "wall_thickness": {
+        "min_mm": 1.798,
+        "at": [
+          -22.092,
+          15.505,
+          3.5
+        ],
+        "samples": 600,
+        "method": "inward-normal-ray"
+      },
+      "overhangs": {
+        "max_deg": 90.0,
+        "area_mm2": 3808.69,
+        "worst_at": [
+          -25.375,
+          -19.843,
+          39.8
+        ],
+        "threshold_deg": 50.0
+      },
+      "internal_voids": {
+        "count": 0,
+        "res_mm": null,
+        "voids": []
+      },
+      "print_estimate": {
+        "material_g_pla": 54.6,
+        "material_g_petg": 55.9,
+        "rough_time_min": 73,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": true,
+        "com_margin_mm": 31.0
+      },
+      "color": "#5b7c99",
+      "features": [
+        {
+          "type": "standoff_pattern",
+          "source": "vigia_board",
+          "at": [
+            [
+              -21.0,
+              -16.0
+            ],
+            [
+              -21.0,
+              16.0
+            ],
+            [
+              21.0,
+              -16.0
+            ],
+            [
+              21.0,
+              16.0
+            ]
+          ]
+        },
+        {
+          "type": "usb_window",
+          "aligned_to": "J1"
+        }
+      ]
+    },
+    "head": {
+      "volume_mm3": 15186.928,
+      "surface_area_mm2": 4379.926,
+      "bbox": {
+        "min": [
+          -22.155,
+          -22.484,
+          45.0
+        ],
+        "max": [
+          22.484,
+          22.484,
+          68.0
+        ],
+        "size": [
+          44.639,
+          44.968,
+          23.0
+        ]
+      },
+      "center_of_mass": [
+        0.009,
+        0.0,
+        57.153
+      ],
+      "triangles": 1396,
+      "shells": 1,
+      "watertight": true,
+      "genus": 0,
+      "wall_thickness": {
+        "min_mm": 7.725,
+        "at": [
+          11.846,
+          10.141,
+          55.0
+        ],
+        "samples": 600,
+        "method": "inward-normal-ray"
+      },
+      "overhangs": {
+        "max_deg": 90.0,
+        "area_mm2": 1197.7,
+        "worst_at": [
+          -10.999,
+          -12.788,
+          55.0
+        ],
+        "threshold_deg": 50.0
+      },
+      "internal_voids": {
+        "count": 0,
+        "res_mm": null,
+        "voids": []
+      },
+      "print_estimate": {
+        "material_g_pla": 18.8,
+        "material_g_petg": 19.3,
+        "rough_time_min": 25,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": null,
+        "com_margin_mm": null,
+        "note": "part does not rest on the build plate"
+      },
+      "color": "#b8b8b4",
+      "features": [
+        {
+          "type": "eye",
+          "d": 16
+        }
+      ]
+    },
+    "arm_l": {
+      "volume_mm3": 2936.183,
+      "surface_area_mm2": 1624.434,
+      "bbox": {
+        "min": [
+          -8.0,
+          29.5,
+          19.0
+        ],
+        "max": [
+          26.0,
+          47.0,
+          33.0
+        ],
+        "size": [
+          34.0,
+          17.5,
+          14.0
+        ]
+      },
+      "center_of_mass": [
+        11.181,
+        40.148,
+        26.0
+      ],
+      "triangles": 1042,
+      "shells": 1,
+      "watertight": true,
+      "genus": 0,
+      "wall_thickness": {
+        "min_mm": 4.994,
+        "at": [
+          16.895,
+          34.5,
+          28.24
+        ],
+        "samples": 600,
+        "method": "inward-normal-ray"
+      },
+      "overhangs": {
+        "max_deg": 87.2,
+        "area_mm2": 90.53,
+        "worst_at": [
+          17.837,
+          32.0,
+          23.508
+        ],
+        "threshold_deg": 50.0
+      },
+      "internal_voids": {
+        "count": 0,
+        "res_mm": null,
+        "voids": []
+      },
+      "print_estimate": {
+        "material_g_pla": 3.6,
+        "material_g_petg": 3.7,
+        "rough_time_min": 5,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": null,
+        "com_margin_mm": null,
+        "note": "part does not rest on the build plate"
+      },
+      "color": "#a56a6a"
+    },
+    "arm_r": {
+      "volume_mm3": 2936.183,
+      "surface_area_mm2": 1624.434,
+      "bbox": {
+        "min": [
+          10.0,
+          -47.0,
+          19.0
+        ],
+        "max": [
+          44.0,
+          -29.5,
+          33.0
+        ],
+        "size": [
+          34.0,
+          17.5,
+          14.0
+        ]
+      },
+      "center_of_mass": [
+        24.819,
+        -40.148,
+        26.0
+      ],
+      "triangles": 1042,
+      "shells": 1,
+      "watertight": true,
+      "genus": 0,
+      "wall_thickness": {
+        "min_mm": 4.994,
+        "at": [
+          16.895,
+          -34.5,
+          23.76
+        ],
+        "samples": 600,
+        "method": "inward-normal-ray"
+      },
+      "overhangs": {
+        "max_deg": 87.2,
+        "area_mm2": 90.53,
+        "worst_at": [
+          17.837,
+          -34.5,
+          23.508
+        ],
+        "threshold_deg": 50.0
+      },
+      "internal_voids": {
+        "count": 0,
+        "res_mm": null,
+        "voids": []
+      },
+      "print_estimate": {
+        "material_g_pla": 3.6,
+        "material_g_petg": 3.7,
+        "rough_time_min": 5,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": null,
+        "com_margin_mm": null,
+        "note": "part does not rest on the build plate"
+      },
+      "color": "#a56a6a"
+    },
+    "pcb": {
+      "ghost": true,
+      "volume_mm3": 6402.4,
+      "bbox": {
+        "min": [
+          -25.0,
+          -20.0,
+          6.5
+        ],
+        "max": [
+          25.0,
+          20.0,
+          17.9
+        ],
+        "size": [
+          50.0,
+          40.0,
+          11.4
+        ]
+      },
+      "color": "#9aa0a6",
+      "note": "reference volume: measured in pairs[], excluded from print checks, exports and material totals"
+    },
+    "servo_l": {
+      "ghost": true,
+      "volume_mm3": 7082.493,
+      "bbox": {
+        "min": [
+          -36.1,
+          5.9,
+          9.0
+        ],
+        "max": [
+          -3.9,
+          18.1,
+          38.9
+        ],
+        "size": [
+          32.2,
+          12.2,
+          29.9
+        ]
+      },
+      "color": "#9aa0a6",
+      "note": "reference volume: measured in pairs[], excluded from print checks, exports and material totals"
+    },
+    "servo_r": {
+      "ghost": true,
+      "volume_mm3": 7082.493,
+      "bbox": {
+        "min": [
+          -36.1,
+          -18.1,
+          9.0
+        ],
+        "max": [
+          -3.9,
+          -5.9,
+          38.9
+        ],
+        "size": [
+          32.2,
+          12.2,
+          29.9
+        ]
+      },
+      "color": "#9aa0a6",
+      "note": "reference volume: measured in pairs[], excluded from print checks, exports and material totals"
+    }
+  },
+  "pairs": [
+    {
+      "a": "body",
+      "b": "head",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 0.3,
+      "suggestion": null,
+      "expected": "clear and clearance 0.2..1 mm",
+      "expectation": "met"
+    },
+    {
+      "a": "body",
+      "b": "arm_l",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 0.25,
+      "suggestion": null,
+      "expected": "clear and clearance 0.1..2 mm",
+      "expectation": "met"
+    },
+    {
+      "a": "body",
+      "b": "arm_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 0.25,
+      "suggestion": null,
+      "expected": "clear and clearance 0.1..2 mm",
+      "expectation": "met"
+    },
+    {
+      "a": "body",
+      "b": "pcb",
+      "status": "touching",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 0.0,
+      "suggestion": null,
+      "expected": "touching",
+      "expectation": "met"
+    },
+    {
+      "a": "body",
+      "b": "servo_l",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 0.5,
+      "suggestion": null
+    },
+    {
+      "a": "body",
+      "b": "servo_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 0.5,
+      "suggestion": null
+    },
+    {
+      "a": "head",
+      "b": "arm_l",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 26.357,
+      "suggestion": null
+    },
+    {
+      "a": "head",
+      "b": "arm_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 28.118,
+      "suggestion": null
+    },
+    {
+      "a": "head",
+      "b": "pcb",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 27.394,
+      "suggestion": null
+    },
+    {
+      "a": "head",
+      "b": "servo_l",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 13.3,
+      "suggestion": null
+    },
+    {
+      "a": "head",
+      "b": "servo_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 13.3,
+      "suggestion": null
+    },
+    {
+      "a": "arm_l",
+      "b": "arm_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 59.0,
+      "suggestion": null
+    },
+    {
+      "a": "arm_l",
+      "b": "pcb",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 12.791,
+      "suggestion": null
+    },
+    {
+      "a": "arm_l",
+      "b": "servo_l",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 18.9,
+      "suggestion": null
+    },
+    {
+      "a": "arm_l",
+      "b": "servo_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 40.367,
+      "suggestion": null
+    },
+    {
+      "a": "arm_r",
+      "b": "pcb",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 12.791,
+      "suggestion": null
+    },
+    {
+      "a": "arm_r",
+      "b": "servo_l",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 40.367,
+      "suggestion": null
+    },
+    {
+      "a": "arm_r",
+      "b": "servo_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 22.502,
+      "suggestion": null
+    },
+    {
+      "a": "pcb",
+      "b": "servo_l",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 0.9,
+      "suggestion": null,
+      "expected": "clear and clearance 0.2..30 mm",
+      "expectation": "met"
+    },
+    {
+      "a": "pcb",
+      "b": "servo_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 0.9,
+      "suggestion": null,
+      "expected": "clear and clearance 0.2..30 mm",
+      "expectation": "met"
+    },
+    {
+      "a": "servo_l",
+      "b": "servo_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 11.8,
+      "suggestion": null
+    }
+  ],
+  "checks": [],
+  "bom": [
+    {
+      "item": "custom part",
+      "count": 2,
+      "names": [
+        "arm_l",
+        "arm_r"
+      ],
+      "ghost": false,
+      "size_mm": [
+        34.0,
+        17.5,
+        14.0
+      ],
+      "volume_mm3": 2936.183,
+      "grams_pla_each": 3.6,
+      "desc": "union(union(extrude(round_corners(rect(34x14), r=6), h=5), cylinder(d=12,..., cylinder(d=5, h=8))"
+    },
+    {
+      "item": "micro_servo()",
+      "count": 2,
+      "names": [
+        "servo_l",
+        "servo_r"
+      ],
+      "ghost": true,
+      "size_mm": [
+        32.2,
+        12.2,
+        29.9
+      ],
+      "volume_mm3": 7082.493,
+      "grams_pla_each": 8.8,
+      "desc": "micro_servo()"
+    },
+    {
+      "item": "custom part",
+      "count": 1,
+      "names": [
+        "body"
+      ],
+      "ghost": false,
+      "size_mm": [
+        78.0,
+        62.0,
+        46.2
+      ],
+      "volume_mm3": 44048.11,
+      "grams_pla_each": 54.6,
+      "desc": "union(union(difference(difference(difference(difference(union(union(union..., difference(cylinder(d=30, h=4.5) minus cylinder(d=22.6, h=6.5)))"
+    },
+    {
+      "item": "custom part",
+      "count": 1,
+      "names": [
+        "head"
+      ],
+      "ghost": false,
+      "size_mm": [
+        44.64,
+        44.97,
+        23.0
+      ],
+      "volume_mm3": 15186.928,
+      "grams_pla_each": 18.8,
+      "desc": "difference(union(cylinder(d=22, h=12), intersection(sphere(d=52), box(54x54x27))) minus union(torus(r_ring=8, r_tube=1.25), cylinder(d=6, h=3)))"
+    },
+    {
+      "item": "custom part",
+      "count": 1,
+      "names": [
+        "pcb"
+      ],
+      "ghost": true,
+      "size_mm": [
+        50.0,
+        40.0,
+        11.4
+      ],
+      "volume_mm3": 6402.4,
+      "grams_pla_each": 7.9,
+      "desc": "union(union(box(50x40x1.6), box(8x36x10)), box(10x10x4))"
+    }
+  ],
+  "files": {
+    "report": "report.json",
+    "renders": [
+      "renders/01_iso.png",
+      "renders/02_front.png",
+      "renders/03_right.png",
+      "renders/exploded.png"
+    ],
+    "exports": [
+      "stl/body.stl",
+      "stl/head.stl",
+      "stl/arm_l.stl",
+      "stl/arm_r.stl",
+      "stl/combined.stl",
+      "glb/body.glb",
+      "glb/head.glb",
+      "glb/arm_l.glb",
+      "glb/arm_r.glb",
+      "glb/combined.glb"
+    ]
+  }
+}

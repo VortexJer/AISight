@@ -1,0 +1,171 @@
+<robot name="model">
+  <link name="body">
+    <inertial>
+      <origin xyz="0.000140893756 -3.81281063e-12 0.0222411843" rpy="0 0 0" />
+      <mass value="0.0546196678" />
+      <inertia ixx="4.00054126e-05" ixy="4.42605896e-14" ixz="7.7537018e-08" iyy="5.1950393e-05" iyz="6.90946541e-16" izz="6.41572432e-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/body.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/body_collision.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="arm_l">
+    <inertial>
+      <origin xyz="0.0111812127 0.0401484551 0.026" rpy="0 0 0" />
+      <mass value="0.00364086718" />
+      <inertia ixx="7.95204366e-08" ixy="-1.60987397e-08" ixz="4.33064997e-22" iyy="3.45914757e-07" iyz="5.77419996e-22" izz="3.28699215e-07" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/arm_l.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/arm_l_collision.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="arm_r">
+    <inertial>
+      <origin xyz="0.0248187873 -0.0401484551 0.026" rpy="0 0 0" />
+      <mass value="0.00364086715" />
+      <inertia ixx="7.95204358e-08" ixy="-1.60987391e-08" ixz="-1.44354999e-21" iyy="3.45914748e-07" iyz="1.15483999e-21" izz="3.28699206e-07" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/arm_r.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/arm_r_collision.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="head">
+    <inertial>
+      <origin xyz="9.00477979e-06 1.62905618e-14 0.0571533131" rpy="0 0 0" />
+      <mass value="0.0188317912" />
+      <inertia ixx="1.89734192e-06" ixy="6.60643229e-18" ixz="2.75539504e-10" iyy="1.89369465e-06" iyz="1.51377629e-19" izz="2.79788128e-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/head.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/head_collision.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="pcb">
+    <inertial>
+      <origin xyz="0.00837585779 0 0.00997300979" rpy="0 0 0" />
+      <mass value="0.00793897658" />
+      <inertia ixx="1.00081154e-06" ixy="-0" ixz="-2.0128195e-07" iyy="1.64556149e-06" iyz="-7.21774995e-24" izz="2.46668842e-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/pcb.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/pcb_collision.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="servo_l">
+    <inertial>
+      <origin xyz="-0.0203803824 0.0120000002 0.0215341921" rpy="0 0 0" />
+      <mass value="0.00878229194" />
+      <inertia ixx="5.59007982e-07" ixy="-6.99479366e-16" ixz="4.19450663e-08" iyy="8.79547159e-07" iyz="1.68561196e-15" izz="5.3350799e-07" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/servo_l.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/servo_l_collision.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="servo_r">
+    <inertial>
+      <origin xyz="-0.0203803824 -0.0120000002 0.0215341921" rpy="0 0 0" />
+      <mass value="0.00878229194" />
+      <inertia ixx="5.59007982e-07" ixy="6.99479366e-16" ixz="4.19450663e-08" iyy="8.79547159e-07" iyz="-1.68561167e-15" izz="5.3350799e-07" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/servo_r.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/servo_r_collision.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="arm_l_pitch" type="revolute">
+    <parent link="body" />
+    <child link="arm_l" />
+    <origin xyz="0.018 0.037 0.026" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-0.698131701" upper="1.74532925" effort="10" velocity="1" />
+  </joint>
+  <joint name="arm_r_pitch" type="revolute">
+    <parent link="body" />
+    <child link="arm_r" />
+    <origin xyz="0.018 -0.037 0.026" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-0.698131701" upper="1.74532925" effort="10" velocity="1" />
+  </joint>
+  <joint name="head_pan" type="revolute">
+    <parent link="body" />
+    <child link="head" />
+    <origin xyz="0 0 0.046" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.0943951" upper="2.0943951" effort="10" velocity="1" />
+  </joint>
+  <joint name="body_to_pcb" type="fixed">
+    <parent link="body" />
+    <child link="pcb" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+  <joint name="body_to_servo_l" type="fixed">
+    <parent link="body" />
+    <child link="servo_l" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+  <joint name="body_to_servo_r" type="fixed">
+    <parent link="body" />
+    <child link="servo_r" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+</robot>

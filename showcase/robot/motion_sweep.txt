@@ -1,0 +1,3 @@
+joint head_pan (revolute, -120.0..120.0 deg): FREE over the whole range
+joint arm_l_pitch (revolute, -40.0..100.0 deg): FREE over the whole range
+joint arm_r_pitch (revolute, -40.0..100.0 deg): FREE over the whole range

@@ -4,6 +4,7 @@
 #   F405 there is the feature working, not an error.
 # - build/ and egg-info are packaging debris.
 extend-exclude = [
+    "showcase/robot",
     "solidsight/skill/examples",
     "solidsight/benchmarks",
     "docs/plugins",

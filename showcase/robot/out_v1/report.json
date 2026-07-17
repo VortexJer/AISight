@@ -1,0 +1,924 @@
+{
+  "tool": "solidsight 0.7.0",
+  "model": "model.py",
+  "mode": "free",
+  "units": "mm",
+  "status": "failed",
+  "scene": {
+    "part_count": 7,
+    "bbox": {
+      "min": [
+        -39.0,
+        -47.0,
+        0.0
+      ],
+      "max": [
+        44.0,
+        47.0,
+        68.0
+      ]
+    },
+    "size": [
+      83.0,
+      94.0,
+      68.0
+    ],
+    "total_volume_mm3": 55846.922
+  },
+  "parts": {
+    "body": {
+      "volume_mm3": 34787.628,
+      "surface_area_mm2": 32155.772,
+      "bbox": {
+        "min": [
+          -39.0,
+          -31.0,
+          0.0
+        ],
+        "max": [
+          39.0,
+          31.0,
+          45.5
+        ],
+        "size": [
+          78.0,
+          62.0,
+          45.5
+        ]
+      },
+      "center_of_mass": [
+        0.237,
+        -0.0,
+        17.268
+      ],
+      "triangles": 4524,
+      "shells": 2,
+      "watertight": true,
+      "genus": null,
+      "wall_thickness": {
+        "min_mm": 1.798,
+        "at": [
+          -23.957,
+          -15.512,
+          5.0
+        ],
+        "samples": 600,
+        "method": "inward-normal-ray"
+      },
+      "overhangs": {
+        "max_deg": 90.0,
+        "area_mm2": 372.69,
+        "worst_at": [
+          -9.839,
+          -9.493,
+          41.5
+        ],
+        "threshold_deg": 50.0
+      },
+      "internal_voids": {
+        "count": 0,
+        "res_mm": null,
+        "voids": []
+      },
+      "print_estimate": {
+        "material_g_pla": 43.1,
+        "material_g_petg": 44.2,
+        "rough_time_min": 58,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": true,
+        "com_margin_mm": 31.0
+      },
+      "color": "#5b7c99",
+      "features": [
+        {
+          "type": "standoff_pattern",
+          "source": "vigia_board",
+          "at": [
+            [
+              -21.0,
+              -16.0
+            ],
+            [
+              -21.0,
+              16.0
+            ],
+            [
+              21.0,
+              -16.0
+            ],
+            [
+              21.0,
+              16.0
+            ]
+          ]
+        },
+        {
+          "type": "usb_window",
+          "aligned_to": "J1"
+        }
+      ]
+    },
+    "head": {
+      "volume_mm3": 15186.928,
+      "surface_area_mm2": 4379.926,
+      "bbox": {
+        "min": [
+          -22.155,
+          -22.484,
+          45.0
+        ],
+        "max": [
+          22.484,
+          22.484,
+          68.0
+        ],
+        "size": [
+          44.639,
+          44.968,
+          23.0
+        ]
+      },
+      "center_of_mass": [
+        0.009,
+        0.0,
+        57.153
+      ],
+      "triangles": 1396,
+      "shells": 1,
+      "watertight": true,
+      "genus": 0,
+      "wall_thickness": {
+        "min_mm": 7.725,
+        "at": [
+          11.846,
+          10.141,
+          55.0
+        ],
+        "samples": 600,
+        "method": "inward-normal-ray"
+      },
+      "overhangs": {
+        "max_deg": 90.0,
+        "area_mm2": 1197.7,
+        "worst_at": [
+          -10.999,
+          -12.788,
+          55.0
+        ],
+        "threshold_deg": 50.0
+      },
+      "internal_voids": {
+        "count": 0,
+        "res_mm": null,
+        "voids": []
+      },
+      "print_estimate": {
+        "material_g_pla": 18.8,
+        "material_g_petg": 19.3,
+        "rough_time_min": 25,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": null,
+        "com_margin_mm": null,
+        "note": "part does not rest on the build plate"
+      },
+      "color": "#b8b8b4",
+      "features": [
+        {
+          "type": "eye",
+          "d": 16
+        }
+      ]
+    },
+    "arm_l": {
+      "volume_mm3": 2936.183,
+      "surface_area_mm2": 1624.434,
+      "bbox": {
+        "min": [
+          -8.0,
+          29.5,
+          19.0
+        ],
+        "max": [
+          26.0,
+          47.0,
+          33.0
+        ],
+        "size": [
+          34.0,
+          17.5,
+          14.0
+        ]
+      },
+      "center_of_mass": [
+        11.181,
+        40.148,
+        26.0
+      ],
+      "triangles": 1042,
+      "shells": 1,
+      "watertight": true,
+      "genus": 0,
+      "wall_thickness": {
+        "min_mm": 4.994,
+        "at": [
+          16.895,
+          34.5,
+          28.24
+        ],
+        "samples": 600,
+        "method": "inward-normal-ray"
+      },
+      "overhangs": {
+        "max_deg": 87.2,
+        "area_mm2": 90.53,
+        "worst_at": [
+          17.837,
+          32.0,
+          23.508
+        ],
+        "threshold_deg": 50.0
+      },
+      "internal_voids": {
+        "count": 0,
+        "res_mm": null,
+        "voids": []
+      },
+      "print_estimate": {
+        "material_g_pla": 3.6,
+        "material_g_petg": 3.7,
+        "rough_time_min": 5,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": null,
+        "com_margin_mm": null,
+        "note": "part does not rest on the build plate"
+      },
+      "color": "#a56a6a"
+    },
+    "arm_r": {
+      "volume_mm3": 2936.183,
+      "surface_area_mm2": 1624.434,
+      "bbox": {
+        "min": [
+          10.0,
+          -47.0,
+          19.0
+        ],
+        "max": [
+          44.0,
+          -29.5,
+          33.0
+        ],
+        "size": [
+          34.0,
+          17.5,
+          14.0
+        ]
+      },
+      "center_of_mass": [
+        24.819,
+        -40.148,
+        26.0
+      ],
+      "triangles": 1042,
+      "shells": 1,
+      "watertight": true,
+      "genus": 0,
+      "wall_thickness": {
+        "min_mm": 4.994,
+        "at": [
+          16.895,
+          -34.5,
+          23.76
+        ],
+        "samples": 600,
+        "method": "inward-normal-ray"
+      },
+      "overhangs": {
+        "max_deg": 87.2,
+        "area_mm2": 90.53,
+        "worst_at": [
+          17.837,
+          -34.5,
+          23.508
+        ],
+        "threshold_deg": 50.0
+      },
+      "internal_voids": {
+        "count": 0,
+        "res_mm": null,
+        "voids": []
+      },
+      "print_estimate": {
+        "material_g_pla": 3.6,
+        "material_g_petg": 3.7,
+        "rough_time_min": 5,
+        "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
+      },
+      "stability": {
+        "standing": null,
+        "com_margin_mm": null,
+        "note": "part does not rest on the build plate"
+      },
+      "color": "#a56a6a"
+    },
+    "pcb": {
+      "ghost": true,
+      "volume_mm3": 13952.0,
+      "bbox": {
+        "min": [
+          -25.0,
+          -20.0,
+          7.0
+        ],
+        "max": [
+          25.0,
+          20.0,
+          16.6
+        ],
+        "size": [
+          50.0,
+          40.0,
+          9.6
+        ]
+      },
+      "color": "#9aa0a6",
+      "note": "reference volume: measured in pairs[], excluded from print checks, exports and material totals"
+    },
+    "servo_l": {
+      "ghost": true,
+      "volume_mm3": 7082.493,
+      "bbox": {
+        "min": [
+          11.9,
+          0.9,
+          11.0
+        ],
+        "max": [
+          24.1,
+          33.1,
+          40.9
+        ],
+        "size": [
+          12.2,
+          32.2,
+          29.9
+        ]
+      },
+      "color": "#9aa0a6",
+      "note": "reference volume: measured in pairs[], excluded from print checks, exports and material totals"
+    },
+    "servo_r": {
+      "ghost": true,
+      "volume_mm3": 7082.493,
+      "bbox": {
+        "min": [
+          11.9,
+          -33.1,
+          11.0
+        ],
+        "max": [
+          24.1,
+          -0.9,
+          40.9
+        ],
+        "size": [
+          12.2,
+          32.2,
+          29.9
+        ]
+      },
+      "color": "#9aa0a6",
+      "note": "reference volume: measured in pairs[], excluded from print checks, exports and material totals"
+    }
+  },
+  "pairs": [
+    {
+      "a": "body",
+      "b": "head",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 0.3,
+      "suggestion": null,
+      "expected": "clear and clearance 0.2..1 mm",
+      "expectation": "met"
+    },
+    {
+      "a": "body",
+      "b": "arm_l",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 0.25,
+      "suggestion": null,
+      "expected": "clear and clearance 0.1..2 mm",
+      "expectation": "met"
+    },
+    {
+      "a": "body",
+      "b": "arm_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 0.25,
+      "suggestion": null,
+      "expected": "clear and clearance 0.1..2 mm",
+      "expectation": "met"
+    },
+    {
+      "a": "body",
+      "b": "pcb",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 0.5,
+      "suggestion": null,
+      "expected": "touching",
+      "expectation": "violated"
+    },
+    {
+      "a": "body",
+      "b": "servo_l",
+      "status": "collision",
+      "overlap_volume_mm3": 58.328,
+      "overlap_bbox": {
+        "min": [
+          11.9,
+          28.6,
+          27.0
+        ],
+        "max": [
+          24.1,
+          31.0,
+          29.6
+        ]
+      },
+      "overlap_patches": [
+        {
+          "min": [
+            11.9,
+            28.6,
+            27.0
+          ],
+          "max": [
+            24.1,
+            31.0,
+            29.6
+          ]
+        }
+      ],
+      "min_clearance_mm": null,
+      "suggestion": "'servo_l' does not fit here: clearing 'body' needs 27.2 mm of travel in x (12.2 mm part). Shrink 'servo_l' where it presses into 'body', and render --slice z=28.3 through the overlap to see the contact"
+    },
+    {
+      "a": "body",
+      "b": "servo_r",
+      "status": "collision",
+      "overlap_volume_mm3": 58.328,
+      "overlap_bbox": {
+        "min": [
+          11.9,
+          -31.0,
+          27.0
+        ],
+        "max": [
+          24.1,
+          -28.6,
+          29.6
+        ]
+      },
+      "overlap_patches": [
+        {
+          "min": [
+            11.9,
+            -31.0,
+            27.0
+          ],
+          "max": [
+            24.1,
+            -28.6,
+            29.6
+          ]
+        }
+      ],
+      "min_clearance_mm": null,
+      "suggestion": "'servo_r' does not fit here: clearing 'body' needs 27.2 mm of travel in x (12.2 mm part). Shrink 'servo_r' where it presses into 'body', and render --slice z=28.3 through the overlap to see the contact"
+    },
+    {
+      "a": "head",
+      "b": "arm_l",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 26.357,
+      "suggestion": null
+    },
+    {
+      "a": "head",
+      "b": "arm_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 28.118,
+      "suggestion": null
+    },
+    {
+      "a": "head",
+      "b": "pcb",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 28.4,
+      "suggestion": null
+    },
+    {
+      "a": "head",
+      "b": "servo_l",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 8.561,
+      "suggestion": null
+    },
+    {
+      "a": "head",
+      "b": "servo_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 8.561,
+      "suggestion": null
+    },
+    {
+      "a": "arm_l",
+      "b": "arm_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 59.0,
+      "suggestion": null
+    },
+    {
+      "a": "arm_l",
+      "b": "pcb",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 15.161,
+      "suggestion": null
+    },
+    {
+      "a": "arm_l",
+      "b": "servo_l",
+      "status": "collision",
+      "overlap_volume_mm3": 12.343,
+      "overlap_bbox": {
+        "min": [
+          15.711,
+          29.5,
+          27.0
+        ],
+        "max": [
+          20.289,
+          33.1,
+          28.5
+        ]
+      },
+      "overlap_patches": [
+        {
+          "min": [
+            15.711,
+            29.5,
+            27.0
+          ],
+          "max": [
+            20.289,
+            33.1,
+            28.5
+          ]
+        }
+      ],
+      "min_clearance_mm": null,
+      "suggestion": "move 'servo_l' 3.7 mm along y, or shrink one part there"
+    },
+    {
+      "a": "arm_l",
+      "b": "servo_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 30.4,
+      "suggestion": null
+    },
+    {
+      "a": "arm_r",
+      "b": "pcb",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 15.161,
+      "suggestion": null
+    },
+    {
+      "a": "arm_r",
+      "b": "servo_l",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 30.4,
+      "suggestion": null
+    },
+    {
+      "a": "arm_r",
+      "b": "servo_r",
+      "status": "collision",
+      "overlap_volume_mm3": 12.343,
+      "overlap_bbox": {
+        "min": [
+          15.711,
+          -33.1,
+          27.0
+        ],
+        "max": [
+          20.289,
+          -29.5,
+          28.5
+        ]
+      },
+      "overlap_patches": [
+        {
+          "min": [
+            15.711,
+            -33.1,
+            27.0
+          ],
+          "max": [
+            20.289,
+            -29.5,
+            28.5
+          ]
+        }
+      ],
+      "min_clearance_mm": null,
+      "suggestion": "move 'servo_r' 3.7 mm along y, or shrink one part there"
+    },
+    {
+      "a": "pcb",
+      "b": "servo_l",
+      "status": "collision",
+      "overlap_volume_mm3": 529.984,
+      "overlap_bbox": {
+        "min": [
+          11.9,
+          5.6,
+          11.0
+        ],
+        "max": [
+          21.0,
+          16.0,
+          16.6
+        ]
+      },
+      "overlap_patches": [
+        {
+          "min": [
+            11.9,
+            5.6,
+            11.0
+          ],
+          "max": [
+            21.0,
+            16.0,
+            16.6
+          ]
+        }
+      ],
+      "min_clearance_mm": null,
+      "suggestion": "move 'servo_l' 5.7 mm along z, or shrink one part there"
+    },
+    {
+      "a": "pcb",
+      "b": "servo_r",
+      "status": "collision",
+      "overlap_volume_mm3": 529.984,
+      "overlap_bbox": {
+        "min": [
+          11.9,
+          -16.0,
+          11.0
+        ],
+        "max": [
+          21.0,
+          -5.6,
+          16.6
+        ]
+      },
+      "overlap_patches": [
+        {
+          "min": [
+            11.9,
+            -16.0,
+            11.0
+          ],
+          "max": [
+            21.0,
+            -5.6,
+            16.6
+          ]
+        }
+      ],
+      "min_clearance_mm": null,
+      "suggestion": "move 'servo_r' 5.7 mm along z, or shrink one part there"
+    },
+    {
+      "a": "servo_l",
+      "b": "servo_r",
+      "status": "clear",
+      "overlap_volume_mm3": 0.0,
+      "overlap_bbox": null,
+      "min_clearance_mm": 1.8,
+      "suggestion": null
+    }
+  ],
+  "checks": [
+    {
+      "id": "union-touching",
+      "level": "warn",
+      "part": null,
+      "message": "union of 'cylinder(d=22, h=10)' and 'intersection(sphere(d=52), box(54x54x27))' only TOUCHES \u2014 no shared volume, so the pieces will not truly fuse (zero-thickness seam)",
+      "where": "bboxes x -11..11, y -11..11, z 0..10 and x -22.484..22.484, y -22.484..22.484, z 10..23",
+      "suggestion": "overlap the pieces by at least 0.1 mm (extend one into the other) so the union merges them"
+    },
+    {
+      "id": "union-touching",
+      "level": "warn",
+      "part": null,
+      "message": "union of 'box(50x40x1.6)' and 'box(42x32x8)' only TOUCHES \u2014 no shared volume, so the pieces will not truly fuse (zero-thickness seam)",
+      "where": "bboxes x -25..25, y -20..20, z 0..1.6 and x -21..21, y -16..16, z 1.6..9.6",
+      "suggestion": "overlap the pieces by at least 0.1 mm (extend one into the other) so the union merges them"
+    },
+    {
+      "id": "multiple-shells",
+      "level": "warn",
+      "part": "body",
+      "message": "part \"body\" is 2 disconnected pieces, not one solid",
+      "where": "piece 1 at (-39, -31, 0)..(39, 31, 42), 33566.8 mm3; piece 2 at (-15, -15, 41.5)..(15, 15, 45.5), 1220.87 mm3",
+      "suggestion": "pieces must overlap (not just touch) to fuse in a union; extend one into the other by ~0.1 mm. If separate pieces are intentional, emit() them as separate named parts, or pass --allow-multiple-shells"
+    },
+    {
+      "id": "expectation-violated",
+      "level": "fail",
+      "part": null,
+      "message": "pair \"body\" / \"pcb\" violates its declared spec: expected touching, but the gap is 0.5 mm",
+      "where": "declared: touching; measured clearance 0.5 mm",
+      "suggestion": "adjust the geometry until the declared relationship holds, or fix the expect() if the intent changed"
+    },
+    {
+      "id": "parts-overlap",
+      "level": "warn",
+      "part": null,
+      "message": "parts \"body\" and \"servo_l\" occupy the same space (58.328 mm3 of overlap)",
+      "where": "overlap bbox x 11.9..24.1, y 28.6..31, z 27..29.6",
+      "suggestion": "'servo_l' does not fit here: clearing 'body' needs 27.2 mm of travel in x (12.2 mm part). Shrink 'servo_l' where it presses into 'body', and render --slice z=28.3 through the overlap to see the contact; separate parts must never intersect. Inspect: solidsight build <model> --views iso,iso_back --focus 18.0,29.8,28.3,12.2 --slice z=28.3 --out out_focus"
+    },
+    {
+      "id": "parts-overlap",
+      "level": "warn",
+      "part": null,
+      "message": "parts \"body\" and \"servo_r\" occupy the same space (58.328 mm3 of overlap)",
+      "where": "overlap bbox x 11.9..24.1, y -31..-28.6, z 27..29.6",
+      "suggestion": "'servo_r' does not fit here: clearing 'body' needs 27.2 mm of travel in x (12.2 mm part). Shrink 'servo_r' where it presses into 'body', and render --slice z=28.3 through the overlap to see the contact; separate parts must never intersect. Inspect: solidsight build <model> --views iso,iso_back --focus 18.0,-29.8,28.3,12.2 --slice z=28.3 --out out_focus"
+    },
+    {
+      "id": "parts-overlap",
+      "level": "warn",
+      "part": null,
+      "message": "parts \"arm_l\" and \"servo_l\" occupy the same space (12.343 mm3 of overlap)",
+      "where": "overlap bbox x 15.711..20.289, y 29.5..33.1, z 27..28.5",
+      "suggestion": "move 'servo_l' 3.7 mm along y, or shrink one part there; separate parts must never intersect. Inspect: solidsight build <model> --views iso,iso_back --focus 18.0,31.3,27.8,8.0 --slice z=27.8 --out out_focus"
+    },
+    {
+      "id": "parts-overlap",
+      "level": "warn",
+      "part": null,
+      "message": "parts \"arm_r\" and \"servo_r\" occupy the same space (12.343 mm3 of overlap)",
+      "where": "overlap bbox x 15.711..20.289, y -33.1..-29.5, z 27..28.5",
+      "suggestion": "move 'servo_r' 3.7 mm along y, or shrink one part there; separate parts must never intersect. Inspect: solidsight build <model> --views iso,iso_back --focus 18.0,-31.3,27.8,8.0 --slice z=27.8 --out out_focus"
+    },
+    {
+      "id": "parts-overlap",
+      "level": "warn",
+      "part": null,
+      "message": "parts \"pcb\" and \"servo_l\" occupy the same space (529.984 mm3 of overlap)",
+      "where": "overlap bbox x 11.9..21, y 5.6..16, z 11..16.6",
+      "suggestion": "move 'servo_l' 5.7 mm along z, or shrink one part there; separate parts must never intersect. Inspect: solidsight build <model> --views iso,iso_back --focus 16.4,10.8,13.8,10.4 --slice z=13.8 --out out_focus"
+    },
+    {
+      "id": "parts-overlap",
+      "level": "warn",
+      "part": null,
+      "message": "parts \"pcb\" and \"servo_r\" occupy the same space (529.984 mm3 of overlap)",
+      "where": "overlap bbox x 11.9..21, y -16..-5.6, z 11..16.6",
+      "suggestion": "move 'servo_r' 5.7 mm along z, or shrink one part there; separate parts must never intersect. Inspect: solidsight build <model> --views iso,iso_back --focus 16.4,-10.8,13.8,10.4 --slice z=13.8 --out out_focus"
+    }
+  ],
+  "bom": [
+    {
+      "item": "custom part",
+      "count": 2,
+      "names": [
+        "arm_l",
+        "arm_r"
+      ],
+      "ghost": false,
+      "size_mm": [
+        34.0,
+        17.5,
+        14.0
+      ],
+      "volume_mm3": 2936.183,
+      "grams_pla_each": 3.6,
+      "desc": "union(union(extrude(round_corners(rect(34x14), r=6), h=5), cylinder(d=12,..., cylinder(d=5, h=8))"
+    },
+    {
+      "item": "micro_servo()",
+      "count": 2,
+      "names": [
+        "servo_l",
+        "servo_r"
+      ],
+      "ghost": true,
+      "size_mm": [
+        12.2,
+        32.2,
+        29.9
+      ],
+      "volume_mm3": 7082.493,
+      "grams_pla_each": 8.8,
+      "desc": "micro_servo()"
+    },
+    {
+      "item": "custom part",
+      "count": 1,
+      "names": [
+        "body"
+      ],
+      "ghost": false,
+      "size_mm": [
+        78.0,
+        62.0,
+        45.5
+      ],
+      "volume_mm3": 34787.628,
+      "grams_pla_each": 43.1,
+      "desc": "union(difference(difference(difference(difference(difference(difference(u..., difference(cylinder(d=30, h=4) minus cylinder(d=22.6, h=6)))"
+    },
+    {
+      "item": "custom part",
+      "count": 1,
+      "names": [
+        "head"
+      ],
+      "ghost": false,
+      "size_mm": [
+        44.64,
+        44.97,
+        23.0
+      ],
+      "volume_mm3": 15186.928,
+      "grams_pla_each": 18.8,
+      "desc": "difference(union(cylinder(d=22, h=10), intersection(sphere(d=52), box(54x54x27))) minus union(torus(r_ring=8, r_tube=1.25), cylinder(d=6, h=3)))"
+    },
+    {
+      "item": "custom part",
+      "count": 1,
+      "names": [
+        "pcb"
+      ],
+      "ghost": true,
+      "size_mm": [
+        50.0,
+        40.0,
+        9.6
+      ],
+      "volume_mm3": 13952.0,
+      "grams_pla_each": 17.3,
+      "desc": "union(box(50x40x1.6), box(42x32x8))"
+    }
+  ],
+  "files": {
+    "report": "report.json",
+    "renders": [
+      "renders/01_iso.png",
+      "renders/02_front.png",
+      "renders/03_right.png"
+    ],
+    "exports": []
+  }
+}

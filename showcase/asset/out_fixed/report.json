@@ -1,0 +1,179 @@
+{
+  "status": "warnings",
+  "checks": [
+    {
+      "id": "uv-packing-loose",
+      "level": "warn",
+      "message": "the UV layout uses 22% of the square",
+      "where": "5 island(s)",
+      "try": "tighter packing = more texels per asset at the same memory; below ~50% you are paying for empty pixels"
+    }
+  ],
+  "files": {
+    "report": "report.json",
+    "renders": [
+      "uv_layout.png",
+      "uv_density.png"
+    ]
+  },
+  "uv": {
+    "mesh": {
+      "source": "faceplate_fixed.obj",
+      "faces": 10,
+      "vertices": 20,
+      "uv_coords": 20,
+      "materials": [
+        "faceplate"
+      ]
+    },
+    "assumed_texture_px": 1024,
+    "texel_density": {
+      "px_per_unit": {
+        "area_weighted_mean": 13.75,
+        "p2": 13.3,
+        "p98": 17.07,
+        "min": 13.3,
+        "max": 17.07
+      },
+      "spread_ratio": 1.28,
+      "worst_face": 4,
+      "note": "texels per world unit at the given texture size; the mean is area-weighted, and spread_ratio is p98/p2 (robust to a few stray faces)"
+    },
+    "distortion": {
+      "anisotropy": {
+        "median": 1.333,
+        "p95": 1.333,
+        "max": 1.333,
+        "worst_face": 1
+      },
+      "stretched_faces": [],
+      "stretched_face_count": 0,
+      "stretched_area_fraction": 0.0,
+      "flipped_faces": [],
+      "flipped_face_count": 0,
+      "note": "anisotropy = sigma_max/sigma_min of the per-face UV Jacobian: 1.0 is conformal, >2 is visibly smeared. Flipped = UV winding opposite to the mesh majority"
+    },
+    "islands": {
+      "uv_islands": 5,
+      "mesh_shells": 5,
+      "seam_edges": 0,
+      "seam_length_3d": 0.0,
+      "largest_island_uv_area": 0.06075,
+      "smallest_island_uv_area": 0.02835,
+      "island_uv_areas": [
+        0.06075,
+        0.06075,
+        0.04,
+        0.02835,
+        0.02835
+      ],
+      "note": "an island is a UV-connected face set; a seam is a 3D edge whose two faces land in different islands - so seams are counted, not guessed",
+      "detail": [
+        {
+          "island": 0,
+          "faces": [
+            0,
+            1
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.03,
+            0.03,
+            0.48,
+            0.165
+          ],
+          "mean_density_px_per_unit": 13.3,
+          "surface_mm2": 360.0
+        },
+        {
+          "island": 1,
+          "faces": [
+            2,
+            3
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.03,
+            0.4,
+            0.48,
+            0.535
+          ],
+          "mean_density_px_per_unit": 13.3,
+          "surface_mm2": 360.0
+        },
+        {
+          "island": 2,
+          "faces": [
+            4,
+            5
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.03,
+            0.77,
+            0.1875,
+            0.95
+          ],
+          "mean_density_px_per_unit": 13.3,
+          "surface_mm2": 168.0
+        },
+        {
+          "island": 3,
+          "faces": [
+            6,
+            7
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.52,
+            0.03,
+            0.6775,
+            0.21
+          ],
+          "mean_density_px_per_unit": 13.3,
+          "surface_mm2": 168.0
+        },
+        {
+          "island": 4,
+          "faces": [
+            8,
+            9
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.55,
+            0.45,
+            0.75,
+            0.65
+          ],
+          "mean_density_px_per_unit": 17.07,
+          "surface_mm2": 144.0
+        }
+      ]
+    },
+    "packing": {
+      "uv_bbox": [
+        0.03,
+        0.03,
+        0.75,
+        0.95
+      ],
+      "used_uv_area": 0.2182,
+      "utilization": 0.2182,
+      "faces_outside_0_1": 0,
+      "overlap_cells": 0,
+      "overlap_grid": 256,
+      "note": "utilization is the summed UV area of all faces (1.0 = the whole square, wasted space excluded); overlap is measured on a 256x256 grid, so it finds stacked islands, not sub-texel touching"
+    },
+    "checks": [
+      {
+        "id": "uv-packing-loose",
+        "level": "warn",
+        "message": "the UV layout uses 22% of the square",
+        "where": "5 island(s)",
+        "try": "tighter packing = more texels per asset at the same memory; below ~50% you are paying for empty pixels"
+      }
+    ]
+  },
+  "textures": []
+}
