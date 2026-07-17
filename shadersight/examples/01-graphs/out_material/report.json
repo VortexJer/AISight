@@ -1,0 +1,191 @@
+{
+  "status": "warnings",
+  "material": {
+    "name": "material",
+    "base_color": [
+      0.7,
+      0.4,
+      0.15
+    ],
+    "roughness": 0.35,
+    "metallic": 1.0,
+    "specular": 0.5,
+    "f0": [
+      0.7,
+      0.4,
+      0.15
+    ],
+    "alpha_ggx": 0.1225
+  },
+  "energy_conservation": {
+    "per_view": [
+      {
+        "theta_deg": 0.0,
+        "albedo_rgb": [
+          0.69138,
+          0.39508,
+          0.14816
+        ],
+        "max_channel": 0.69138
+      },
+      {
+        "theta_deg": 7.73,
+        "albedo_rgb": [
+          0.69124,
+          0.395,
+          0.14813
+        ],
+        "max_channel": 0.69124
+      },
+      {
+        "theta_deg": 15.45,
+        "albedo_rgb": [
+          0.69069,
+          0.39469,
+          0.14803
+        ],
+        "max_channel": 0.69069
+      },
+      {
+        "theta_deg": 23.18,
+        "albedo_rgb": [
+          0.69012,
+          0.3944,
+          0.14797
+        ],
+        "max_channel": 0.69012
+      },
+      {
+        "theta_deg": 30.91,
+        "albedo_rgb": [
+          0.68918,
+          0.39397,
+          0.14797
+        ],
+        "max_channel": 0.68918
+      },
+      {
+        "theta_deg": 38.64,
+        "albedo_rgb": [
+          0.68762,
+          0.39351,
+          0.14841
+        ],
+        "max_channel": 0.68762
+      },
+      {
+        "theta_deg": 46.36,
+        "albedo_rgb": [
+          0.68588,
+          0.39394,
+          0.15066
+        ],
+        "max_channel": 0.68588
+      },
+      {
+        "theta_deg": 54.09,
+        "albedo_rgb": [
+          0.68427,
+          0.39725,
+          0.15806
+        ],
+        "max_channel": 0.68427
+      },
+      {
+        "theta_deg": 61.82,
+        "albedo_rgb": [
+          0.68269,
+          0.40679,
+          0.17687
+        ],
+        "max_channel": 0.68269
+      },
+      {
+        "theta_deg": 69.55,
+        "albedo_rgb": [
+          0.68174,
+          0.42783,
+          0.21624
+        ],
+        "max_channel": 0.68174
+      },
+      {
+        "theta_deg": 77.27,
+        "albedo_rgb": [
+          0.68261,
+          0.46382,
+          0.2815
+        ],
+        "max_channel": 0.68261
+      },
+      {
+        "theta_deg": 85.0,
+        "albedo_rgb": [
+          0.71471,
+          0.52712,
+          0.3708
+        ],
+        "max_channel": 0.71471
+      }
+    ],
+    "max_albedo": 0.71471,
+    "max_at_theta_deg": 85.0,
+    "conserves_energy": true,
+    "grid": {
+      "n_theta": 64,
+      "n_phi": 128,
+      "n_views": 12
+    },
+    "note": "directional albedo = integral of f*cos over the hemisphere; >1 means the surface emits energy it never received. Values slightly under 1 at grazing angles are expected: single-scattering GGX loses energy there"
+  },
+  "reciprocity": {
+    "max_relative_error": 0.0,
+    "mean_relative_error": 0.0,
+    "worst_pair": {
+      "wi": [
+        -0.933,
+        0.3599,
+        0.0008
+      ],
+      "wo": [
+        0.9347,
+        -0.3548,
+        0.0206
+      ]
+    },
+    "samples": 4096,
+    "seed": 7,
+    "reciprocal": true,
+    "note": "f(wi,wo) == f(wo,wi) is a physical law, not a style"
+  },
+  "positivity": {
+    "min_value": 0.0,
+    "negative_samples": 0,
+    "non_negative": true
+  },
+  "furnace": {
+    "normal_incidence_albedo": [
+      0.69138,
+      0.39508,
+      0.14816
+    ],
+    "energy_lost": 0.30862,
+    "note": "energy below 1 at high roughness is the known single-scattering GGX deficit, not a defect: add a multi-scatter term if it matters"
+  },
+  "checks": [
+    {
+      "id": "high-energy-loss",
+      "level": "warn",
+      "message": "the material loses 31% of its energy at this roughness (single-scatter GGX)",
+      "where": "normal-incidence white furnace",
+      "try": "EXPECTED for rough surfaces with single-scatter GGX, not a bug: rough metals look too dark without a multi-scatter term. Add one if it matters, or accept it"
+    }
+  ],
+  "files": {
+    "report": "report.json",
+    "renders": [
+      "preview.png",
+      "albedo_curve.png"
+    ]
+  }
+}

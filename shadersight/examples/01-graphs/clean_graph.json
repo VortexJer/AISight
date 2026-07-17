@@ -1,0 +1,71 @@
+{
+  "name": "clean_pbr",
+  "nodes": [
+    {
+      "id": "uv",
+      "type": "uv",
+      "inputs": {}
+    },
+    {
+      "id": "albedo_tex",
+      "type": "texture",
+      "inputs": {
+        "uv": "uv.out"
+      }
+    },
+    {
+      "id": "rough_tex",
+      "type": "texture",
+      "inputs": {
+        "uv": "uv.out"
+      }
+    },
+    {
+      "id": "normal_tex",
+      "type": "texture",
+      "inputs": {
+        "uv": "uv.out"
+      }
+    },
+    {
+      "id": "n",
+      "type": "normal",
+      "inputs": {
+        "map": "normal_tex.out"
+      }
+    },
+    {
+      "id": "fres",
+      "type": "fresnel",
+      "inputs": {
+        "normal": "n.out"
+      }
+    },
+    {
+      "id": "tint",
+      "type": "multiply",
+      "inputs": {
+        "a": "albedo_tex.out",
+        "b": 0.9
+      }
+    },
+    {
+      "id": "shade",
+      "type": "brdf",
+      "inputs": {
+        "albedo": "tint.out",
+        "roughness": "rough_tex.out",
+        "normal": "n.out",
+        "fresnel": "fres.out"
+      }
+    },
+    {
+      "id": "out",
+      "type": "output",
+      "inputs": {
+        "color": "shade.out"
+      }
+    }
+  ],
+  "output": "out"
+}

@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shadersight"
+version = "0.1.0"
+description = "Shader review built exclusively for AI agents: a material or node graph in, exact physics + cost + preview out."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "solidsight contributors" }]
+keywords = ["shader", "brdf", "pbr", "ai-agent", "gamedev"]
+dependencies = ["numpy>=1.24", "pillow>=10.0"]
+
+[project.scripts]
+shadersight = "shadersight.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["shadersight*"]
+
+[tool.setuptools.package-data]
+shadersight = ["skill_data/SKILL.md"]

@@ -1,0 +1,56 @@
+{
+  "name": "broken_pbr",
+  "nodes": [
+    {
+      "id": "uv",
+      "type": "uv",
+      "inputs": {}
+    },
+    {
+      "id": "tex",
+      "type": "texture",
+      "inputs": {
+        "uv": "uv.out"
+      }
+    },
+    {
+      "id": "mul",
+      "type": "multiply",
+      "inputs": {
+        "a": "add.out",
+        "b": "tex.out"
+      }
+    },
+    {
+      "id": "add",
+      "type": "add",
+      "inputs": {
+        "a": "mul.out",
+        "b": 0.5
+      }
+    },
+    {
+      "id": "noise",
+      "type": "fbm",
+      "inputs": {
+        "p": "uv.out"
+      }
+    },
+    {
+      "id": "warp",
+      "type": "multiply",
+      "inputs": {
+        "a": "noise.out",
+        "b": 2.0
+      }
+    },
+    {
+      "id": "out",
+      "type": "output",
+      "inputs": {
+        "color": "missing.out"
+      }
+    }
+  ],
+  "output": "out"
+}
