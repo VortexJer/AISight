@@ -4,10 +4,14 @@ A full standing long-jump — crouch, drive, travelling flight, landing
 absorb 60 cm ahead, recovery — written twice by `make_jump.py`. The two
 clips have IDENTICAL poses; only the flight's timing differs:
 
-| | apex | forward travel | airtime | effective gravity |
+| | measured apex | forward travel | measured airtime | effective gravity |
 |---|---|---|---|---|
-| `jump_floaty.bvh` | +493 mm | 600 mm | 0.833 s (+35%) | **0.554x g** |
-| `jump_fixed.bvh` | +493 mm | 600 mm | 0.667 s | **0.905x g** |
+| `jump_floaty.bvh` | +266 mm | 600 mm | 0.633 s (+36%) | **0.58x g** |
+| `jump_fixed.bvh` | +249 mm | 600 mm | 0.467 s | **1.064x g** |
+
+(The measured flight is the span where BOTH feet are above contact
+height — shorter than the authored keyframe span, because takeoff
+extension and landing absorb keep a foot low at each end.)
 
 That is exactly why the defect is invisible to inspection: every still
 frame of both clips is a fine jump pose. Floatiness lives in time.
@@ -15,7 +19,7 @@ frame of both clips is a fine jump pose. Floatiness lives in time.
 ```bash
 animationsight inspect jump_floaty.bvh --kind oneshot --out out_floaty
 animationsight inspect jump_fixed.bvh  --kind oneshot --out out_fixed
-animationsight diff jump_floaty.bvh jump_fixed.bvh
+animationsight diff jump_floaty.bvh jump_fixed.bvh --kind oneshot
 ```
 
 ## The arc sheet makes time visible
@@ -36,25 +40,26 @@ is `sqrt(g_ratio)` as wide).
 
 ```
 # floaty:
-flight: frames 23..47 (0.8333s, apex +493.2 mm) -> 0.554x gravity
-[WARN] flight at frames [23, 47] falls at 0.55x gravity: it will read as floaty
-       where: apex +493.2 mm over 0.8333s; at 1 g that apex takes 0.63s of airtime
+flight: frames 27..45 (0.6333s, apex +266.2 mm) -> 0.58x gravity
+[WARN] flight at frames [27, 45] falls at 0.58x gravity: it will read as floaty
+       where: apex +266.2 mm over 0.6333s; at 1 g that apex takes 0.47s of airtime
        try:   physics fixes it two ways: shorten the airtime to match the apex,
               or raise the apex to match the airtime (T = 2*sqrt(2h/g))
 
 # fixed:
-flight: frames 23..42 (0.6667s, apex +493.5 mm) -> 0.905x gravity
+flight: frames 27..40 (0.4667s, apex +248.9 mm) -> 1.064x gravity
 (no floaty-flight finding)
 ```
 
 ## The diff is the proof
 
 ```
-animationsight diff jump_floaty.bvh jump_fixed.bvh
-  flight 0: 0.554x gravity (0.8333s) -> 0.905x gravity (0.6667s)
-  'RightShin': peak speed ... (+...)
+animationsight diff jump_floaty.bvh jump_fixed.bvh --kind oneshot
+  timing: 71 frames @ 30.0 fps -> 65 @ 30.0
+  flight 0: 0.58x gravity (0.6333s) -> 1.064x gravity (0.4667s)
+  'Spine': peak speed 1852.4 -> 2405.5 mm/s (+553.1)
   ... and N more joint(s) with peak-speed changes ...
-  GONE [floaty-flight] flight at frames [23, 47] falls at 0.55x gravity ...
+  GONE [floaty-flight] flight at frames [27, 45] falls at 0.58x gravity ...
 ```
 
 (Flights lead the diff, and near-identical per-joint peak lines fold

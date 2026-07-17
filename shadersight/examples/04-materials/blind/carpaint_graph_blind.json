@@ -1,0 +1,27 @@
+{
+  "nodes": [
+    { "id": "n1",  "type": "uv",       "inputs": {} },
+    { "id": "n2",  "type": "constant", "inputs": { "value": 180.0 } },
+    { "id": "n3",  "type": "multiply", "inputs": { "a": "n1.out", "b": "n2.out" } },
+    { "id": "n4",  "type": "voronoi",  "inputs": { "uv": "n3.out" } },
+    { "id": "n5",  "type": "pow",      "inputs": { "a": "n4.out", "b": 8.0 } },
+    { "id": "n6",  "type": "clamp",    "inputs": { "a": "n5.out", "min": 0.0, "max": 1.0 } },
+    { "id": "n7",  "type": "constant", "inputs": { "value": [0.45, 0.015, 0.02] } },
+    { "id": "n8",  "type": "constant", "inputs": { "value": [0.85, 0.83, 0.88] } },
+    { "id": "n9",  "type": "mix",      "inputs": { "a": "n7.out", "b": "n8.out", "factor": "n6.out" } },
+    { "id": "n10", "type": "fbm",      "inputs": { "uv": "n3.out", "octaves": 3.0 } },
+    { "id": "n11", "type": "normal",   "inputs": {} },
+    { "id": "n12", "type": "multiply", "inputs": { "a": "n10.out", "b": 0.12 } },
+    { "id": "n13", "type": "multiply", "inputs": { "a": "n12.out", "b": "n6.out" } },
+    { "id": "n14", "type": "add",      "inputs": { "a": "n11.out", "b": "n13.out" } },
+    { "id": "n15", "type": "normalize", "inputs": { "a": "n14.out" } },
+    { "id": "n16", "type": "constant", "inputs": { "value": 0.35 } },
+    { "id": "n17", "type": "mix",      "inputs": { "a": "n16.out", "b": 0.15, "factor": "n6.out" } },
+    { "id": "n18", "type": "brdf",     "inputs": { "base_color": "n9.out", "roughness": "n17.out", "metallic": "n6.out", "normal": "n15.out" } },
+    { "id": "n19", "type": "brdf",     "inputs": { "base_color": [1.0, 1.0, 1.0], "roughness": 0.04, "metallic": 0.0, "normal": "n11.out" } },
+    { "id": "n20", "type": "fresnel",  "inputs": { "normal": "n11.out", "ior": 1.5 } },
+    { "id": "n21", "type": "clamp",    "inputs": { "a": "n20.out", "min": 0.0, "max": 1.0 } },
+    { "id": "n22", "type": "mix",      "inputs": { "a": "n18.out", "b": "n19.out", "factor": "n21.out" } }
+  ],
+  "output": "n22"
+}

@@ -190,6 +190,38 @@ def test_ballistics_measures_effective_gravity():
     assert b["flights"][0]["gravity_ratio"] == pytest.approx(0.5, abs=0.02)
 
 
+def test_airborne_flat_com_is_rails_not_wrong_unit(tmp_path):
+    """Regression from the parkour example: outbound jog steps left both
+    feet airborne while the root glided at constant height. The fit gave
+    g ~ -0.05x and the tool blamed --unit — but a parabola fitted to a
+    flat line measures nothing. That case is 'root on rails'."""
+    hier = (
+        "HIERARCHY\nROOT Hips\n{\n\tOFFSET 0 0 0\n"
+        "\tCHANNELS 6 Xposition Yposition Zposition "
+        "Zrotation Xrotation Yrotation\n"
+        "\tJOINT LeftFoot\n\t{\n\t\tOFFSET 10 -80 0\n"
+        "\t\tCHANNELS 3 Zrotation Xrotation Yrotation\n"
+        "\t\tEnd Site\n\t\t{\n\t\t\tOFFSET 0 -2 5\n\t\t}\n\t}\n"
+        "\tJOINT RightFoot\n\t{\n\t\tOFFSET -10 -80 0\n"
+        "\t\tCHANNELS 3 Zrotation Xrotation Yrotation\n"
+        "\t\tEnd Site\n\t\t{\n\t\t\tOFFSET 0 -2 5\n\t\t}\n\t}\n}\n")
+    rows = []
+    for f in range(60):
+        glide = 15 <= f <= 40
+        y = 86.0 if glide else 80.0             # glide: airborne, flat
+        z = 0.0 if f < 15 else (f - 14) * 4.0 if glide else 104.0
+        rows.append(f"0 {y} {z} 0 0 0  0 0 0  0 0 0")
+    p = tmp_path / "rails.bvh"
+    p.write_text(hier + "MOTION\nFrames: 60\nFrame Time: 0.033333\n"
+                 + "\n".join(rows) + "\n", encoding="utf-8")
+
+    rep = analyze(parse_bvh(str(p), unit="cm"), up="y", kind="oneshot")
+    rep.pop("_arrays")
+    ids = [c["id"] for c in rep["checks"]]
+    assert "root-on-rails" in ids
+    assert "gravity-unit-suspect" not in ids
+
+
 def test_oneshot_kind_silences_the_loop_check():
     """Cut a walk mid-cycle: the seam is genuinely discontinuous, so
     'auto' reports it — and 'oneshot' silences it, because a jump or a

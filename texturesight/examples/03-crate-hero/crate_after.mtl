@@ -1,0 +1,11 @@
+newmtl crate_mat
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.2 0.2 0.2
+Ns 64
+d 1.0
+illum 2
+map_Kd crate_albedo.png
+map_Pr crate_roughness.png
+map_Bump -bm 1.0 crate_normal.png
+norm crate_normal.png

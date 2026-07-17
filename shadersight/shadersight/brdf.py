@@ -285,11 +285,37 @@ def energy_conservation(mat: Material, n_theta: int = 64, n_phi: int = 128,
                      "max_channel": round(m, 5)})
         if m > worst:
             worst, worst_at = m, float(np.degrees(a))
+
+    # A material at the physical limit (F0 = 1 mirror gold) reads up to
+    # ~1.004 on a fast grid — estimator variance, not emitted energy.
+    # Any view over the limit is re-measured at 16x samples before it
+    # may condemn the material: at 128x256 an exact-limit metal never
+    # read above 1.00064 across roughness 0.02..1.0, so 1e-3 separates
+    # noise from violation there. A violation must survive more
+    # evidence; noise doesn't.
+    tol = 1e-3
+    remeasured = False
+    if worst > 1.0 + tol and n_theta < 128:
+        remeasured = True
+        for row in rows:
+            if row["max_channel"] <= 1.0 + tol:
+                continue
+            a = np.radians(row["theta_deg"])
+            wo = (np.sin(a), 0.0, np.cos(a))
+            alb = directional_albedo(mat, wo, 128, 256)
+            row["albedo_rgb"] = [round(float(v), 5) for v in alb]
+            row["max_channel"] = round(float(alb.max()), 5)
+            row["remeasured_at"] = {"n_theta": 128, "n_phi": 256}
+        worst_row = max(rows, key=lambda r: r["max_channel"])
+        worst = float(worst_row["max_channel"])
+        worst_at = float(worst_row["theta_deg"])
+
     return {
         "per_view": rows,
         "max_albedo": round(worst, 5),
         "max_at_theta_deg": round(worst_at, 2),
-        "conserves_energy": bool(worst <= 1.0 + 1e-3),
+        "conserves_energy": bool(worst <= 1.0 + tol),
+        "remeasured": remeasured,
         "grid": {"n_theta": n_theta, "n_phi": n_phi, "n_views": n_views},
         "note": ("directional albedo = integral of f*cos over the "
                  "hemisphere; >1 means the surface emits energy it never "

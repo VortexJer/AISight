@@ -99,6 +99,22 @@ shadersight graph broken_graph.json   ->  FAILED (cycle: mul, add; dangling
 shadersight graph clean_graph.json    ->  OK  (~340 ALU-equiv, 3 fetches)
 ```
 
+## Blind vs verified: the production material set
+
+[`examples/04-materials`](examples/04-materials) is the full study:
+eight production materials plus a layered car-paint graph, authored
+once by a cold-context agent with **no tools** (JSON from memory, one
+shot) and once with this tool in the loop. Twist: the blind side was
+good — measured F0s from memory, refused the "boost the highlights"
+bait — and the audit's only FAIL turned out to be **estimator noise in
+the tool itself** (an exactly-F0=1 gold read 1.004 at fast quality).
+That became a tool fix: over-limit views are re-measured at 16x
+samples before any material is condemned, with the tolerance
+calibrated against an exact-limit metal. The graph side: verified
+sound (22/22 reachable, acyclic), then baked from 436 to **204
+ALU/pixel** by turning the procedural flake chain into one texture
+fetch. Full numbers in the example's README.
+
 ## Proof it works
 
 The tests hold the tool to the laws, in both directions:

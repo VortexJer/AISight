@@ -1,0 +1,193 @@
+{
+  "status": "warnings",
+  "material": {
+    "name": "material",
+    "boost": 1.0,
+    "base_color": [
+      0.45,
+      0.015,
+      0.02
+    ],
+    "roughness": 0.12,
+    "metallic": 0.0,
+    "specular": 1.0,
+    "f0": [
+      0.08,
+      0.08,
+      0.08
+    ],
+    "alpha_ggx": 0.0144
+  },
+  "energy_conservation": {
+    "per_view": [
+      {
+        "theta_deg": 0.0,
+        "albedo_rgb": [
+          0.47928,
+          0.09353,
+          0.09796
+        ],
+        "max_channel": 0.47928
+      },
+      {
+        "theta_deg": 7.73,
+        "albedo_rgb": [
+          0.47906,
+          0.09345,
+          0.09788
+        ],
+        "max_channel": 0.47906
+      },
+      {
+        "theta_deg": 15.45,
+        "albedo_rgb": [
+          0.47762,
+          0.09331,
+          0.09773
+        ],
+        "max_channel": 0.47762
+      },
+      {
+        "theta_deg": 23.18,
+        "albedo_rgb": [
+          0.47398,
+          0.0932,
+          0.09758
+        ],
+        "max_channel": 0.47398
+      },
+      {
+        "theta_deg": 30.91,
+        "albedo_rgb": [
+          0.46789,
+          0.09308,
+          0.09739
+        ],
+        "max_channel": 0.46789
+      },
+      {
+        "theta_deg": 38.64,
+        "albedo_rgb": [
+          0.45867,
+          0.09319,
+          0.09739
+        ],
+        "max_channel": 0.45867
+      },
+      {
+        "theta_deg": 46.36,
+        "albedo_rgb": [
+          0.4458,
+          0.09493,
+          0.09896
+        ],
+        "max_channel": 0.4458
+      },
+      {
+        "theta_deg": 54.09,
+        "albedo_rgb": [
+          0.43135,
+          0.10276,
+          0.10654
+        ],
+        "max_channel": 0.43135
+      },
+      {
+        "theta_deg": 61.82,
+        "albedo_rgb": [
+          0.4234,
+          0.12824,
+          0.13163
+        ],
+        "max_channel": 0.4234
+      },
+      {
+        "theta_deg": 69.55,
+        "albedo_rgb": [
+          0.44187,
+          0.19567,
+          0.1985
+        ],
+        "max_channel": 0.44187
+      },
+      {
+        "theta_deg": 77.27,
+        "albedo_rgb": [
+          0.52469,
+          0.34829,
+          0.35032
+        ],
+        "max_channel": 0.52469
+      },
+      {
+        "theta_deg": 85.0,
+        "albedo_rgb": [
+          0.71927,
+          0.63955,
+          0.64047
+        ],
+        "max_channel": 0.71927
+      }
+    ],
+    "max_albedo": 0.71927,
+    "max_at_theta_deg": 85.0,
+    "conserves_energy": true,
+    "remeasured": false,
+    "grid": {
+      "n_theta": 64,
+      "n_phi": 128,
+      "n_views": 12
+    },
+    "note": "directional albedo = integral of f*cos over the hemisphere; >1 means the surface emits energy it never received. Values slightly under 1 at grazing angles are expected: single-scattering GGX loses energy there"
+  },
+  "reciprocity": {
+    "max_relative_error": 0.0,
+    "mean_relative_error": 0.0,
+    "worst_pair": {
+      "wi": [
+        -0.933,
+        0.3599,
+        0.0008
+      ],
+      "wo": [
+        0.9347,
+        -0.3548,
+        0.0206
+      ]
+    },
+    "samples": 4096,
+    "seed": 7,
+    "reciprocal": true,
+    "note": "f(wi,wo) == f(wo,wi) is a physical law, not a style"
+  },
+  "positivity": {
+    "min_value": 0.0,
+    "negative_samples": 0,
+    "non_negative": true
+  },
+  "furnace": {
+    "normal_incidence_albedo": [
+      0.47928,
+      0.09353,
+      0.09796
+    ],
+    "energy_lost": 0.52072,
+    "note": "energy below 1 at high roughness is the known single-scattering GGX deficit, not a defect: add a multi-scatter term if it matters"
+  },
+  "checks": [
+    {
+      "id": "high-energy-loss",
+      "level": "warn",
+      "message": "the material loses 52% of its energy at this roughness (single-scatter GGX)",
+      "where": "normal-incidence white furnace",
+      "try": "EXPECTED for rough surfaces with single-scatter GGX, not a bug: rough metals look too dark without a multi-scatter term. Add one if it matters, or accept it"
+    }
+  ],
+  "files": {
+    "report": "report.json",
+    "renders": [
+      "preview.png",
+      "albedo_curve.png"
+    ]
+  }
+}

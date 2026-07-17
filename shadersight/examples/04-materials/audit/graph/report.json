@@ -1,0 +1,67 @@
+{
+  "status": "warnings",
+  "name": "carpaint_graph_blind",
+  "nodes": 22,
+  "output": "n22",
+  "evaluation_order": [
+    "n1",
+    "n2",
+    "n7",
+    "n8",
+    "n11",
+    "n16",
+    "n3",
+    "n19",
+    "n20",
+    "n4",
+    "n10",
+    "n21",
+    "n5",
+    "n12",
+    "n6",
+    "n9",
+    "n13",
+    "n17",
+    "n14",
+    "n15",
+    "n18",
+    "n22"
+  ],
+  "cycle_nodes": [],
+  "reachable_nodes": 22,
+  "dead_nodes": [],
+  "cost": {
+    "alu_equivalents": 436,
+    "texture_fetches": 0,
+    "by_type": {
+      "fbm": 200,
+      "voronoi": 120,
+      "brdf": 80,
+      "fresnel": 10,
+      "pow": 8,
+      "mix": 6,
+      "normalize": 4,
+      "clamp": 4,
+      "multiply": 3,
+      "add": 1,
+      "uv": 0,
+      "constant": 0,
+      "normal": 0
+    },
+    "counts_only_live_nodes": true,
+    "excluded_unknown_types": [],
+    "note": "orders of magnitude, not a vendor instruction count: a texture fetch is ~100x an add, noise ~50x. Use it to compare graphs, never as a frame budget"
+  },
+  "checks": [
+    {
+      "id": "shader-cost-high",
+      "level": "warn",
+      "message": "the live graph costs ~436 ALU-equivalents per pixel (0 texture fetch(es))",
+      "where": "dominant: fbm 200, voronoi 120, brdf 80",
+      "try": "bake what is constant, move maths to the vertex stage or a lookup texture, and check the fetch count first - a fetch costs ~100x an add"
+    }
+  ],
+  "files": {
+    "report": "report.json"
+  }
+}

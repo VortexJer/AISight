@@ -1,0 +1,50 @@
+{
+  "status": "ok",
+  "name": "carpaint_after",
+  "nodes": 15,
+  "output": "n15",
+  "evaluation_order": [
+    "n1",
+    "n3",
+    "n4",
+    "n6",
+    "n2",
+    "n12",
+    "n13",
+    "n5",
+    "n7",
+    "n10",
+    "n14",
+    "n8",
+    "n9",
+    "n11",
+    "n15"
+  ],
+  "cycle_nodes": [],
+  "reachable_nodes": 15,
+  "dead_nodes": [],
+  "cost": {
+    "alu_equivalents": 204,
+    "texture_fetches": 1,
+    "by_type": {
+      "texture": 100,
+      "brdf": 80,
+      "fresnel": 10,
+      "mix": 6,
+      "normalize": 4,
+      "clamp": 2,
+      "multiply": 1,
+      "add": 1,
+      "constant": 0,
+      "uv": 0,
+      "normal": 0
+    },
+    "counts_only_live_nodes": true,
+    "excluded_unknown_types": [],
+    "note": "orders of magnitude, not a vendor instruction count: a texture fetch is ~100x an add, noise ~50x. Use it to compare graphs, never as a frame budget"
+  },
+  "checks": [],
+  "files": {
+    "report": "report.json"
+  }
+}

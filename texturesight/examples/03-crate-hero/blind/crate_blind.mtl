@@ -1,0 +1,12 @@
+newmtl crate_mat
+Ka 1.000 1.000 1.000
+Kd 1.000 1.000 1.000
+Ks 0.200 0.200 0.200
+Ns 64
+d 1.0
+illum 2
+map_Kd crate_albedo.png
+map_Pr crate_roughness.png
+map_Bump -bm 1.0 crate_normal.png
+norm crate_normal.png
+# crate_normal.png is tangent-space, OpenGL convention (green = +V)

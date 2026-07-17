@@ -1,0 +1,800 @@
+{
+  "status": "warnings",
+  "clip": {
+    "source": "parkour_blind.bvh",
+    "frames": 240,
+    "fps": 30.0,
+    "duration_s": 8.0,
+    "joints": 26,
+    "unit": "cm",
+    "up_axis": "y",
+    "floor_mm": -0.403,
+    "floor_inferred": true,
+    "floor_estimate": {
+      "method": "10th percentile of the per-frame lowest point",
+      "clip_min_mm": -4.971,
+      "frames_below_floor": 0,
+      "spread_mm": 73.22
+    }
+  },
+  "skeleton": {
+    "root": "Hips",
+    "joint_names": [
+      "Hips",
+      "Spine",
+      "Chest",
+      "Neck",
+      "Head",
+      "Head_end",
+      "LeftShoulder",
+      "LeftArm",
+      "LeftForeArm",
+      "LeftHand",
+      "LeftHand_end",
+      "RightShoulder",
+      "RightArm",
+      "RightForeArm",
+      "RightHand",
+      "RightHand_end",
+      "LeftUpLeg",
+      "LeftLeg",
+      "LeftFoot",
+      "LeftToeBase",
+      "LeftToeBase_end",
+      "RightUpLeg",
+      "RightLeg",
+      "RightFoot",
+      "RightToeBase",
+      "RightToeBase_end"
+    ]
+  },
+  "com": {
+    "anthropometric_weights": true,
+    "trajectory_file": "com_trajectory.csv",
+    "height_mm": {
+      "min": 846.57,
+      "max": 1392.14,
+      "mean": 1015.4
+    }
+  },
+  "ballistics": {
+    "flights": [
+      {
+        "frames": [
+          35,
+          39
+        ],
+        "duration_s": 0.1667,
+        "apex_rise_mm": 24.0,
+        "vertical_range_mm": 24.0,
+        "effective_gravity_mm_s2": 6567.7,
+        "gravity_ratio": 0.669,
+        "fit_rms_mm": 0.62
+      },
+      {
+        "frames": [
+          46,
+          51
+        ],
+        "duration_s": 0.2,
+        "apex_rise_mm": 37.9,
+        "vertical_range_mm": 37.9,
+        "effective_gravity_mm_s2": 4585.0,
+        "gravity_ratio": 0.467,
+        "fit_rms_mm": 1.78
+      },
+      {
+        "frames": [
+          63,
+          80
+        ],
+        "duration_s": 0.6,
+        "apex_rise_mm": 274.4,
+        "vertical_range_mm": 280.9,
+        "effective_gravity_mm_s2": 6503.0,
+        "gravity_ratio": 0.663,
+        "fit_rms_mm": 23.23
+      }
+    ],
+    "note": "effective gravity from a parabola fit to the COM height over each airborne span; 1.0 = physical, <0.75 reads floaty, >1.3 reads heavy. ~0.1 or ~10 usually means --unit is wrong"
+  },
+  "kind": "oneshot",
+  "peaks": {
+    "Hips": {
+      "peak_speed_mm_s": 3869.1,
+      "peak_speed_frame": 66,
+      "peak_accel_mm_s2": 22436.4,
+      "peak_angular_deg_s": 87.7
+    },
+    "Spine": {
+      "peak_speed_mm_s": 3928.0,
+      "peak_speed_frame": 67,
+      "peak_accel_mm_s2": 21939.1,
+      "peak_angular_deg_s": 110.7
+    },
+    "Chest": {
+      "peak_speed_mm_s": 4078.6,
+      "peak_speed_frame": 67,
+      "peak_accel_mm_s2": 24210.0,
+      "peak_angular_deg_s": 130.1
+    },
+    "Neck": {
+      "peak_speed_mm_s": 4328.0,
+      "peak_speed_frame": 67,
+      "peak_accel_mm_s2": 27123.5,
+      "peak_angular_deg_s": 103.2
+    },
+    "Head": {
+      "peak_speed_mm_s": 4450.7,
+      "peak_speed_frame": 68,
+      "peak_accel_mm_s2": 27948.3,
+      "peak_angular_deg_s": 131.2
+    },
+    "Head_end": {
+      "peak_speed_mm_s": 4747.5,
+      "peak_speed_frame": 68,
+      "peak_accel_mm_s2": 29406.1,
+      "peak_angular_deg_s": 131.2
+    },
+    "LeftShoulder": {
+      "peak_speed_mm_s": 4281.2,
+      "peak_speed_frame": 67,
+      "peak_accel_mm_s2": 26507.3,
+      "peak_angular_deg_s": 130.1
+    },
+    "LeftArm": {
+      "peak_speed_mm_s": 4283.2,
+      "peak_speed_frame": 67,
+      "peak_accel_mm_s2": 26135.8,
+      "peak_angular_deg_s": 719.4
+    },
+    "LeftForeArm": {
+      "peak_speed_mm_s": 4977.3,
+      "peak_speed_frame": 61,
+      "peak_accel_mm_s2": 50267.1,
+      "peak_angular_deg_s": 561.5
+    },
+    "LeftHand": {
+      "peak_speed_mm_s": 6703.0,
+      "peak_speed_frame": 61,
+      "peak_accel_mm_s2": 79728.3,
+      "peak_angular_deg_s": 561.5
+    },
+    "LeftHand_end": {
+      "peak_speed_mm_s": 7921.1,
+      "peak_speed_frame": 61,
+      "peak_accel_mm_s2": 100789.2,
+      "peak_angular_deg_s": 561.5
+    },
+    "RightShoulder": {
+      "peak_speed_mm_s": 4280.2,
+      "peak_speed_frame": 67,
+      "peak_accel_mm_s2": 26678.8,
+      "peak_angular_deg_s": 130.1
+    },
+    "RightArm": {
+      "peak_speed_mm_s": 4278.2,
+      "peak_speed_frame": 67,
+      "peak_accel_mm_s2": 27050.4,
+      "peak_angular_deg_s": 719.4
+    },
+    "RightForeArm": {
+      "peak_speed_mm_s": 4939.4,
+      "peak_speed_frame": 61,
+      "peak_accel_mm_s2": 61680.8,
+      "peak_angular_deg_s": 561.7
+    },
+    "RightHand": {
+      "peak_speed_mm_s": 6637.2,
+      "peak_speed_frame": 61,
+      "peak_accel_mm_s2": 97898.1,
+      "peak_angular_deg_s": 561.7
+    },
+    "RightHand_end": {
+      "peak_speed_mm_s": 7843.4,
+      "peak_speed_frame": 61,
+      "peak_accel_mm_s2": 124754.6,
+      "peak_angular_deg_s": 561.7
+    },
+    "LeftUpLeg": {
+      "peak_speed_mm_s": 3849.3,
+      "peak_speed_frame": 66,
+      "peak_accel_mm_s2": 22578.7,
+      "peak_angular_deg_s": 1280.8
+    },
+    "LeftLeg": {
+      "peak_speed_mm_s": 9968.5,
+      "peak_speed_frame": 64,
+      "peak_accel_mm_s2": 180588.7,
+      "peak_angular_deg_s": 1280.8
+    },
+    "LeftFoot": {
+      "peak_speed_mm_s": 9723.3,
+      "peak_speed_frame": 64,
+      "peak_accel_mm_s2": 123033.9,
+      "peak_angular_deg_s": 690.4
+    },
+    "LeftToeBase": {
+      "peak_speed_mm_s": 10071.0,
+      "peak_speed_frame": 64,
+      "peak_accel_mm_s2": 129970.4,
+      "peak_angular_deg_s": 258.2
+    },
+    "LeftToeBase_end": {
+      "peak_speed_mm_s": 10084.5,
+      "peak_speed_frame": 64,
+      "peak_accel_mm_s2": 130722.8,
+      "peak_angular_deg_s": 258.2
+    },
+    "RightUpLeg": {
+      "peak_speed_mm_s": 3864.1,
+      "peak_speed_frame": 66,
+      "peak_accel_mm_s2": 22667.9,
+      "peak_angular_deg_s": 2535.6
+    },
+    "RightLeg": {
+      "peak_speed_mm_s": 10840.2,
+      "peak_speed_frame": 66,
+      "peak_accel_mm_s2": 159980.6,
+      "peak_angular_deg_s": 2528.3
+    },
+    "RightFoot": {
+      "peak_speed_mm_s": 8314.9,
+      "peak_speed_frame": 53,
+      "peak_accel_mm_s2": 74869.3,
+      "peak_angular_deg_s": 728.8
+    },
+    "RightToeBase": {
+      "peak_speed_mm_s": 8624.4,
+      "peak_speed_frame": 53,
+      "peak_accel_mm_s2": 76921.5,
+      "peak_angular_deg_s": 201.8
+    },
+    "RightToeBase_end": {
+      "peak_speed_mm_s": 8630.2,
+      "peak_speed_frame": 53,
+      "peak_accel_mm_s2": 76971.8,
+      "peak_angular_deg_s": 201.8
+    }
+  },
+  "contacts": {
+    "foot_joints": [
+      "LeftFoot",
+      "LeftToeBase",
+      "LeftToeBase_end",
+      "RightFoot",
+      "RightToeBase",
+      "RightToeBase_end"
+    ],
+    "events": [
+      {
+        "frame": 3,
+        "joint": "RightToeBase",
+        "event": "lift",
+        "t_s": 0.1
+      },
+      {
+        "frame": 3,
+        "joint": "RightToeBase_end",
+        "event": "lift",
+        "t_s": 0.1
+      },
+      {
+        "frame": 7,
+        "joint": "LeftToeBase",
+        "event": "plant",
+        "t_s": 0.2333
+      },
+      {
+        "frame": 7,
+        "joint": "LeftToeBase_end",
+        "event": "plant",
+        "t_s": 0.2333
+      },
+      {
+        "frame": 10,
+        "joint": "LeftToeBase",
+        "event": "lift",
+        "t_s": 0.3333
+      },
+      {
+        "frame": 10,
+        "joint": "LeftToeBase_end",
+        "event": "lift",
+        "t_s": 0.3333
+      },
+      {
+        "frame": 19,
+        "joint": "RightToeBase",
+        "event": "plant",
+        "t_s": 0.6333
+      },
+      {
+        "frame": 19,
+        "joint": "RightToeBase_end",
+        "event": "plant",
+        "t_s": 0.6333
+      },
+      {
+        "frame": 21,
+        "joint": "RightToeBase",
+        "event": "lift",
+        "t_s": 0.7
+      },
+      {
+        "frame": 21,
+        "joint": "RightToeBase_end",
+        "event": "lift",
+        "t_s": 0.7
+      },
+      {
+        "frame": 31,
+        "joint": "LeftToeBase",
+        "event": "plant",
+        "t_s": 1.0333
+      },
+      {
+        "frame": 31,
+        "joint": "LeftToeBase_end",
+        "event": "plant",
+        "t_s": 1.0333
+      },
+      {
+        "frame": 33,
+        "joint": "LeftToeBase",
+        "event": "lift",
+        "t_s": 1.1
+      },
+      {
+        "frame": 33,
+        "joint": "LeftToeBase_end",
+        "event": "lift",
+        "t_s": 1.1
+      },
+      {
+        "frame": 43,
+        "joint": "RightToeBase",
+        "event": "plant",
+        "t_s": 1.4333
+      },
+      {
+        "frame": 43,
+        "joint": "RightToeBase_end",
+        "event": "plant",
+        "t_s": 1.4333
+      },
+      {
+        "frame": 45,
+        "joint": "RightToeBase",
+        "event": "lift",
+        "t_s": 1.5
+      },
+      {
+        "frame": 45,
+        "joint": "RightToeBase_end",
+        "event": "lift",
+        "t_s": 1.5
+      },
+      {
+        "frame": 55,
+        "joint": "LeftToeBase",
+        "event": "plant",
+        "t_s": 1.8333
+      },
+      {
+        "frame": 55,
+        "joint": "LeftToeBase_end",
+        "event": "plant",
+        "t_s": 1.8333
+      },
+      {
+        "frame": 61,
+        "joint": "LeftToeBase",
+        "event": "lift",
+        "t_s": 2.0333
+      },
+      {
+        "frame": 61,
+        "joint": "LeftToeBase_end",
+        "event": "lift",
+        "t_s": 2.0333
+      },
+      {
+        "frame": 83,
+        "joint": "RightToeBase",
+        "event": "plant",
+        "t_s": 2.7667
+      },
+      {
+        "frame": 83,
+        "joint": "RightToeBase_end",
+        "event": "plant",
+        "t_s": 2.7667
+      },
+      {
+        "frame": 89,
+        "joint": "LeftToeBase",
+        "event": "plant",
+        "t_s": 2.9667
+      },
+      {
+        "frame": 89,
+        "joint": "LeftToeBase_end",
+        "event": "plant",
+        "t_s": 2.9667
+      },
+      {
+        "frame": 91,
+        "joint": "RightToeBase",
+        "event": "lift",
+        "t_s": 3.0333
+      },
+      {
+        "frame": 91,
+        "joint": "RightToeBase_end",
+        "event": "lift",
+        "t_s": 3.0333
+      },
+      {
+        "frame": 103,
+        "joint": "LeftToeBase",
+        "event": "lift",
+        "t_s": 3.4333
+      },
+      {
+        "frame": 103,
+        "joint": "LeftToeBase_end",
+        "event": "lift",
+        "t_s": 3.4333
+      },
+      {
+        "frame": 105,
+        "joint": "RightToeBase",
+        "event": "plant",
+        "t_s": 3.5
+      },
+      {
+        "frame": 105,
+        "joint": "RightToeBase_end",
+        "event": "plant",
+        "t_s": 3.5
+      },
+      {
+        "frame": 114,
+        "joint": "RightToeBase",
+        "event": "lift",
+        "t_s": 3.8
+      },
+      {
+        "frame": 114,
+        "joint": "RightToeBase_end",
+        "event": "lift",
+        "t_s": 3.8
+      },
+      {
+        "frame": 116,
+        "joint": "LeftToeBase",
+        "event": "plant",
+        "t_s": 3.8667
+      },
+      {
+        "frame": 116,
+        "joint": "LeftToeBase_end",
+        "event": "plant",
+        "t_s": 3.8667
+      },
+      {
+        "frame": 125,
+        "joint": "LeftToeBase",
+        "event": "lift",
+        "t_s": 4.1667
+      },
+      {
+        "frame": 125,
+        "joint": "LeftToeBase_end",
+        "event": "lift",
+        "t_s": 4.1667
+      },
+      {
+        "frame": 130,
+        "joint": "RightToeBase",
+        "event": "plant",
+        "t_s": 4.3333
+      },
+      {
+        "frame": 130,
+        "joint": "RightToeBase_end",
+        "event": "plant",
+        "t_s": 4.3333
+      },
+      {
+        "frame": 139,
+        "joint": "RightToeBase",
+        "event": "lift",
+        "t_s": 4.6333
+      },
+      {
+        "frame": 139,
+        "joint": "RightToeBase_end",
+        "event": "lift",
+        "t_s": 4.6333
+      },
+      {
+        "frame": 145,
+        "joint": "LeftToeBase",
+        "event": "plant",
+        "t_s": 4.8333
+      },
+      {
+        "frame": 145,
+        "joint": "LeftToeBase_end",
+        "event": "plant",
+        "t_s": 4.8333
+      },
+      {
+        "frame": 154,
+        "joint": "LeftToeBase",
+        "event": "lift",
+        "t_s": 5.1333
+      },
+      {
+        "frame": 154,
+        "joint": "LeftToeBase_end",
+        "event": "lift",
+        "t_s": 5.1333
+      },
+      {
+        "frame": 160,
+        "joint": "RightToeBase",
+        "event": "plant",
+        "t_s": 5.3333
+      },
+      {
+        "frame": 160,
+        "joint": "RightToeBase_end",
+        "event": "plant",
+        "t_s": 5.3333
+      },
+      {
+        "frame": 169,
+        "joint": "LeftToeBase",
+        "event": "plant",
+        "t_s": 5.6333
+      },
+      {
+        "frame": 169,
+        "joint": "LeftToeBase_end",
+        "event": "plant",
+        "t_s": 5.6333
+      }
+    ],
+    "sliding": [
+      {
+        "joint": "LeftToeBase",
+        "frames": [
+          89,
+          102,
+          116,
+          153,
+          169
+        ],
+        "worst_frame": 89,
+        "peak_speed_mm_s": 84.26,
+        "total_slip_mm": 10.95
+      },
+      {
+        "joint": "LeftToeBase_end",
+        "frames": [
+          89,
+          102,
+          116,
+          153,
+          169
+        ],
+        "worst_frame": 89,
+        "peak_speed_mm_s": 84.23,
+        "total_slip_mm": 10.87
+      },
+      {
+        "joint": "RightToeBase",
+        "frames": [
+          138
+        ],
+        "worst_frame": 138,
+        "peak_speed_mm_s": 54.81,
+        "total_slip_mm": 1.83
+      },
+      {
+        "joint": "RightToeBase_end",
+        "frames": [
+          138
+        ],
+        "worst_frame": 138,
+        "peak_speed_mm_s": 54.11,
+        "total_slip_mm": 1.8
+      }
+    ],
+    "note": null
+  },
+  "balance": {
+    "com_to_support_mm": {
+      "max": 351.59,
+      "mean": 93.1,
+      "at_frame": 12
+    },
+    "airborne_frames": [
+      13,
+      14,
+      15,
+      16,
+      24,
+      25,
+      26,
+      27,
+      35,
+      36,
+      37,
+      38,
+      39,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      141,
+      156
+    ],
+    "airborne_ratio": 0.1625,
+    "note": "distance from the COM's ground projection to the support base; large values in flight//dynamic frames are expected - read them with airborne_frames"
+  },
+  "penetration": [],
+  "smoothness": {
+    "jerk_rms_mm_s3": {
+      "Hips": 92631.1,
+      "Spine": 93626.8,
+      "Chest": 95609.3,
+      "Neck": 100040.1,
+      "Head": 103120.3,
+      "Head_end": 109875.9,
+      "LeftShoulder": 98873.3,
+      "LeftArm": 98303.6,
+      "LeftForeArm": 147138.8,
+      "LeftHand": 248732.2,
+      "LeftHand_end": 328474.6,
+      "RightShoulder": 99156.4,
+      "RightArm": 99812.7,
+      "RightForeArm": 176913.2,
+      "RightHand": 282249.2,
+      "RightHand_end": 368972.5,
+      "LeftUpLeg": 92690.9,
+      "LeftLeg": 634572.6,
+      "LeftFoot": 486346.2,
+      "LeftToeBase": 490020.6,
+      "LeftToeBase_end": 490673.3,
+      "RightUpLeg": 92275.9,
+      "RightLeg": 840888.8,
+      "RightFoot": 448156.6,
+      "RightToeBase": 441082.0,
+      "RightToeBase_end": 441109.7
+    },
+    "roughest_joint": "RightLeg",
+    "roughest_jerk_rms_mm_s3": 840888.8,
+    "pops": [],
+    "pop_count": 0,
+    "raw_spike_count": 0,
+    "note": "a pop is a single-frame acceleration spike (robust z > 12, MAD floored at 10% of the clip's own scale), clustered by frame: a 'pose snap' hits many joints at once (blocking pass or splice), a 'joint pop' is one bad key"
+  },
+  "loop": {
+    "pose_gap_mm": {
+      "max": 654.35,
+      "mean": 249.88,
+      "worst_joint": "RightHand_end"
+    },
+    "typical_frame_motion_mm": 87.7,
+    "velocity_gap_mm_frame": {
+      "max": 27.44,
+      "worst_joint": "Head"
+    },
+    "root_travel_mm": [
+      2299.98,
+      20.15,
+      8801.04
+    ],
+    "convention": "discontinuous",
+    "loops_cleanly": false,
+    "note": "the seam gap is judged against this clip's own median per-frame motion, because a full loop is SUPPOSED to differ from frame 0 by one step; root travel is removed"
+  },
+  "checks": [
+    {
+      "id": "foot-sliding",
+      "level": "warn",
+      "message": "'LeftToeBase' slides while planted: 10.95 mm over 5 frame(s)",
+      "where": "worst at frame 89, 84.26 mm/s horizontal",
+      "try": "pin the foot over the contact: match the root's forward speed to the stride, or add an IK constraint on the planted frames"
+    },
+    {
+      "id": "foot-sliding",
+      "level": "warn",
+      "message": "'LeftToeBase_end' slides while planted: 10.87 mm over 5 frame(s)",
+      "where": "worst at frame 89, 84.23 mm/s horizontal",
+      "try": "pin the foot over the contact: match the root's forward speed to the stride, or add an IK constraint on the planted frames"
+    },
+    {
+      "id": "foot-sliding",
+      "level": "warn",
+      "message": "'RightToeBase' slides while planted: 1.83 mm over 1 frame(s)",
+      "where": "worst at frame 138, 54.81 mm/s horizontal",
+      "try": "pin the foot over the contact: match the root's forward speed to the stride, or add an IK constraint on the planted frames"
+    },
+    {
+      "id": "foot-sliding",
+      "level": "warn",
+      "message": "'RightToeBase_end' slides while planted: 1.8 mm over 1 frame(s)",
+      "where": "worst at frame 138, 54.11 mm/s horizontal",
+      "try": "pin the foot over the contact: match the root's forward speed to the stride, or add an IK constraint on the planted frames"
+    },
+    {
+      "id": "floaty-flight",
+      "level": "warn",
+      "message": "flight at frames [35, 39] falls at 0.67x gravity: it will read as floaty",
+      "where": "apex +24.0 mm over 0.1667s; at 1 g that apex takes 0.14s of airtime",
+      "try": "physics fixes it two ways: shorten the airtime to match the apex, or raise the apex to match the airtime (T = 2*sqrt(2h/g)); or accept the stylised float and say so"
+    },
+    {
+      "id": "floaty-flight",
+      "level": "warn",
+      "message": "flight at frames [46, 51] falls at 0.47x gravity: it will read as floaty",
+      "where": "apex +37.9 mm over 0.2s; at 1 g that apex takes 0.18s of airtime",
+      "try": "physics fixes it two ways: shorten the airtime to match the apex, or raise the apex to match the airtime (T = 2*sqrt(2h/g)); or accept the stylised float and say so"
+    },
+    {
+      "id": "floaty-flight",
+      "level": "warn",
+      "message": "flight at frames [63, 80] falls at 0.66x gravity: it will read as floaty",
+      "where": "apex +274.4 mm over 0.6s; at 1 g that apex takes 0.47s of airtime",
+      "try": "physics fixes it two ways: shorten the airtime to match the apex, or raise the apex to match the airtime (T = 2*sqrt(2h/g)); or accept the stylised float and say so"
+    }
+  ],
+  "files": {
+    "report": "report.json",
+    "frames": [
+      "frames/frame_0000.png",
+      "frames/frame_0047.png",
+      "frames/frame_0089.png",
+      "frames/frame_0095.png",
+      "frames/frame_0138.png",
+      "frames/frame_0143.png",
+      "frames/frame_0191.png",
+      "frames/frame_0239.png"
+    ],
+    "tracks": [
+      "track_com_height.png",
+      "track_foot_speed.png"
+    ],
+    "flight_arcs": [
+      "flight_0_arc.png",
+      "flight_1_arc.png",
+      "flight_2_arc.png"
+    ],
+    "gif": "playback.gif"
+  }
+}

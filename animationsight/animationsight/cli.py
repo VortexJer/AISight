@@ -64,6 +64,10 @@ def main(argv: list[str] | None = None) -> int:
                        help="what changed between two takes")
     d.add_argument("a")
     d.add_argument("b")
+    d.add_argument("--kind", default="auto",
+                   choices=["auto", "oneshot", "loop"],
+                   help="declared intent for BOTH takes (same meaning "
+                        "as in inspect)")
 
     t = sub.add_parser("track", parents=[common],
                        help="print one joint's per-frame numbers")
@@ -157,9 +161,13 @@ def _inspect(args) -> int:
              f"({fl['duration_s']}s, apex +{fl['apex_rise_mm']} mm) -> "
              f"{fl['gravity_ratio']}x gravity")
     lp = rep["loop"]
-    _say(f"  loop: {'CLEAN' if lp['loops_cleanly'] else 'DISCONTINUOUS'} "
-         f"- {lp['convention']}; seam gap {lp['pose_gap_mm']['max']} mm vs "
-         f"{lp['typical_frame_motion_mm']} mm in a normal frame")
+    if rep.get("kind") == "oneshot":
+        _say("  loop: not judged (--kind oneshot; a one-shot may end "
+             "anywhere)")
+    else:
+        _say(f"  loop: {'CLEAN' if lp['loops_cleanly'] else 'DISCONTINUOUS'} "
+             f"- {lp['convention']}; seam gap {lp['pose_gap_mm']['max']} mm "
+             f"vs {lp['typical_frame_motion_mm']} mm in a normal frame")
 
     for chk in [c for c in rep["checks"] if c["level"] == "fail"] + \
                [c for c in rep["checks"] if c["level"] == "warn"]:
@@ -189,7 +197,7 @@ def _diff(args) -> int:
     reps = []
     for path in (args.a, args.b):
         clip = parse_bvh(path, unit=args.unit)
-        r = analyze(clip, up=args.up, floor_mm=args.floor)
+        r = analyze(clip, up=args.up, floor_mm=args.floor, kind=args.kind)
         r.pop("_arrays")
         reps.append(r)
     for line in diff_reports(*reps):

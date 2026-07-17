@@ -76,21 +76,21 @@ directions are asserted in `tests/`.
 ## Before / after: one turn of the loop
 
 [`examples/02-jump`](examples/02-jump) is the defect nobody can see and
-everybody can feel: a jump whose flight falls at **0.554x gravity**.
+everybody can feel: a jump whose flight falls at **0.58x gravity**.
 Every still frame looks fine; the parabola fit does not care.
 
 ```
-flight: frames 23..47 (0.8333s, apex +493.2 mm) -> 0.554x gravity
-[WARN] ... at 1 g that apex takes 0.63s of airtime
+flight: frames 27..45 (0.6333s, apex +266.2 mm) -> 0.58x gravity
+[WARN] ... at 1 g that apex takes 0.47s of airtime
        try:   T = 2*sqrt(2h/g): shorten the airtime or raise the apex
 ```
 
 Apply the `try:` line, re-inspect, and prove it:
 
 ```
-animationsight diff jump_floaty.bvh jump_fixed.bvh
-  flight 0: 0.554x gravity (0.8333s) -> 0.905x gravity (0.6667s)
-  GONE [floaty-flight] flight at frames [23, 47] falls at 0.55x gravity ...
+animationsight diff jump_floaty.bvh jump_fixed.bvh --kind oneshot
+  flight 0: 0.58x gravity (0.6333s) -> 1.064x gravity (0.4667s)
+  GONE [floaty-flight] flight at frames [27, 45] falls at 0.58x gravity ...
 ```
 
 <p align="center">
@@ -98,6 +98,19 @@ animationsight diff jump_floaty.bvh jump_fixed.bvh
   <img src="examples/02-jump/out_fixed/flight_0_arc.png" width="49%">
 </p>
 <p align="center"><em>the arc sheet inspect writes for every flight: ghosted poses, the measured COM arc (red, one dot per frame) vs the 1 g reference (green, dashed). Left: floaty — the red arc overshoots the reference by a third of the jump. Right: fixed — the arcs coincide.</em></p>
+
+## Blind vs measured: the parkour vault
+
+[`examples/03-parkour`](examples/03-parkour) is the full study: a
+240-frame run → kong vault → land → turn → settle sequence authored
+twice — once by a cold-context agent with **no tools at all** (numpy
+and arithmetic, one shot), once through this tool's loop. The blind
+clip's structure is genuinely good and its physics is genuinely wrong:
+strides at 0.47–0.67x g, a 10.95 mm toe skate, outbound steps whose
+root glides airborne. The after clip audits **`OK`, zero findings** —
+and auditing the pair forced three fixes into the tool itself
+(`root-on-rails`, height-only airborne detection, `diff --kind`). The
+GIFs and arc sheets are in the example's README.
 
 ## Three bugs this found in itself
 

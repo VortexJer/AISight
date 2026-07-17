@@ -27,7 +27,7 @@ animationsight inspect walk.bvh --view side      # side|front|top
 animationsight inspect walk.bvh --kind oneshot   # declare intent: oneshot (jump, hit) | loop | auto
 animationsight inspect walk.bvh --json           # full report JSON on stdout
 
-animationsight diff take_a.bvh take_b.bvh        # what changed: peaks, findings appeared/gone
+animationsight diff take_a.bvh take_b.bvh --kind oneshot   # what changed: peaks, findings appeared/gone
 animationsight track walk.bvh LeftFoot           # one joint's per-frame position + speed
 animationsight version
 ```
@@ -68,6 +68,7 @@ a `try:`. The check ids:
 | `motion-pop` | warn | discontinuity events, clustered: a "pose snap" hits many joints in one frame (blocking pass, splice — needs inbetweens), a "joint pop" is one bad key. |
 | `floaty-flight` / `heavy-flight` | warn | during flight the COM must fall at 1 g; the report gives the measured ratio and the exact fix (T = 2*sqrt(2h/g)). Nobody can SEE 0.68 g — it just feels off. |
 | `gravity-unit-suspect` | warn | effective gravity ~0.1x or ~10x = the --unit is probably wrong (one metric prefix), not the animation. |
+| `root-on-rails` | warn | airborne but the COM never falls: both feet leave the ground while the root glides — a driven root, not a jump. Drop it ballistically (h = g*(T/2)^2/2) or keep a foot planted. |
 | `loop-discontinuity` | warn | the seam jumps much more than a normal frame does. Declare `--kind oneshot` to silence it for jumps/hits/gestures. |
 | `com-weights-unknown` | warn | joint names were unrecognisable, so the COM used uniform weights. Balance numbers are then indicative, not exact. |
 

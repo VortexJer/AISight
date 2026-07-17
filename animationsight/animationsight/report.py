@@ -98,6 +98,32 @@ def analyze(clip, up: str = "y", floor_mm: float | None = None,
                        "tangent"))
     for fl in ball["flights"]:
         r = fl["gravity_ratio"]
+        # over T seconds of flight a 1 g COM must traverse at least the
+        # apex-to-ground drop g*(T/2)^2/2; a span whose whole vertical
+        # range is a sliver of that is not a mis-scaled arc, it is no
+        # arc at all — a parabola fitted to a flat line measures
+        # nothing, so don't blame --unit for it
+        # |r| < 0.09 keeps a genuine 10x unit error out of here: mm
+        # read as cm still fits a REAL parabola at ratio ~0.1, while a
+        # driven root fits nothing (r ~ 0). And a NEGATIVE r — the COM
+        # accelerating upward in flight — cannot be a unit error at
+        # all: units scale positively, so that root is driven too.
+        expected_drop = 0.5 * 9810.0 * (fl["duration_s"] / 2.0) ** 2
+        if r <= 0.0 or (abs(r) < 0.09
+                        and fl["vertical_range_mm"] < 0.5 * expected_drop):
+            checks.append(_check(
+                "root-on-rails", "warn",
+                f"airborne at frames {fl['frames']} but the COM never "
+                f"falls (vertical range {fl['vertical_range_mm']} mm "
+                f"over {fl['duration_s']}s, 1 g would traverse "
+                f"{expected_drop:.0f} mm): the root is on rails",
+                where=f"effective g {fl['effective_gravity_mm_s2']} "
+                      f"mm/s2 vs -9810 physical",
+                suggestion="both feet leave the ground, so the root "
+                           "must drop ballistically for the airtime "
+                           "(h = g*(T/2)^2/2), or keep one foot "
+                           "planted through the step"))
+            continue
         if r < 0.1 or r > 8.0:
             checks.append(_check(
                 "gravity-unit-suspect", "warn",

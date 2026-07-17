@@ -121,6 +121,20 @@ texturesight diff out_starved out_fixed
 </p>
 <p align="center"><em>before: island #4 dark (starved) · after: uniform density</em></p>
 
+## Blind vs measured: the hero crate
+
+[`examples/03-crate-hero`](examples/03-crate-hero) is the full study: a
+576-triangle sci-fi supply crate, unwrapped and textured twice — once
+by a cold-context agent with **no tools at all** (numpy + PIL, one
+shot), once through this tool's loop. The blind build's painted maps
+survive the audit untouched; its little UV mapper hides three real
+bugs: **148 flipped faces (FAIL), 7.35:1 stretch, 54x texel density
+spread**. The after build imports the blind generator, rewrites only
+the mapper, and lands at 0 flips, 1.005 p95 anisotropy, 3.35x spread —
+with the two remaining warnings explained as intent (trim-sheet
+overlap, downres'd hidden faces). Full numbers and layouts in the
+example's README.
+
 ## Reading the results honestly
 
 Several findings are only defects **in context**, and the tool says so

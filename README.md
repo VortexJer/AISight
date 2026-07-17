@@ -67,8 +67,8 @@ no services, no accounts.
 
 [`showcase/`](showcase/) takes **Vigía**, a desk robot, from nothing to
 a printable enclosure, a routed controller board, a simulation-ready
-URDF, a textured game asset, validated materials and a reviewed hop
-animation — entirely by an AI agent, entirely through measurements. The
+URDF, a textured game asset, validated materials and a reviewed servo
+gesture — entirely by an AI agent, entirely through measurements. The
 enclosure does not copy the board's dimensions: it **imports pcbsight
 and reads them from the .kicad_pcb**, so the standoffs sit at the
 board's own mounting pads.
@@ -92,6 +92,25 @@ and every fix ends in a diff that proves it.
 <p align="center"><em>the assembly with its electronics as X-ray ghosts · the board pcbsight took from 31 findings to 0 · the boosted-vs-physical copper · the robot performing its servo gesture</em></p>
 
 Full narrative and the defect scoreboard: [showcase/README.md](showcase/README.md).
+
+## Blind vs measured: the controlled studies
+
+Four hero examples run the same experiment: a cold-context agent with
+**no tools at all** (numpy/PIL, no viewer, one shot) attempts a hard
+commission; the same commission then goes through the tool's loop. The
+blind sides are genuinely competent — the defects they ship are the
+ones nobody can see without measuring:
+
+| study | blind | after |
+|---|---|---|
+| [parkour vault](animationsight/examples/03-parkour) (animationsight) | strides at 0.47–0.67x g, toe skate, root on rails | **OK — 0 findings**, vault at 1.03x g |
+| [hero crate](texturesight/examples/03-crate-hero) (texturesight) | 148 flipped UVs (FAIL), 7.35:1 stretch, 54x density spread | 0 flips, 1.005 anisotropy, 3.35x |
+| [material set](shadersight/examples/04-materials) (shadersight) | 8/8 conserve — the one FAIL was the tool's own estimator noise | tool fixed + graph 436 → 204 ALU/px |
+| [rover board](pcbsight/examples/02-rover) (pcbsight) | 12 open nets, 26 clearance faults | routed: **OK — 0 findings** |
+
+Each README credits what the blind side got right, ties every fix to a
+measured finding, and lists the bugs the studies forced back into the
+tools themselves.
 
 ## The standard every tool holds itself to
 

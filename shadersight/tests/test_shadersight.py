@@ -298,6 +298,29 @@ def test_cli_diff_writes_the_compare_sheet(tmp_path):
     assert (tmp_path / "b" / "compare.png").exists()
 
 
+def test_exact_limit_gold_is_not_condemned_by_estimator_noise():
+    """Regression: gold's measured F0 red channel is exactly 1.0. On the
+    fast grid the MIS estimate read 1.00398 and the audit called a
+    physically exact material a violator. Over-limit views must be
+    re-measured at 16x samples before failing anything."""
+    m = Material(base_color=(1.0, 0.766, 0.336), roughness=0.18,
+                 metallic=1.0)
+    rep = analyze_material(m, quality="fast")
+    e = rep["energy_conservation"]
+    assert e["conserves_energy"], e["max_albedo"]
+    assert e["remeasured"] is True
+
+
+def test_real_violation_survives_the_remeasure():
+    """The remeasure must rescue noise, not violations: boosted metal
+    still fails at fast quality after the 16x confirmation pass."""
+    m = Material(base_color=(1.0, 0.766, 0.336), roughness=0.18,
+                 metallic=1.0, boost=1.2)
+    rep = analyze_material(m, quality="fast")
+    assert not rep["energy_conservation"]["conserves_energy"]
+    assert rep["status"] == "failed"
+
+
 def test_boost_slider_violates_energy_and_names_itself():
     """boost is the engine slider that manufactures energy; the finding
     must name the multiplier, not send the user hunting in F/D/G."""

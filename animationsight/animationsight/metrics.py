@@ -149,7 +149,7 @@ def contacts(pos: np.ndarray, names: list[str], dt: float,
     height = pos[:, :, k] - floor_mm
 
     out = {"foot_joints": [names[i] for i in feet], "events": [],
-           "planted": {}, "sliding": []}
+           "planted": {}, "on_ground": {}, "sliding": []}
     if not feet:
         out["note"] = ("no foot/toe/ankle joints found by name: contact "
                        "and balance analysis was skipped")
@@ -159,6 +159,12 @@ def contacts(pos: np.ndarray, names: list[str], dt: float,
         down = (height[:, i] < CONTACT_HEIGHT_MM) & \
                (speed[:, i] < CONTACT_SPEED_MMS)
         out["planted"][names[i]] = down
+        # Height-only ground signal, for airborne/ballistics: a foot at
+        # 1 mm still bears load however fast it moves, and np.gradient
+        # smears the speed test +-2 frames at every lift/plant — enough
+        # to drag grounded frames into a short flight's parabola fit
+        # and misread a physical run stride as 0.4 g floaty.
+        out["on_ground"][names[i]] = height[:, i] < CONTACT_HEIGHT_MM
 
         # contact events: rising/falling edges of the planted signal
         edges = np.diff(down.astype(int))
@@ -198,7 +204,10 @@ def balance(pos: np.ndarray, names: list[str], com: np.ndarray,
     what running is); this measures how far, not whether it is wrong.
     """
     _k, (h1, h2) = _axis_indices(up)
-    planted = contact.get("planted", {})
+    # support and airborne-ness are about load, so the height-only
+    # signal: the speed-gated 'planted' would call a foot mid-slide
+    # airborne and smear every flight span by +-2 frames
+    planted = contact.get("on_ground") or contact.get("planted", {})
     if not planted:
         return {"note": "no contacts: balance not evaluated",
                 "frames_outside_support": []}
@@ -401,6 +410,7 @@ def ballistics(com: np.ndarray, airborne_frames: list[int], dt: float,
             "frames": [int(a), int(b)],
             "duration_s": round(n * dt, 4),
             "apex_rise_mm": round(float(h.max() - h[0]), 1),
+            "vertical_range_mm": round(float(h.max() - h.min()), 1),
             "effective_gravity_mm_s2": round(eff_g, 1),
             "gravity_ratio": round(eff_g / G_MM_S2, 3),
             "fit_rms_mm": round(resid, 2),

@@ -118,7 +118,9 @@ def _diff(args) -> int:
     if pa.exists() and pb.exists():
         from .render import compare_sheet
         out = Path(args.b) / "compare.png"
-        compare_sheet(pa, pb, out, label_a=str(args.a), label_b=str(args.b))
+        # short labels: a full path overflows the title band unread
+        compare_sheet(pa, pb, out, label_a=Path(args.a).name,
+                      label_b=Path(args.b).name)
         _say(f"  compare: {out}  (before | after - LOOK at it)")
     return 0
 
@@ -167,7 +169,9 @@ def _material(args) -> int:
          f"{e['max_at_theta_deg']} deg -> "
          f"{'CONSERVES' if e['conserves_energy'] else 'VIOLATES'} "
          f"(grid {e['grid']['n_theta']}x{e['grid']['n_phi']}, "
-         f"{e['grid']['n_views']} views)")
+         f"{e['grid']['n_views']} views"
+         + (", over-limit views re-measured at 128x256"
+            if e.get("remeasured") else "") + ")")
     r = rep["reciprocity"]
     _say(f"  reciprocity: max rel error {r['max_relative_error']} -> "
          f"{'OK' if r['reciprocal'] else 'BROKEN'}")

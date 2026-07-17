@@ -1,0 +1,5777 @@
+{
+  "status": "failed",
+  "checks": [
+    {
+      "id": "uv-flipped-faces",
+      "level": "fail",
+      "message": "148 face(s) have inverted UV winding",
+      "where": "first at face 0",
+      "try": "mirror those UV islands back: a flipped face samples normal maps mirrored, so lighting is wrong in a way no texture edit can fix"
+    },
+    {
+      "id": "uv-overlap",
+      "level": "warn",
+      "message": "UV islands overlap in 425938 cell(s) of a 256x256 grid",
+      "where": "stacked islands share texels",
+      "try": "if the overlap is deliberate (mirrored/tiled parts sharing texture), ignore this; otherwise re-pack the layout"
+    },
+    {
+      "id": "uv-stretch",
+      "level": "warn",
+      "message": "328 face(s) stretched more than 2.0:1 (9.4% of the surface); worst 7.352:1",
+      "where": "worst at face 321",
+      "try": "add a seam through the stretched region and re-unwrap it; stretch cannot be painted out"
+    },
+    {
+      "id": "texel-density-uneven",
+      "level": "warn",
+      "message": "texel density varies 54.08x across the mesh (331.35..17919.39 px/unit)",
+      "where": "island #159 at uv (0.6211, 0.4609)-(0.6797, 0.5195): 101.7 px/unit vs 573.51 mesh mean",
+      "try": "scale island #159 up ~5.6x in the UV editor (islands are labelled in uv_layout.png); repack if it no longer fits"
+    }
+  ],
+  "files": {
+    "report": "report.json",
+    "renders": [
+      "uv_layout.png",
+      "uv_density.png"
+    ]
+  },
+  "uv": {
+    "mesh": {
+      "source": "crate_blind.obj",
+      "faces": 576,
+      "vertices": 1248,
+      "uv_coords": 1248,
+      "materials": [
+        "crate_mat"
+      ]
+    },
+    "assumed_texture_px": 1024,
+    "texel_density": {
+      "px_per_unit": {
+        "area_weighted_mean": 573.51,
+        "p2": 331.35,
+        "p98": 17919.39,
+        "min": 101.7,
+        "max": 17919.39
+      },
+      "spread_ratio": 54.08,
+      "worst_face": 270,
+      "note": "texels per world unit at the given texture size; the mean is area-weighted, and spread_ratio is p98/p2 (robust to a few stray faces)"
+    },
+    "distortion": {
+      "anisotropy": {
+        "median": 2.609,
+        "p95": 7.188,
+        "max": 7.352,
+        "worst_face": 321
+      },
+      "stretched_faces": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        108,
+        109
+      ],
+      "stretched_face_count": 328,
+      "stretched_area_fraction": 0.0943,
+      "flipped_faces": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        132,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        176,
+        177
+      ],
+      "flipped_face_count": 148,
+      "note": "anisotropy = sigma_max/sigma_min of the per-face UV Jacobian: 1.0 is conformal, >2 is visibly smeared. Flipped = UV winding opposite to the mesh majority"
+    },
+    "islands": {
+      "uv_islands": 336,
+      "mesh_shells": 336,
+      "seam_edges": 0,
+      "seam_length_3d": 0.0,
+      "largest_island_uv_area": 0.095231,
+      "smallest_island_uv_area": 0.002518,
+      "island_uv_areas": [
+        0.095231,
+        0.070803,
+        0.070803,
+        0.0708,
+        0.0708,
+        0.044496,
+        0.023211,
+        0.023211,
+        0.01326,
+        0.01326,
+        0.01326,
+        0.01326,
+        0.01326,
+        0.01326,
+        0.01326,
+        0.01326,
+        0.01326,
+        0.01326,
+        0.01326,
+        0.01326
+      ],
+      "note": "an island is a UV-connected face set; a seam is a 3D edge whose two faces land in different islands - so seams are counted, not guessed",
+      "detail": [
+        {
+          "island": 0,
+          "faces": [
+            0,
+            1
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.0078,
+            0.7656,
+            0.3203,
+            0.9922
+          ],
+          "mean_density_px_per_unit": 612.69,
+          "surface_mm2": 0.2
+        },
+        {
+          "island": 1,
+          "faces": [
+            2,
+            3
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3301,
+            0.7656,
+            0.6426,
+            0.9922
+          ],
+          "mean_density_px_per_unit": 612.69,
+          "surface_mm2": 0.2
+        },
+        {
+          "island": 2,
+          "faces": [
+            4,
+            5
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6523,
+            0.8398,
+            0.8047,
+            0.9922
+          ],
+          "mean_density_px_per_unit": 296.59,
+          "surface_mm2": 0.28
+        },
+        {
+          "island": 3,
+          "faces": [
+            6,
+            7
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.873,
+            0.6426,
+            0.9863,
+            0.7559
+          ],
+          "mean_density_px_per_unit": 220.53,
+          "surface_mm2": 0.28
+        },
+        {
+          "island": 4,
+          "faces": [
+            8,
+            9
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.0078,
+            0.5293,
+            0.3203,
+            0.7559
+          ],
+          "mean_density_px_per_unit": 612.67,
+          "surface_mm2": 0.2
+        },
+        {
+          "island": 5,
+          "faces": [
+            10,
+            11
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3301,
+            0.5293,
+            0.6426,
+            0.7559
+          ],
+          "mean_density_px_per_unit": 612.67,
+          "surface_mm2": 0.2
+        },
+        {
+          "island": 6,
+          "faces": [
+            12,
+            13
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1248.05,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 7,
+          "faces": [
+            14,
+            15
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1248.05,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 8,
+          "faces": [
+            16,
+            17
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1248.05,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 9,
+          "faces": [
+            18,
+            19
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1248.05,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 10,
+          "faces": [
+            20,
+            21
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1476.15,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 11,
+          "faces": [
+            22,
+            23
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1476.15,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 12,
+          "faces": [
+            24,
+            25
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1476.15,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 13,
+          "faces": [
+            26,
+            27
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1476.15,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 14,
+          "faces": [
+            28,
+            29
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1248.05,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 15,
+          "faces": [
+            30,
+            31
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1248.05,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 16,
+          "faces": [
+            32,
+            33
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1248.05,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 17,
+          "faces": [
+            34,
+            35
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1248.05,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 18,
+          "faces": [
+            36
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 7466.41,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 19,
+          "faces": [
+            37
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 7466.41,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 20,
+          "faces": [
+            38
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 7466.41,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 21,
+          "faces": [
+            39
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 7466.41,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 22,
+          "faces": [
+            40
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 7466.41,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 23,
+          "faces": [
+            41
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 7466.41,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 24,
+          "faces": [
+            42
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 7466.41,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 25,
+          "faces": [
+            43
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 7466.41,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 26,
+          "faces": [
+            44,
+            45
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 27,
+          "faces": [
+            46,
+            47
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 28,
+          "faces": [
+            48,
+            49
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4961,
+            0.4609,
+            0.5547,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1111.13,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 29,
+          "faces": [
+            50,
+            51
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4961,
+            0.4609,
+            0.5547,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1111.13,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 30,
+          "faces": [
+            52,
+            53
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 31,
+          "faces": [
+            54,
+            55
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 32,
+          "faces": [
+            56,
+            57
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 33,
+          "faces": [
+            58,
+            59
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 34,
+          "faces": [
+            60,
+            61
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 35,
+          "faces": [
+            62,
+            63
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 36,
+          "faces": [
+            64,
+            65
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 37,
+          "faces": [
+            66,
+            67
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 38,
+          "faces": [
+            68,
+            69
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 39,
+          "faces": [
+            70,
+            71
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 40,
+          "faces": [
+            72,
+            73
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 41,
+          "faces": [
+            74,
+            75
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 42,
+          "faces": [
+            76,
+            77
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 43,
+          "faces": [
+            78,
+            79
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 44,
+          "faces": [
+            80
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 45,
+          "faces": [
+            81
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 46,
+          "faces": [
+            82
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 47,
+          "faces": [
+            83
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 48,
+          "faces": [
+            84
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 49,
+          "faces": [
+            85
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 50,
+          "faces": [
+            86
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 51,
+          "faces": [
+            87
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 52,
+          "faces": [
+            88,
+            89
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 53,
+          "faces": [
+            90,
+            91
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 54,
+          "faces": [
+            92,
+            93
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4961,
+            0.4609,
+            0.5547,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1111.13,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 55,
+          "faces": [
+            94,
+            95
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4961,
+            0.4609,
+            0.5547,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1111.13,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 56,
+          "faces": [
+            96,
+            97
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 57,
+          "faces": [
+            98,
+            99
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 58,
+          "faces": [
+            100,
+            101
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 59,
+          "faces": [
+            102,
+            103
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 60,
+          "faces": [
+            104,
+            105
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 61,
+          "faces": [
+            106,
+            107
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 62,
+          "faces": [
+            108,
+            109
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 63,
+          "faces": [
+            110,
+            111
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 64,
+          "faces": [
+            112,
+            113
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 65,
+          "faces": [
+            114,
+            115
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 66,
+          "faces": [
+            116,
+            117
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 67,
+          "faces": [
+            118,
+            119
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 68,
+          "faces": [
+            120,
+            121
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 69,
+          "faces": [
+            122,
+            123
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 70,
+          "faces": [
+            124
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 71,
+          "faces": [
+            125
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 72,
+          "faces": [
+            126
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 73,
+          "faces": [
+            127
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 74,
+          "faces": [
+            128
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 75,
+          "faces": [
+            129
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 76,
+          "faces": [
+            130
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 77,
+          "faces": [
+            131
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 78,
+          "faces": [
+            132,
+            133
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 79,
+          "faces": [
+            134,
+            135
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 80,
+          "faces": [
+            136,
+            137
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4961,
+            0.4609,
+            0.5547,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1111.13,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 81,
+          "faces": [
+            138,
+            139
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4961,
+            0.4609,
+            0.5547,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1111.13,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 82,
+          "faces": [
+            140,
+            141
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 83,
+          "faces": [
+            142,
+            143
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 84,
+          "faces": [
+            144,
+            145
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 85,
+          "faces": [
+            146,
+            147
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 86,
+          "faces": [
+            148,
+            149
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 87,
+          "faces": [
+            150,
+            151
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 88,
+          "faces": [
+            152,
+            153
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 89,
+          "faces": [
+            154,
+            155
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 90,
+          "faces": [
+            156,
+            157
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 91,
+          "faces": [
+            158,
+            159
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 92,
+          "faces": [
+            160,
+            161
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 93,
+          "faces": [
+            162,
+            163
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 94,
+          "faces": [
+            164,
+            165
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 95,
+          "faces": [
+            166,
+            167
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 96,
+          "faces": [
+            168
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 97,
+          "faces": [
+            169
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 98,
+          "faces": [
+            170
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 99,
+          "faces": [
+            171
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 100,
+          "faces": [
+            172
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 101,
+          "faces": [
+            173
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 102,
+          "faces": [
+            174
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 103,
+          "faces": [
+            175
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 104,
+          "faces": [
+            176,
+            177
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 105,
+          "faces": [
+            178,
+            179
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 106,
+          "faces": [
+            180,
+            181
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4961,
+            0.4609,
+            0.5547,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1111.13,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 107,
+          "faces": [
+            182,
+            183
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4961,
+            0.4609,
+            0.5547,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1111.13,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 108,
+          "faces": [
+            184,
+            185
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 109,
+          "faces": [
+            186,
+            187
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3262,
+            0.2109,
+            0.3652,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 751.9,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 110,
+          "faces": [
+            188,
+            189
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 111,
+          "faces": [
+            190,
+            191
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 112,
+          "faces": [
+            192,
+            193
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 113,
+          "faces": [
+            194,
+            195
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 114,
+          "faces": [
+            196,
+            197
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 115,
+          "faces": [
+            198,
+            199
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 116,
+          "faces": [
+            200,
+            201
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 117,
+          "faces": [
+            202,
+            203
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1722.94,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 118,
+          "faces": [
+            204,
+            205
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 119,
+          "faces": [
+            206,
+            207
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 120,
+          "faces": [
+            208,
+            209
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 121,
+          "faces": [
+            210,
+            211
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4770.61,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 122,
+          "faces": [
+            212
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 123,
+          "faces": [
+            213
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 124,
+          "faces": [
+            214
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 125,
+          "faces": [
+            215
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 126,
+          "faces": [
+            216
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 127,
+          "faces": [
+            217
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 128,
+          "faces": [
+            218
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 129,
+          "faces": [
+            219
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 130,
+          "faces": [
+            220,
+            221
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3359,
+            0.1816,
+            0.6543,
+            0.2012
+          ],
+          "mean_density_px_per_unit": 573.01,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 131,
+          "faces": [
+            222,
+            223
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3359,
+            0.1816,
+            0.6543,
+            0.2012
+          ],
+          "mean_density_px_per_unit": 573.01,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 132,
+          "faces": [
+            224,
+            225
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6211,
+            0.4609,
+            0.6797,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 102.74,
+          "surface_mm2": 0.34
+        },
+        {
+          "island": 133,
+          "faces": [
+            226,
+            227
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.8145,
+            0.8398,
+            0.9668,
+            0.9922
+          ],
+          "mean_density_px_per_unit": 267.13,
+          "surface_mm2": 0.34
+        },
+        {
+          "island": 134,
+          "faces": [
+            228,
+            229
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3359,
+            0.1816,
+            0.6543,
+            0.2012
+          ],
+          "mean_density_px_per_unit": 573.01,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 135,
+          "faces": [
+            230,
+            231
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.3359,
+            0.1816,
+            0.6543,
+            0.2012
+          ],
+          "mean_density_px_per_unit": 573.01,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 136,
+          "faces": [
+            232,
+            233
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1450.66,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 137,
+          "faces": [
+            234,
+            235
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1450.66,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 138,
+          "faces": [
+            236,
+            237
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1450.66,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 139,
+          "faces": [
+            238,
+            239
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1450.66,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 140,
+          "faces": [
+            240,
+            241
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 6012.17,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 141,
+          "faces": [
+            242,
+            243
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 6012.17,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 142,
+          "faces": [
+            244,
+            245
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 6012.17,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 143,
+          "faces": [
+            246,
+            247
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 6012.17,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 144,
+          "faces": [
+            248,
+            249
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1450.66,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 145,
+          "faces": [
+            250,
+            251
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1450.66,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 146,
+          "faces": [
+            252,
+            253
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1450.66,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 147,
+          "faces": [
+            254,
+            255
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1450.66,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 148,
+          "faces": [
+            256
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 149,
+          "faces": [
+            257
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 150,
+          "faces": [
+            258
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 151,
+          "faces": [
+            259
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 152,
+          "faces": [
+            260
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 153,
+          "faces": [
+            261
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 154,
+          "faces": [
+            262
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 155,
+          "faces": [
+            263
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11199.62,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 156,
+          "faces": [
+            264,
+            265
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.0078,
+            0.1777,
+            0.3262,
+            0.2012
+          ],
+          "mean_density_px_per_unit": 664.89,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 157,
+          "faces": [
+            266,
+            267
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.0078,
+            0.1777,
+            0.3262,
+            0.2012
+          ],
+          "mean_density_px_per_unit": 664.89,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 158,
+          "faces": [
+            268,
+            269
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6523,
+            0.5449,
+            0.8633,
+            0.7559
+          ],
+          "mean_density_px_per_unit": 366.11,
+          "surface_mm2": 0.35
+        },
+        {
+          "island": 159,
+          "faces": [
+            270,
+            271
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6211,
+            0.4609,
+            0.6797,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 101.7,
+          "surface_mm2": 0.35
+        },
+        {
+          "island": 160,
+          "faces": [
+            272,
+            273
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.0078,
+            0.1777,
+            0.3262,
+            0.2012
+          ],
+          "mean_density_px_per_unit": 664.89,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 161,
+          "faces": [
+            274,
+            275
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.0078,
+            0.1777,
+            0.3262,
+            0.2012
+          ],
+          "mean_density_px_per_unit": 664.89,
+          "surface_mm2": 0.02
+        },
+        {
+          "island": 162,
+          "faces": [
+            276,
+            277
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1290.89,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 163,
+          "faces": [
+            278,
+            279
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1290.89,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 164,
+          "faces": [
+            280,
+            281
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1290.89,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 165,
+          "faces": [
+            282,
+            283
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1290.89,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 166,
+          "faces": [
+            284,
+            285
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 5724.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 167,
+          "faces": [
+            286,
+            287
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 5724.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 168,
+          "faces": [
+            288,
+            289
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 5724.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 169,
+          "faces": [
+            290,
+            291
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 5724.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 170,
+          "faces": [
+            292,
+            293
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1290.89,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 171,
+          "faces": [
+            294,
+            295
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1290.89,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 172,
+          "faces": [
+            296,
+            297
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1290.89,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 173,
+          "faces": [
+            298,
+            299
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1290.89,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 174,
+          "faces": [
+            300
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 8959.7,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 175,
+          "faces": [
+            301
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 8959.7,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 176,
+          "faces": [
+            302
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 8959.7,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 177,
+          "faces": [
+            303
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 8959.7,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 178,
+          "faces": [
+            304
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 8959.7,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 179,
+          "faces": [
+            305
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 8959.7,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 180,
+          "faces": [
+            306
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 8959.7,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 181,
+          "faces": [
+            307
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 8959.7,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 182,
+          "faces": [
+            308,
+            309
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6641,
+            0.1836,
+            0.9531,
+            0.2012
+          ],
+          "mean_density_px_per_unit": 995.57,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 183,
+          "faces": [
+            310,
+            311
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6641,
+            0.1836,
+            0.9531,
+            0.2012
+          ],
+          "mean_density_px_per_unit": 995.57,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 184,
+          "faces": [
+            312,
+            313
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.0078,
+            0.2109,
+            0.3164,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 705.36,
+          "surface_mm2": 0.2
+        },
+        {
+          "island": 185,
+          "faces": [
+            314,
+            315
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6211,
+            0.4609,
+            0.6797,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 133.93,
+          "surface_mm2": 0.2
+        },
+        {
+          "island": 186,
+          "faces": [
+            316,
+            317
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6641,
+            0.1836,
+            0.9531,
+            0.2012
+          ],
+          "mean_density_px_per_unit": 995.57,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 187,
+          "faces": [
+            318,
+            319
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6641,
+            0.1836,
+            0.9531,
+            0.2012
+          ],
+          "mean_density_px_per_unit": 995.57,
+          "surface_mm2": 0.01
+        },
+        {
+          "island": 188,
+          "faces": [
+            320,
+            321
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1912.5,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 189,
+          "faces": [
+            322,
+            323
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1912.5,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 190,
+          "faces": [
+            324,
+            325
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1912.5,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 191,
+          "faces": [
+            326,
+            327
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1912.5,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 192,
+          "faces": [
+            328,
+            329
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11685.57,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 193,
+          "faces": [
+            330,
+            331
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11685.57,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 194,
+          "faces": [
+            332,
+            333
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11685.57,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 195,
+          "faces": [
+            334,
+            335
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11685.57,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 196,
+          "faces": [
+            336,
+            337
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1912.5,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 197,
+          "faces": [
+            338,
+            339
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1912.5,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 198,
+          "faces": [
+            340,
+            341
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1912.5,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 199,
+          "faces": [
+            342,
+            343
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1912.5,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 200,
+          "faces": [
+            344
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 14932.83,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 201,
+          "faces": [
+            345
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 14932.83,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 202,
+          "faces": [
+            346
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 14932.83,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 203,
+          "faces": [
+            347
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 14932.83,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 204,
+          "faces": [
+            348
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 14932.83,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 205,
+          "faces": [
+            349
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 14932.83,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 206,
+          "faces": [
+            350
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 14932.83,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 207,
+          "faces": [
+            351
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 14932.83,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 208,
+          "faces": [
+            352,
+            353
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1712.81,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 209,
+          "faces": [
+            354,
+            355
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1712.81,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 210,
+          "faces": [
+            356,
+            357
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 211,
+          "faces": [
+            358,
+            359
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 212,
+          "faces": [
+            360,
+            361
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 213,
+          "faces": [
+            362,
+            363
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 214,
+          "faces": [
+            364,
+            365
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1712.81,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 215,
+          "faces": [
+            366,
+            367
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1712.81,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 216,
+          "faces": [
+            368,
+            369
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 217,
+          "faces": [
+            370,
+            371
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 218,
+          "faces": [
+            372,
+            373
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 219,
+          "faces": [
+            374,
+            375
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 220,
+          "faces": [
+            376,
+            377
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6895,
+            0.4844,
+            0.9004,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1267.42,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 221,
+          "faces": [
+            378,
+            379
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6895,
+            0.4844,
+            0.9004,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1267.42,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 222,
+          "faces": [
+            380,
+            381
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6895,
+            0.4844,
+            0.9004,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1486.18,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 223,
+          "faces": [
+            382,
+            383
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6895,
+            0.4844,
+            0.9004,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1486.18,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 224,
+          "faces": [
+            384,
+            385
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6895,
+            0.4844,
+            0.9004,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4699.71,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 225,
+          "faces": [
+            386,
+            387
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6895,
+            0.4844,
+            0.9004,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4699.71,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 226,
+          "faces": [
+            388,
+            389
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 2989.65,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 227,
+          "faces": [
+            390,
+            391
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 2989.65,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 228,
+          "faces": [
+            392,
+            393
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 2989.65,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 229,
+          "faces": [
+            394,
+            395
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 2989.65,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 230,
+          "faces": [
+            396,
+            397
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 9454.09,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 231,
+          "faces": [
+            398,
+            399
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 9454.09,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 232,
+          "faces": [
+            400,
+            401
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 9454.09,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 233,
+          "faces": [
+            402,
+            403
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 9454.09,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 234,
+          "faces": [
+            404,
+            405
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11085.9,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 235,
+          "faces": [
+            406,
+            407
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11085.9,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 236,
+          "faces": [
+            408,
+            409
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11085.9,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 237,
+          "faces": [
+            410,
+            411
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11085.9,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 238,
+          "faces": [
+            412
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 239,
+          "faces": [
+            413
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 240,
+          "faces": [
+            414
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 241,
+          "faces": [
+            415
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 242,
+          "faces": [
+            416
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 243,
+          "faces": [
+            417
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 244,
+          "faces": [
+            418
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 245,
+          "faces": [
+            419
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 246,
+          "faces": [
+            420,
+            421
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1712.81,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 247,
+          "faces": [
+            422,
+            423
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1712.81,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 248,
+          "faces": [
+            424,
+            425
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 249,
+          "faces": [
+            426,
+            427
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 250,
+          "faces": [
+            428,
+            429
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 251,
+          "faces": [
+            430,
+            431
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 252,
+          "faces": [
+            432,
+            433
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1712.81,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 253,
+          "faces": [
+            434,
+            435
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1712.81,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 254,
+          "faces": [
+            436,
+            437
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 255,
+          "faces": [
+            438,
+            439
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 256,
+          "faces": [
+            440,
+            441
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 257,
+          "faces": [
+            442,
+            443
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1326.74,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 258,
+          "faces": [
+            444,
+            445
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6895,
+            0.4844,
+            0.9004,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1267.42,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 259,
+          "faces": [
+            446,
+            447
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6895,
+            0.4844,
+            0.9004,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1267.42,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 260,
+          "faces": [
+            448,
+            449
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6895,
+            0.4844,
+            0.9004,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1486.18,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 261,
+          "faces": [
+            450,
+            451
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6895,
+            0.4844,
+            0.9004,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1486.18,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 262,
+          "faces": [
+            452,
+            453
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6895,
+            0.4844,
+            0.9004,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4699.71,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 263,
+          "faces": [
+            454,
+            455
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.6895,
+            0.4844,
+            0.9004,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4699.71,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 264,
+          "faces": [
+            456,
+            457
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 2989.65,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 265,
+          "faces": [
+            458,
+            459
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 2989.65,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 266,
+          "faces": [
+            460,
+            461
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 2989.65,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 267,
+          "faces": [
+            462,
+            463
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 2989.65,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 268,
+          "faces": [
+            464,
+            465
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 9454.09,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 269,
+          "faces": [
+            466,
+            467
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 9454.09,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 270,
+          "faces": [
+            468,
+            469
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 9454.09,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 271,
+          "faces": [
+            470,
+            471
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 9454.09,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 272,
+          "faces": [
+            472,
+            473
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11085.9,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 273,
+          "faces": [
+            474,
+            475
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11085.9,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 274,
+          "faces": [
+            476,
+            477
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11085.9,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 275,
+          "faces": [
+            478,
+            479
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11085.9,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 276,
+          "faces": [
+            480
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 277,
+          "faces": [
+            481
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 278,
+          "faces": [
+            482
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 279,
+          "faces": [
+            483
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 280,
+          "faces": [
+            484
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 281,
+          "faces": [
+            485
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 282,
+          "faces": [
+            486
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 283,
+          "faces": [
+            487
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 284,
+          "faces": [
+            488,
+            489
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1535.4,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 285,
+          "faces": [
+            490,
+            491
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1535.4,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 286,
+          "faces": [
+            492,
+            493
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1868.83,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 287,
+          "faces": [
+            494,
+            495
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1868.83,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 288,
+          "faces": [
+            496,
+            497
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.5645,
+            0.457,
+            0.6113,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 843.32,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 289,
+          "faces": [
+            498,
+            499
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 781.79,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 290,
+          "faces": [
+            500,
+            501
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11851.33,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 291,
+          "faces": [
+            502,
+            503
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11851.33,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 292,
+          "faces": [
+            504,
+            505
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11851.33,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 293,
+          "faces": [
+            506,
+            507
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11851.33,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 294,
+          "faces": [
+            508,
+            509
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4957.77,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 295,
+          "faces": [
+            510,
+            511
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4957.77,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 296,
+          "faces": [
+            512,
+            513
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4957.77,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 297,
+          "faces": [
+            514,
+            515
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4957.77,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 298,
+          "faces": [
+            516,
+            517
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 6034.4,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 299,
+          "faces": [
+            518,
+            519
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 6034.4,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 300,
+          "faces": [
+            520,
+            521
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 6034.4,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 301,
+          "faces": [
+            522,
+            523
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 6034.4,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 302,
+          "faces": [
+            524
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 303,
+          "faces": [
+            525
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 304,
+          "faces": [
+            526
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 305,
+          "faces": [
+            527
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 306,
+          "faces": [
+            528
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 307,
+          "faces": [
+            529
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 308,
+          "faces": [
+            530
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 309,
+          "faces": [
+            531
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 310,
+          "faces": [
+            532,
+            533
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1535.4,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 311,
+          "faces": [
+            534,
+            535
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1535.4,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 312,
+          "faces": [
+            536,
+            537
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1868.83,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 313,
+          "faces": [
+            538,
+            539
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 1868.83,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 314,
+          "faces": [
+            540,
+            541
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.5645,
+            0.457,
+            0.6113,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 843.32,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 315,
+          "faces": [
+            542,
+            543
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.4277,
+            0.4766,
+            0.4863,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 781.79,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 316,
+          "faces": [
+            544,
+            545
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11851.33,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 317,
+          "faces": [
+            546,
+            547
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11851.33,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 318,
+          "faces": [
+            548,
+            549
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11851.33,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 319,
+          "faces": [
+            550,
+            551
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 11851.33,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 320,
+          "faces": [
+            552,
+            553
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4957.77,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 321,
+          "faces": [
+            554,
+            555
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4957.77,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 322,
+          "faces": [
+            556,
+            557
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4957.77,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 323,
+          "faces": [
+            558,
+            559
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 4957.77,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 324,
+          "faces": [
+            560,
+            561
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 6034.4,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 325,
+          "faces": [
+            562,
+            563
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 6034.4,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 326,
+          "faces": [
+            564,
+            565
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 6034.4,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 327,
+          "faces": [
+            566,
+            567
+          ],
+          "face_count": 2,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 6034.4,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 328,
+          "faces": [
+            568
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 329,
+          "faces": [
+            569
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 330,
+          "faces": [
+            570
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 331,
+          "faces": [
+            571
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 332,
+          "faces": [
+            572
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 333,
+          "faces": [
+            573
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 334,
+          "faces": [
+            574
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        },
+        {
+          "island": 335,
+          "faces": [
+            575
+          ],
+          "face_count": 1,
+          "uv_bbox": [
+            0.375,
+            0.2109,
+            0.418,
+            0.5195
+          ],
+          "mean_density_px_per_unit": 17919.39,
+          "surface_mm2": 0.0
+        }
+      ]
+    },
+    "packing": {
+      "uv_bbox": [
+        0.0078,
+        0.1777,
+        0.9863,
+        0.9922
+      ],
+      "used_uv_area": 3.514246,
+      "utilization": 3.5142,
+      "faces_outside_0_1": 0,
+      "overlap_cells": 425938,
+      "overlap_grid": 256,
+      "note": "utilization is the summed UV area of all faces (1.0 = the whole square, wasted space excluded); overlap is measured on a 256x256 grid, so it finds stacked islands, not sub-texel touching"
+    },
+    "checks": [
+      {
+        "id": "uv-flipped-faces",
+        "level": "fail",
+        "message": "148 face(s) have inverted UV winding",
+        "where": "first at face 0",
+        "try": "mirror those UV islands back: a flipped face samples normal maps mirrored, so lighting is wrong in a way no texture edit can fix"
+      },
+      {
+        "id": "uv-overlap",
+        "level": "warn",
+        "message": "UV islands overlap in 425938 cell(s) of a 256x256 grid",
+        "where": "stacked islands share texels",
+        "try": "if the overlap is deliberate (mirrored/tiled parts sharing texture), ignore this; otherwise re-pack the layout"
+      },
+      {
+        "id": "uv-stretch",
+        "level": "warn",
+        "message": "328 face(s) stretched more than 2.0:1 (9.4% of the surface); worst 7.352:1",
+        "where": "worst at face 321",
+        "try": "add a seam through the stretched region and re-unwrap it; stretch cannot be painted out"
+      },
+      {
+        "id": "texel-density-uneven",
+        "level": "warn",
+        "message": "texel density varies 54.08x across the mesh (331.35..17919.39 px/unit)",
+        "where": "island #159 at uv (0.6211, 0.4609)-(0.6797, 0.5195): 101.7 px/unit vs 573.51 mesh mean",
+        "try": "scale island #159 up ~5.6x in the UV editor (islands are labelled in uv_layout.png); repack if it no longer fits"
+      }
+    ]
+  },
+  "textures": [
+    {
+      "basics": {
+        "name": "crate_albedo.png",
+        "size_px": [
+          1024,
+          1024
+        ],
+        "channels": 3,
+        "power_of_two": true,
+        "square": true,
+        "megapixels": 1.049
+      },
+      "kind": "albedo",
+      "kind_source": "filename",
+      "tiling": {
+        "horizontal": {
+          "edge_diff": 0.0,
+          "interior_median_diff": 0.00321,
+          "ratio": 0.0,
+          "tiles": true
+        },
+        "vertical": {
+          "edge_diff": 0.0,
+          "interior_median_diff": 0.00189,
+          "ratio": 0.0,
+          "tiles": true
+        },
+        "tiles": true,
+        "note": "the wrap difference is compared against the texture's OWN median neighbouring-pixel difference: noisy images are allowed a big edge jump, smooth ones are not"
+      },
+      "repetition": {
+        "peak_correlation": 0.4681,
+        "peak_offset_px": [
+          -13,
+          0
+        ],
+        "periodic": false,
+        "analysis_size": [
+          256,
+          256
+        ],
+        "note": "off-centre autocorrelation peak; >0.5 means a clearly repeating pattern at that offset. Expected in a deliberate pattern, a defect in a 'random' material"
+      },
+      "compression": {
+        "block_8": {
+          "x_edge_gradient": 0.00627,
+          "x_interior_gradient": 0.0051,
+          "x_ratio": 1.228,
+          "y_edge_gradient": 0.00735,
+          "y_interior_gradient": 0.00497,
+          "y_ratio": 1.479,
+          "ratio": 1.228,
+          "blocking": false
+        },
+        "block_4": {
+          "x_edge_gradient": 0.00599,
+          "x_interior_gradient": 0.005,
+          "x_ratio": 1.199,
+          "y_edge_gradient": 0.00645,
+          "y_interior_gradient": 0.00487,
+          "y_ratio": 1.325,
+          "ratio": 1.199,
+          "blocking": false
+        },
+        "note": "gradient energy on block boundaries vs between them, measured on BOTH axes: a codec's grid is square, so blocking is only flagged when x and y both exceed 1.25x with a visible (>1/255) edge step"
+      }
+    },
+    {
+      "basics": {
+        "name": "crate_normal.png",
+        "size_px": [
+          1024,
+          1024
+        ],
+        "channels": 3,
+        "power_of_two": true,
+        "square": true,
+        "megapixels": 1.049
+      },
+      "kind": "normal",
+      "kind_source": "filename",
+      "tiling": {
+        "horizontal": {
+          "edge_diff": 0.0,
+          "interior_median_diff": 0.0003,
+          "ratio": 0.0,
+          "tiles": true
+        },
+        "vertical": {
+          "edge_diff": 0.0,
+          "interior_median_diff": 0.00018,
+          "ratio": 0.0,
+          "tiles": true
+        },
+        "tiles": true,
+        "note": "the wrap difference is compared against the texture's OWN median neighbouring-pixel difference: noisy images are allowed a big edge jump, smooth ones are not"
+      },
+      "repetition": {
+        "peak_correlation": 0.3495,
+        "peak_offset_px": [
+          -20,
+          0
+        ],
+        "periodic": false,
+        "analysis_size": [
+          256,
+          256
+        ],
+        "note": "off-centre autocorrelation peak; >0.5 means a clearly repeating pattern at that offset. Expected in a deliberate pattern, a defect in a 'random' material"
+      },
+      "compression": {
+        "block_8": {
+          "x_edge_gradient": 0.00135,
+          "x_interior_gradient": 0.00128,
+          "x_ratio": 1.052,
+          "y_edge_gradient": 0.00142,
+          "y_interior_gradient": 0.00131,
+          "y_ratio": 1.086,
+          "ratio": 1.052,
+          "blocking": false
+        },
+        "block_4": {
+          "x_edge_gradient": 0.0013,
+          "x_interior_gradient": 0.00129,
+          "x_ratio": 1.01,
+          "y_edge_gradient": 0.00119,
+          "y_interior_gradient": 0.00136,
+          "y_ratio": 0.878,
+          "ratio": 0.878,
+          "blocking": false
+        },
+        "note": "gradient energy on block boundaries vs between them, measured on BOTH axes: a codec's grid is square, so blocking is only flagged when x and y both exceed 1.25x with a visible (>1/255) edge step"
+      },
+      "normal_map": {
+        "unit_length": {
+          "mean": 1.0,
+          "min": 0.995,
+          "max": 1.0055,
+          "off_spec_fraction": 0.0,
+          "ok": true
+        },
+        "z_channel": {
+          "mean": 0.9974,
+          "negative_fraction": 0.0,
+          "ok": true
+        },
+        "green_convention": {
+          "gradient_correlation": 1e-05,
+          "likely": "OpenGL (+Y up)",
+          "note": "a guess from the map's own statistics, not a fact in the file: no format records the convention. Confirm against what the engine expects"
+        },
+        "flat_fraction": 0.9139
+      }
+    },
+    {
+      "basics": {
+        "name": "crate_roughness.png",
+        "size_px": [
+          1024,
+          1024
+        ],
+        "channels": 1,
+        "power_of_two": true,
+        "square": true,
+        "megapixels": 1.049
+      },
+      "kind": "roughness",
+      "kind_source": "filename",
+      "tiling": {
+        "horizontal": {
+          "edge_diff": 0.0,
+          "interior_median_diff": 0.00269,
+          "ratio": 0.0,
+          "tiles": true
+        },
+        "vertical": {
+          "edge_diff": 0.0,
+          "interior_median_diff": 0.00235,
+          "ratio": 0.0,
+          "tiles": true
+        },
+        "tiles": true,
+        "note": "the wrap difference is compared against the texture's OWN median neighbouring-pixel difference: noisy images are allowed a big edge jump, smooth ones are not"
+      },
+      "repetition": {
+        "peak_correlation": 0.4986,
+        "peak_offset_px": [
+          -13,
+          0
+        ],
+        "periodic": false,
+        "analysis_size": [
+          256,
+          256
+        ],
+        "note": "off-centre autocorrelation peak; >0.5 means a clearly repeating pattern at that offset. Expected in a deliberate pattern, a defect in a 'random' material"
+      },
+      "compression": {
+        "block_8": {
+          "x_edge_gradient": 0.0049,
+          "x_interior_gradient": 0.00401,
+          "x_ratio": 1.223,
+          "y_edge_gradient": 0.00614,
+          "y_interior_gradient": 0.00413,
+          "y_ratio": 1.485,
+          "ratio": 1.223,
+          "blocking": false
+        },
+        "block_4": {
+          "x_edge_gradient": 0.00477,
+          "x_interior_gradient": 0.0039,
+          "x_ratio": 1.223,
+          "y_edge_gradient": 0.00509,
+          "y_interior_gradient": 0.00415,
+          "y_ratio": 1.228,
+          "ratio": 1.223,
+          "blocking": false
+        },
+        "note": "gradient energy on block boundaries vs between them, measured on BOTH axes: a codec's grid is square, so blocking is only flagged when x and y both exceed 1.25x with a visible (>1/255) edge step"
+      },
+      "channel": {
+        "kind": "roughness",
+        "mean": 0.5982,
+        "std": 0.0802,
+        "min": 0.2431,
+        "max": 0.8588,
+        "percentiles": {
+          "p1": 0.3098,
+          "p25": 0.5843,
+          "p50": 0.6,
+          "p75": 0.6,
+          "p99": 0.8
+        },
+        "distinct_levels_of_256": 158,
+        "range_used": 0.4902,
+        "is_constant": false
+      }
+    }
+  ]
+}

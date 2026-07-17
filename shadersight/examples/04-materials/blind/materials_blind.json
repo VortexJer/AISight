@@ -1,0 +1,49 @@
+{
+  "materials": {
+    "gold": {
+      "base_color": [1.0, 0.766, 0.336],
+      "roughness": 0.18,
+      "metallic": 1.0
+    },
+    "aluminum": {
+      "base_color": [0.913, 0.921, 0.925],
+      "roughness": 0.22,
+      "metallic": 1.0
+    },
+    "copper": {
+      "base_color": [0.955, 0.637, 0.538],
+      "roughness": 0.16,
+      "metallic": 1.0
+    },
+    "red_car_paint": {
+      "base_color": [0.45, 0.015, 0.02],
+      "roughness": 0.12,
+      "metallic": 0.0,
+      "specular": 1.0
+    },
+    "black_rubber": {
+      "base_color": [0.022, 0.022, 0.024],
+      "roughness": 0.82,
+      "metallic": 0.0,
+      "specular": 0.45
+    },
+    "gray_plastic": {
+      "base_color": [0.34, 0.34, 0.35],
+      "roughness": 0.42,
+      "metallic": 0.0,
+      "specular": 0.5
+    },
+    "skin": {
+      "base_color": [0.56, 0.32, 0.21],
+      "roughness": 0.55,
+      "metallic": 0.0,
+      "specular": 0.35
+    },
+    "snow": {
+      "base_color": [0.9, 0.92, 0.95],
+      "roughness": 0.75,
+      "metallic": 0.0,
+      "specular": 0.5
+    }
+  }
+}

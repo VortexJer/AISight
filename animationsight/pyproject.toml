@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "animationsight"
-version = "0.5.0"
+version = "0.6.0"
 description = "Animation review built exclusively for AI agents: a clip in, exact motion measurements + evidence renders out."
 readme = "README.md"
 license = { text = "MIT" }

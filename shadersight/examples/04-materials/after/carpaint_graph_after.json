@@ -1,0 +1,137 @@
+{
+ "name": "carpaint_after",
+ "output": "n15",
+ "nodes": [
+  {
+   "id": "n1",
+   "type": "uv",
+   "inputs": {}
+  },
+  {
+   "id": "n2",
+   "type": "texture",
+   "inputs": {
+    "uv": "n1.out"
+   },
+   "comment": "baked flake map: voronoi^8 mask in R, fbm height in G"
+  },
+  {
+   "id": "n3",
+   "type": "constant",
+   "inputs": {
+    "value": [
+     0.45,
+     0.015,
+     0.02
+    ]
+   }
+  },
+  {
+   "id": "n4",
+   "type": "constant",
+   "inputs": {
+    "value": [
+     0.85,
+     0.83,
+     0.88
+    ]
+   }
+  },
+  {
+   "id": "n5",
+   "type": "mix",
+   "inputs": {
+    "a": "n3.out",
+    "b": "n4.out",
+    "factor": "n2.r"
+   }
+  },
+  {
+   "id": "n6",
+   "type": "normal",
+   "inputs": {}
+  },
+  {
+   "id": "n7",
+   "type": "multiply",
+   "inputs": {
+    "a": "n2.g",
+    "b": 0.12
+   }
+  },
+  {
+   "id": "n8",
+   "type": "add",
+   "inputs": {
+    "a": "n6.out",
+    "b": "n7.out"
+   }
+  },
+  {
+   "id": "n9",
+   "type": "normalize",
+   "inputs": {
+    "a": "n8.out"
+   }
+  },
+  {
+   "id": "n10",
+   "type": "mix",
+   "inputs": {
+    "a": 0.35,
+    "b": 0.15,
+    "factor": "n2.r"
+   }
+  },
+  {
+   "id": "n11",
+   "type": "brdf",
+   "inputs": {
+    "base_color": "n5.out",
+    "roughness": "n10.out",
+    "metallic": "n2.r",
+    "normal": "n9.out"
+   }
+  },
+  {
+   "id": "n12",
+   "type": "brdf",
+   "inputs": {
+    "base_color": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "roughness": 0.04,
+    "metallic": 0.0,
+    "normal": "n6.out"
+   }
+  },
+  {
+   "id": "n13",
+   "type": "fresnel",
+   "inputs": {
+    "normal": "n6.out",
+    "ior": 1.5
+   }
+  },
+  {
+   "id": "n14",
+   "type": "clamp",
+   "inputs": {
+    "a": "n13.out",
+    "min": 0.0,
+    "max": 1.0
+   }
+  },
+  {
+   "id": "n15",
+   "type": "mix",
+   "inputs": {
+    "a": "n11.out",
+    "b": "n12.out",
+    "factor": "n14.out"
+   }
+  }
+ ]
+}
