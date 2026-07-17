@@ -34,10 +34,15 @@ def analyze_material(mat: B.Material, quality: str = "normal") -> dict:
             f"receives at {energy['max_at_theta_deg']} deg",
             where=f"directional albedo peaks at "
                   f"theta={energy['max_at_theta_deg']} deg",
-            suggestion="a passive surface cannot emit energy: lower the "
-                       "base colour or specular, or check the F/D/G "
-                       "normalisation - most often the D term is not "
-                       "normalised so its hemisphere integral exceeds 1"))
+            suggestion=("the boost multiplier IS the violation: "
+                        f"boost={mat.boost} manufactures energy by "
+                        "construction - set it to 1.0 and restyle with "
+                        "roughness/F0 instead"
+                        if mat.boost > 1.0 else
+                        "a passive surface cannot emit energy: lower the "
+                        "base colour or specular, or check the F/D/G "
+                        "normalisation - most often the D term is not "
+                        "normalised so its hemisphere integral exceeds 1")))
     if not recip["reciprocal"]:
         checks.append(_check(
             "not-reciprocal", "fail",
@@ -72,7 +77,7 @@ def analyze_material(mat: B.Material, quality: str = "normal") -> dict:
     return {
         "status": ("failed" if fails else
                    ("warnings" if checks else "ok")),
-        "material": {"name": mat.name,
+        "material": {"name": mat.name, "boost": mat.boost,
                      "base_color": [round(float(v), 4) for v in mat.base_color],
                      "roughness": mat.roughness, "metallic": mat.metallic,
                      "specular": mat.specular,
@@ -112,7 +117,8 @@ def diff_reports(a: dict, b: dict) -> list[str]:
     lines = [f"diff: [{a.get('status')}] -> [{b.get('status')}]"]
     ma, mb = a.get("material"), b.get("material")
     if ma and mb:
-        for k in ("base_color", "roughness", "metallic", "specular"):
+        for k in ("base_color", "roughness", "metallic", "specular",
+                  "boost"):
             if ma.get(k) != mb.get(k):
                 lines.append(f"  {k}: {ma.get(k)} -> {mb.get(k)}")
         ea = a["energy_conservation"]

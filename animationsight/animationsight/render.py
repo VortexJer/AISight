@@ -12,6 +12,7 @@ identical input.
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 
 import numpy as np
@@ -129,6 +130,90 @@ def render_frames(clip, pos: np.ndarray, com: np.ndarray, out_dir: Path,
         img.save(out_dir / name)
         written.append(name)
     return written
+
+
+def render_flight_arc(clip, pos: np.ndarray, com: np.ndarray,
+                      flight: dict, out_path: Path, up: str,
+                      floor_mm: float, g_mm_s2: float = 9810.0,
+                      view: str = "side", size: int = 900) -> None:
+    """THE picture for a jump: ghosted poses across the flight, the
+    measured COM arc drawn solid, and the arc physics WOULD draw (same
+    apex, 1 g) dashed beside it. A floaty flight and its fix stop being
+    numbers and become two visibly different curves.
+
+    Ghosts fade with time; the COM arc carries the gravity ratio as a
+    burned-in label. Deterministic."""
+    a, b = flight["frames"]
+    n = b - a + 1
+    picks = [a + round(i * (n - 1) / 6) for i in range(7)]
+
+    all2d = _project(pos[a:b + 1], up, view)
+    lo = all2d.reshape(-1, 2).min(axis=0)
+    hi = all2d.reshape(-1, 2).max(axis=0)
+    span = float(max(hi[0] - lo[0], hi[1] - lo[1], 1.0)) * 1.30
+    cx = float((lo[0] + hi[0]) / 2)
+    cy = float((lo[1] + hi[1]) / 2)
+    pad = size * 0.07
+
+    def to_px(p):
+        s = (size - 2 * pad) / span
+        return (pad + (p[0] - cx) * s + (size - 2 * pad) / 2,
+                size - (pad + (p[1] - cy) * s + (size - 2 * pad) / 2))
+
+    img = Image.new("RGB", (size, size), BG)
+    d = ImageDraw.Draw(img)
+
+    y_floor = to_px((cx, floor_mm))[1]
+    d.line([(0, y_floor), (size, y_floor)], fill=GRID, width=2)
+    d.text((6, y_floor + 4), "floor", fill=GRID, font=_font(11))
+
+    bones = [(i, clip.joints.index(j.parent))
+             for i, j in enumerate(clip.joints) if j.parent is not None]
+    for gi, f in enumerate(picks):
+        t = gi / max(len(picks) - 1, 1)
+        shade = tuple(int(BG[k] + (BONE[k] - BG[k]) * (0.25 + 0.75 * t))
+                      for k in range(3))
+        p2 = _project(pos[f], up, view)
+        for i, j in bones:
+            d.line([to_px(p2[i]), to_px(p2[j])], fill=shade, width=3)
+
+    # the measured COM arc, with a dot per frame: time made visible
+    c2 = _project(com[a:b + 1], up, view)
+    d.line([to_px(p) for p in c2], fill=ACCENT, width=3)
+    for p in c2:
+        x, y = to_px(p)
+        d.ellipse([x - 2.5, y - 2.5, x + 2.5, y + 2.5], fill=ACCENT)
+
+    # The arc physics would draw. In space both parabolas have the same
+    # shape — floatiness lives in TIME — so the honest reference keeps
+    # the takeoff velocity and the apex and lands where 1 g says:
+    # T_phys/T_actual = sqrt(g_ratio), i.e. the reference arc is
+    # sqrt(ratio) as wide. For a physical flight the two coincide.
+    h0 = float(c2[0, 1])
+    apex = float(c2[:, 1].max()) - h0
+    x0, x1 = float(c2[0, 0]), float(c2[-1, 0])
+    ratio = max(float(flight.get("gravity_ratio") or 1.0), 1e-3)
+    x1_ref = x0 + (x1 - x0) * math.sqrt(ratio)
+    ref = []
+    for i in range(41):
+        s = i / 40.0
+        ref.append((x0 + (x1_ref - x0) * s,
+                    h0 + 4.0 * apex * s * (1.0 - s)))
+    for i in range(0, 40, 2):                      # dashed
+        d.line([to_px(ref[i]), to_px(ref[i + 1])], fill=COM_C, width=3)
+    xe, ye = to_px(ref[-1])
+    d.ellipse([xe - 4, ye - 4, xe + 4, ye + 4], outline=COM_C, width=2)
+
+    ratio = flight.get("gravity_ratio")
+    d.text((10, 8), _ascii(f"{clip.source} - flight, frames {a}..{b} "
+                           f"({flight['duration_s']}s)"),
+           fill=INK, font=_font(14))
+    d.text((10, 26), _ascii(
+        f"measured COM arc (red): {ratio}x gravity   -   "
+        f"1 g reference shape (green, dashed)   -   "
+        f"apex +{flight['apex_rise_mm']} mm"),
+        fill=BONE, font=_font(12))
+    img.save(out_path)
 
 
 def render_track(values: np.ndarray, out_path: Path, title: str,

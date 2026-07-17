@@ -1,8 +1,16 @@
 # 02 — The floaty jump (before / after)
 
-The defect nobody can see and everybody can feel. `make_jump.py` writes
-the same standing jump twice: once with an arbitrary "looks nice"
-airtime, once with the airtime physics demands for that apex.
+A full standing long-jump — crouch, drive, travelling flight, landing
+absorb 60 cm ahead, recovery — written twice by `make_jump.py`. The two
+clips have IDENTICAL poses; only the flight's timing differs:
+
+| | apex | forward travel | airtime | effective gravity |
+|---|---|---|---|---|
+| `jump_floaty.bvh` | +493 mm | 600 mm | 0.833 s (+35%) | **0.554x g** |
+| `jump_fixed.bvh` | +493 mm | 600 mm | 0.667 s | **0.905x g** |
+
+That is exactly why the defect is invisible to inspection: every still
+frame of both clips is a fine jump pose. Floatiness lives in time.
 
 ```bash
 animationsight inspect jump_floaty.bvh --kind oneshot --out out_floaty
@@ -10,50 +18,49 @@ animationsight inspect jump_fixed.bvh  --kind oneshot --out out_fixed
 animationsight diff jump_floaty.bvh jump_fixed.bvh
 ```
 
-## Before: the flight disobeys gravity
+## The arc sheet makes time visible
+
+`inspect` writes `flight_0_arc.png` for any clip with a flight: ghosted
+poses across the jump, the measured COM arc in red (one dot per frame),
+and dashed in green the arc physics would draw — same takeoff velocity,
+same apex, landing where 1 g says (`T = 2*sqrt(2h/g)`, so the reference
+is `sqrt(g_ratio)` as wide).
+
+<p align="center">
+  <img src="out_floaty/flight_0_arc.png" width="49%">
+  <img src="out_fixed/flight_0_arc.png" width="49%">
+</p>
+<p align="center"><em>left, the floaty take: the red measured arc overshoots the green 1 g reference by a third of the jump. right, the fix: the two arcs coincide.</em></p>
+
+## The findings
 
 ```
-flight: frames 17..39 (0.7667s, apex +374.2 mm) -> 0.552x gravity
-[WARN] flight at frames [17, 39] falls at 0.55x gravity: it will read as floaty
-       where: apex +374.2 mm over 0.7667s; at 1 g that apex takes 0.55s of airtime
+# floaty:
+flight: frames 23..47 (0.8333s, apex +493.2 mm) -> 0.554x gravity
+[WARN] flight at frames [23, 47] falls at 0.55x gravity: it will read as floaty
+       where: apex +493.2 mm over 0.8333s; at 1 g that apex takes 0.63s of airtime
        try:   physics fixes it two ways: shorten the airtime to match the apex,
-              or raise the apex to match the airtime (T = 2*sqrt(2h/g)); or
-              accept the stylised float and say so
+              or raise the apex to match the airtime (T = 2*sqrt(2h/g))
+
+# fixed:
+flight: frames 23..42 (0.6667s, apex +493.5 mm) -> 0.905x gravity
+(no floaty-flight finding)
 ```
-
-Every still frame of this clip looks fine — the pose is right, the arc
-is smooth. The COM is simply falling at half the acceleration the world
-uses, and the only way to know is to fit the parabola. (This clip is a
-faithful reproduction of the jump the tool's own author wrote while
-dogfooding, floaty without noticing.)
-
-## After: same apex, honest airtime
-
-```
-flight: frames 17..33 (0.5667s, apex +373.3 mm) -> 1.005x gravity
-```
-
-No floaty-flight finding. The fix came straight from the `try:` line —
-`T = 2*sqrt(2h/g)` — not from re-watching anything.
 
 ## The diff is the proof
 
 ```
-diff: jump_floaty.bvh [warnings] -> jump_fixed.bvh [warnings]
-  timing: 56 frames @ 30.0003 fps -> 51 @ 30.0003
-  flight 0: 0.552x gravity (0.7667s) -> 1.005x gravity (0.5667s)
-  'RightShin': peak speed 3819.1 -> 4761.8 mm/s (+942.7)
-  ... and 11 more joint(s) with peak-speed changes between +444.5 and +841.3 mm/s
-  GONE [floaty-flight] flight at frames [17, 39] falls at 0.55x gravity: ...
+animationsight diff jump_floaty.bvh jump_fixed.bvh
+  flight 0: 0.554x gravity (0.8333s) -> 0.905x gravity (0.6667s)
+  'RightShin': peak speed ... (+...)
+  ... and N more joint(s) with peak-speed changes ...
+  GONE [floaty-flight] flight at frames [23, 47] falls at 0.55x gravity ...
 ```
 
-<p align="center">
-  <img src="out_floaty/frames/frame_0022.png" width="44%">
-  <img src="out_floaty/track_com_height.png" width="54%">
-</p>
-<p align="center"><em>left: mid-flight, legs tucked, COM (green) drawn with its ground projection · right: the COM height track — that parabola is the thing being measured</em></p>
+(Flights lead the diff, and near-identical per-joint peak lines fold
+into one — both changes came from using this very example and finding
+the headline buried.)
 
-Both clips also report their pose snaps honestly (`--kind oneshot`
-silences only the loop check): this is a blocking-pass jump with
-instantaneous pose changes, and the report says so — 8-9 "pose snap"
-events, each needing inbetweens.
+Both clips also report their pose snaps honestly: this is a
+blocking-pass jump with instantaneous pose changes, and `--kind
+oneshot` silences only the loop check, never the snaps.

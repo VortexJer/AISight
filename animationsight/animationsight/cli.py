@@ -170,6 +170,8 @@ def _inspect(args) -> int:
         _say(f"  frame:  {out}/{f}")
     for t in rep["files"]["tracks"]:
         _say(f"  track:  {out}/{t}")
+    for a_ in rep["files"].get("flight_arcs", []):
+        _say(f"  arc:    {out}/{a_}  (ghosted flight + measured arc vs 1 g)")
     _say("  NEXT: LOOK at the flagged frames and the tracks, then read "
          "report.json checks.")
     return 2 if rep["status"] == "failed" else 0

@@ -48,18 +48,44 @@ Real committed output from [`examples/01-graphs`](examples/01-graphs)
 
 ## Before / after: one turn of the loop
 
-[`examples/02-gold`](examples/02-gold): a "gold-ish" base colour written
-from memory, against the measured preset. Both pass the physics — being
-physical and being *right* are different questions.
+[`examples/03-boosted`](examples/03-boosted): the "specular boost"
+slider every engine exposes, measured. Copper at boost 1.8 **FAILS** —
+it reflects 1.72x the light it receives, from every angle:
 
 ```
-shadersight diff out_memory out_preset
-  base_color: [1.0, 0.86, 0.57] -> [1.0, 0.766, 0.336]
-  compare: out_preset/compare.png  (before | after - LOOK at it)
+[FAIL] the material reflects 1.71766x the light it receives at 0.0 deg
+       try:   the boost multiplier IS the violation: boost=1.8 manufactures
+              energy by construction - set it to 1.0 and restyle with
+              roughness/F0 instead
+```
+
+Apply the `try:` line and prove it:
+
+```
+shadersight diff out_boosted out_physical
+  boost: 1.8 -> 1.0
+  max albedo: 1.71766 (at 0.0 deg) -> 0.95172 (at 0.0 deg)
+  GONE [energy-not-conserved] the material reflects 1.71766x the light it receives
+  compare: out_physical/compare.png
 ```
 
 <p align="center">
-  <img src="examples/02-gold/out_preset/compare.png" width="80%">
+  <img src="examples/03-boosted/out_boosted/albedo_curve.png" width="70%">
+</p>
+<p align="center"><em>the before: the whole albedo curve floats above the red 1.0 ceiling</em></p>
+
+<p align="center">
+  <img src="examples/03-boosted/out_physical/compare.png" width="76%">
+</p>
+<p align="center"><em>before | after — the boosted copper is brighter, and a lie the lighting pipeline pays for later</em></p>
+
+And [`examples/02-gold`](examples/02-gold) is the other half of the
+craft: a "gold-ish" colour from memory vs the measured preset — both
+pass the physics, only one is gold. Being physical and being right are
+different questions; that is why the presets exist.
+
+<p align="center">
+  <img src="examples/02-gold/out_preset/compare.png" width="76%">
 </p>
 <p align="center"><em>left: the guess (reads as pewter) · right: measured gold</em></p>
 

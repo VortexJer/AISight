@@ -114,7 +114,11 @@ class Material:
 
     def __init__(self, base_color=(0.8, 0.8, 0.8), roughness: float = 0.5,
                  metallic: float = 0.0, specular: float = 0.5,
-                 name: str = "material"):
+                 boost: float = 1.0, name: str = "material"):
+        """boost multiplies the whole BRDF — the 'intensity'/'specular
+        boost' slider real engines expose. 1.0 is physics; anything
+        above it manufactures energy, which is exactly why it is here:
+        so the slider's cost can be MEASURED instead of argued about."""
         bc = np.asarray(base_color, dtype=float)
         if bc.shape != (3,):
             raise BadModelError(
@@ -128,10 +132,13 @@ class Material:
                       ("specular", specular)):
             if not 0.0 <= v <= 1.0:
                 raise BadModelError(f"{nm} must be in 0..1, got {v}")
+        if boost <= 0.0:
+            raise BadModelError(f"boost must be positive, got {boost}")
         self.base_color = bc
         self.roughness = float(roughness)
         self.metallic = float(metallic)
         self.specular = float(specular)
+        self.boost = float(boost)
         self.name = name
 
     @property
@@ -188,7 +195,7 @@ class Material:
         roll_o = 1.0 - np.power(1.0 - cos_o[ok] / 2.0, 5.0)
         diff = (28.0 / (23.0 * np.pi)) * rho * (1.0 - f0m) \
             * (roll_i * roll_o)[:, None]
-        out[ok] = diff + spec
+        out[ok] = (diff + spec) * self.boost
         return out
 
 

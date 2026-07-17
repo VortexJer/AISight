@@ -41,6 +41,11 @@ def main(argv: list[str] | None = None) -> int:
     m.add_argument("--roughness", type=float, default=None)
     m.add_argument("--metallic", type=float, default=None)
     m.add_argument("--specular", type=float, default=None)
+    m.add_argument("--boost", type=float, default=None,
+                   help="the 'intensity' slider real engines expose "
+                        "(multiplies the whole BRDF). 1.0 is physics; "
+                        "above it manufactures energy - pass your "
+                        "engine's value to MEASURE what it costs")
     m.add_argument("--quality", default="normal",
                    choices=["fast", "normal", "high"],
                    help="hemisphere integration resolution (default normal)")
@@ -142,7 +147,7 @@ def _material(args) -> int:
         except ValueError:
             raise BadModelError(f"bad --base-color {args.base_color!r}",
                                 suggestion="three numbers, e.g. 0.8,0.1,0.1")
-    for k in ("roughness", "metallic", "specular"):
+    for k in ("roughness", "metallic", "specular", "boost"):
         v = getattr(args, k)
         if v is not None:
             params[k] = v

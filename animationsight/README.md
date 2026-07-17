@@ -76,12 +76,12 @@ directions are asserted in `tests/`.
 ## Before / after: one turn of the loop
 
 [`examples/02-jump`](examples/02-jump) is the defect nobody can see and
-everybody can feel: a jump whose flight falls at **0.552x gravity**.
+everybody can feel: a jump whose flight falls at **0.554x gravity**.
 Every still frame looks fine; the parabola fit does not care.
 
 ```
-flight: frames 17..39 (0.7667s, apex +374.2 mm) -> 0.552x gravity
-[WARN] ... at 1 g that apex takes 0.55s of airtime
+flight: frames 23..47 (0.8333s, apex +493.2 mm) -> 0.554x gravity
+[WARN] ... at 1 g that apex takes 0.63s of airtime
        try:   T = 2*sqrt(2h/g): shorten the airtime or raise the apex
 ```
 
@@ -89,15 +89,15 @@ Apply the `try:` line, re-inspect, and prove it:
 
 ```
 animationsight diff jump_floaty.bvh jump_fixed.bvh
-  flight 0: 0.552x gravity (0.7667s) -> 1.005x gravity (0.5667s)
-  GONE [floaty-flight] flight at frames [17, 39] falls at 0.55x gravity ...
+  flight 0: 0.554x gravity (0.8333s) -> 0.905x gravity (0.6667s)
+  GONE [floaty-flight] flight at frames [23, 47] falls at 0.55x gravity ...
 ```
 
 <p align="center">
-  <img src="examples/02-jump/out_floaty/frames/frame_0022.png" width="44%">
-  <img src="examples/02-jump/out_floaty/track_com_height.png" width="54%">
+  <img src="examples/02-jump/out_floaty/flight_0_arc.png" width="49%">
+  <img src="examples/02-jump/out_fixed/flight_0_arc.png" width="49%">
 </p>
-<p align="center"><em>mid-flight with the COM drawn, and the COM-height track: the parabola under measurement</em></p>
+<p align="center"><em>the arc sheet inspect writes for every flight: ghosted poses, the measured COM arc (red, one dot per frame) vs the 1 g reference (green, dashed). Left: floaty — the red arc overshoots the reference by a third of the jump. Right: fixed — the arcs coincide.</em></p>
 
 ## Three bugs this found in itself
 

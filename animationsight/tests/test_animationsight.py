@@ -328,8 +328,41 @@ def test_diff_leads_with_gravity_and_folds_peak_spam():
     from animationsight.report import diff_reports
     text = diff_reports(a, b)
     joined = "\n".join(text)
-    assert "flight 0: 0.552x gravity" in joined
-    assert "1.005x gravity" in joined
+    assert "flight 0:" in joined and "x gravity" in joined
+    # the flight line precedes any per-joint line: the headline leads
+    flight_at = next(i for i, ln in enumerate(text) if "flight 0:" in ln)
+    peak_lines = [i for i, ln in enumerate(text) if "peak speed" in ln]
+    assert not peak_lines or flight_at < peak_lines[0]
     assert "more joint(s) with peak-speed changes" in joined
-    per_joint = [ln for ln in text if "peak speed" in ln]
-    assert len(per_joint) <= 5
+    assert len(peak_lines) <= 5
+
+
+def test_inspect_writes_a_flight_arc_sheet(tmp_path):
+    """Every flight gets its arc sheet — the picture that makes floaty
+    legible (ghosts + measured arc + the 1 g reference)."""
+    jump = Path(__file__).parents[1] / "examples" / "02-jump"
+    r = subprocess.run(
+        [sys.executable, "-m", "animationsight.cli", "inspect",
+         str(jump / "jump_floaty.bvh"), "--kind", "oneshot",
+         "--frames", "2", "--out", str(tmp_path / "o")],
+        capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert (tmp_path / "o" / "flight_0_arc.png").exists()
+    assert "arc:" in r.stdout
+
+
+def test_jump_example_ground_truth():
+    """The floaty take must measure well under 0.75x g and the fixed one
+    inside the physical band — the pair is the example's whole claim."""
+    jump = Path(__file__).parents[1] / "examples" / "02-jump"
+    a = analyze(parse_bvh(jump / "jump_floaty.bvh", unit="cm"),
+                up="y", kind="oneshot")
+    b = analyze(parse_bvh(jump / "jump_fixed.bvh", unit="cm"),
+                up="y", kind="oneshot")
+    a.pop("_arrays"), b.pop("_arrays")
+    ra = a["ballistics"]["flights"][0]["gravity_ratio"]
+    rb = b["ballistics"]["flights"][0]["gravity_ratio"]
+    assert ra < 0.65
+    assert 0.8 < rb < 1.2
+    assert any(c["id"] == "floaty-flight" for c in a["checks"])
+    assert not any(c["id"] == "floaty-flight" for c in b["checks"])

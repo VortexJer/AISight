@@ -15,7 +15,7 @@ import numpy as np
 from . import metrics as M
 from .bvh import forward_kinematics, parse_bvh
 from .metrics import G_MM_S2 as G
-from .render import render_frames, render_track
+from .render import render_flight_arc, render_frames, render_track
 
 
 def _check(id_, level, message, where=None, suggestion=None) -> dict:
@@ -257,10 +257,20 @@ def inspect_clip(path: str | Path, out_dir: Path | None = None,
                      "mm/s", clip.frame_time, marks=slide_frames)
         tracks.append("track_foot_speed.png")
 
+    # one arc sheet per flight: ghosted poses + the measured COM arc vs
+    # the 1 g reference shape — the picture that makes floaty legible
+    arcs = []
+    for i, fl in enumerate(rep["ballistics"]["flights"]):
+        name = f"flight_{i}_arc.png"
+        render_flight_arc(clip, pos, com, fl, out / name, up,
+                          arrays["floor"], view=view)
+        arcs.append(name)
+
     rep["files"] = {
         "report": "report.json",
         "frames": [f"frames/{n}" for n in written],
         "tracks": tracks,
+        "flight_arcs": arcs,
     }
     (out / "report.json").write_text(json.dumps(rep, indent=2) + "\n",
                                      encoding="utf-8")

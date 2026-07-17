@@ -296,3 +296,17 @@ def test_cli_diff_writes_the_compare_sheet(tmp_path):
     assert r.returncode == 0
     assert "compare" in r.stdout
     assert (tmp_path / "b" / "compare.png").exists()
+
+
+def test_boost_slider_violates_energy_and_names_itself():
+    """boost is the engine slider that manufactures energy; the finding
+    must name the multiplier, not send the user hunting in F/D/G."""
+    m = Material(base_color=(0.9, 0.6, 0.5), roughness=0.3, metallic=1.0,
+                 boost=1.8)
+    rep = analyze_material(m, quality="fast")
+    assert rep["status"] == "failed"
+    chk = next(c for c in rep["checks"] if c["id"] == "energy-not-conserved")
+    assert "boost=1.8" in chk["try"]
+    # and the physical twin passes
+    m2 = Material(base_color=(0.9, 0.6, 0.5), roughness=0.3, metallic=1.0)
+    assert analyze_material(m2, quality="fast")["status"] != "failed"
