@@ -268,6 +268,13 @@ def smoothness(deriv: dict, names: list[str], dt: float) -> dict:
     A 'pop' is a single-frame spike in acceleration: the signature of a
     bad key, a wrong tangent or a splice. It is one frame long, which is
     exactly why nobody catches it watching at speed.
+
+    The z-score's MAD is floored at a fraction of the CLIP's overall
+    acceleration scale: a joint that holds still for most of the clip
+    has MAD ~ 0, and dividing by it declared every keyframe of a
+    blocking pass to be a million-sigma event (a jump clip reported 154
+    'pops'). A spike must be extreme FOR THE CLIP, not merely nonzero
+    for a mostly-static joint.
     """
     jerk = np.linalg.norm(deriv["jerk"], axis=2)          # (F, J)
     acc = np.linalg.norm(deriv["acceleration"], axis=2)
@@ -276,9 +283,9 @@ def smoothness(deriv: dict, names: list[str], dt: float) -> dict:
     pops = []
     med = np.median(acc, axis=0)
     mad = np.median(np.abs(acc - med), axis=0)
+    clip_scale = float(np.median(np.abs(acc - np.median(acc))))
+    mad = np.maximum(mad, max(0.10 * clip_scale, 1e-6))
     for j in range(acc.shape[1]):
-        if mad[j] <= 1e-9:
-            continue
         z = (acc[:, j] - med[j]) / (1.4826 * mad[j])      # robust z-score
         spikes = np.nonzero(z > 12.0)[0]
         for f in spikes:
@@ -287,16 +294,105 @@ def smoothness(deriv: dict, names: list[str], dt: float) -> dict:
                          "accel_mm_s2": round(float(acc[f, j]), 1),
                          "robust_z": round(float(z[f]), 1)})
     pops.sort(key=lambda p: -p["robust_z"])
+
+    # Cluster by frame: a pose SNAP hits many joints in the same frame,
+    # and 154 per-joint entries for what is really 5 global snaps buries
+    # the signal (found dogfooding a blocking-pass jump). One event per
+    # frame-neighbourhood, with how many joints it hit.
+    events: list[dict] = []
+    for p in sorted(pops, key=lambda p: p["frame"]):
+        # a snap's spikes span the 2-3 frames of its acceleration kick;
+        # the window is anchored at the cluster START so successive
+        # snaps cannot daisy-chain into one blob covering half the clip
+        if events and p["frame"] - events[-1]["frames"][0] <= 2:
+            ev = events[-1]
+            ev["frames"] = sorted(set(ev["frames"] + [p["frame"]]))
+            ev["_joints"].add(p["joint"])
+            if p["robust_z"] > ev["worst"]["robust_z"]:
+                ev["worst"] = p
+        else:
+            events.append({"frames": [p["frame"]], "_joints": {p["joint"]},
+                           "worst": dict(p)})
+    for ev in events:
+        w = ev["worst"]
+        ev["joints_hit"] = len(ev["_joints"])
+        ev["kind"] = "pose snap" if ev["joints_hit"] >= 4 else "joint pop"
+        ev["t_s"] = w["t_s"]
+        ev["worst_joint"] = w["joint"]
+        ev["worst_accel_mm_s2"] = w["accel_mm_s2"]
+        ev["worst_robust_z"] = w["robust_z"]
+        del ev["worst"], ev["_joints"]
+    events.sort(key=lambda e: -e["worst_robust_z"])
+
     worst = int(np.argmax(rms))
     return {
         "jerk_rms_mm_s3": {names[j]: round(float(rms[j]), 1)
                            for j in range(len(names))},
         "roughest_joint": names[worst],
         "roughest_jerk_rms_mm_s3": round(float(rms[worst]), 1),
-        "pops": pops[:20],
-        "pop_count": len(pops),
+        "pops": events[:12],
+        "pop_count": len(events),
+        "raw_spike_count": len(pops),
         "note": ("a pop is a single-frame acceleration spike (robust "
-                 "z > 12): a bad key, tangent or splice"),
+                 "z > 12, MAD floored at 10% of the clip's own scale), "
+                 "clustered by frame: a 'pose snap' hits many joints at "
+                 "once (blocking pass or splice), a 'joint pop' is one "
+                 "bad key"),
+    }
+
+
+G_MM_S2 = 9810.0
+
+
+def ballistics(com: np.ndarray, airborne_frames: list[int], dt: float,
+               up: str) -> dict:
+    """During flight, the COM has no choice: gravity is the only force,
+    so its height must follow a parabola at -9.81 m/s^2. An animator
+    breaks this constantly — too slow reads as 'floaty', too fast as
+    'heavy' — and nobody can SEE 0.68 g; they just feel something is
+    off. It is a least-squares fit, so measure it.
+
+    Also a free sanity check on --unit: an effective gravity of ~0.1 g
+    or ~10 g usually means the declared unit is wrong, not that the
+    animation is.
+    """
+    k, _h = _axis_indices(up)
+    spans: list[tuple[int, int]] = []
+    if airborne_frames:
+        start = prev = airborne_frames[0]
+        for f in airborne_frames[1:]:
+            if f == prev + 1:
+                prev = f
+                continue
+            spans.append((start, prev))
+            start = prev = f
+        spans.append((start, prev))
+
+    out = []
+    for a, b in spans:
+        n = b - a + 1
+        if n < 5:
+            continue                       # too short to fit a parabola
+        t = np.arange(n) * dt
+        h = com[a:b + 1, k]
+        coef = np.polyfit(t, h, 2)         # h = c2 t^2 + c1 t + c0
+        eff_g = -2.0 * float(coef[0])
+        resid = float(np.sqrt(np.mean(
+            (np.polyval(coef, t) - h) ** 2)))
+        out.append({
+            "frames": [int(a), int(b)],
+            "duration_s": round(n * dt, 4),
+            "apex_rise_mm": round(float(h.max() - h[0]), 1),
+            "effective_gravity_mm_s2": round(eff_g, 1),
+            "gravity_ratio": round(eff_g / G_MM_S2, 3),
+            "fit_rms_mm": round(resid, 2),
+        })
+    return {
+        "flights": out,
+        "note": ("effective gravity from a parabola fit to the COM "
+                 "height over each airborne span; 1.0 = physical, "
+                 "<0.75 reads floaty, >1.3 reads heavy. ~0.1 or ~10 "
+                 "usually means --unit is wrong"),
     }
 
 

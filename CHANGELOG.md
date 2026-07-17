@@ -1,5 +1,45 @@
 # Changelog
 
+## 2026-07-17 — repo renamed to AISight; family v0.2.0 (dogfooding round)
+
+The repo is now **AISight**: five independent tools, install only what
+you need. Each Sight was then USED on a realistic commission by a fresh
+agent, and every point of friction fixed at the root — the same process
+that hardened solidsight in its Phase 2.
+
+- **all four Sights**: a `diff` command (the proof step of the loop —
+  solidsight had it, the others did not; "a fix without a diff is a
+  claim").
+- **animationsight 0.2.0** (commission: review a jump):
+  - ballistics: parabola fit per airborne span -> effective gravity.
+    The dogfood jump measured 0.683x g — authored floaty without
+    noticing, invisible to any still frame. Also a free unit sanity
+    check (~0.1x/~10x = wrong --unit, one metric prefix).
+  - pop clustering: a blocking-pass jump reported "154 pops" that were
+    really 8 pose snaps; spikes now cluster by frame into "pose snap"
+    (many joints) vs "joint pop" (one bad key), with the MAD floored at
+    the clip's own scale so static joints cannot inflate z-scores.
+  - `--kind oneshot|loop|auto`: a jump is not supposed to loop; declare
+    the intent instead of ignoring a warning.
+  - report.json slimmed: the COM trajectory moved to com_trajectory.csv.
+- **texturesight 0.2.0** (commission: fix a crate's starved lid island):
+  - `islands.detail[]`: per island id, uv bbox, face count, mean
+    density — the actionable unit. The density finding now names the
+    island and the scale factor ("scale island #4 up ~2.7x"), and
+    islands are labelled #N in uv_layout.png. "Lowest at face 8" told
+    nobody what to grab in the UV editor.
+- **shadersight 0.2.0** (commission: author a physical gold):
+  - `--preset gold|silver|copper|...|skin|snow`: measured F0/base
+    values. The dogfood gold authored "from memory" was visibly too
+    pale next to the measured (1.000, 0.766, 0.336).
+- **pcbsight 0.2.0**: `pcbsight diff before.kicad_pcb after.kicad_pcb`
+  tells the whole story of a repair (islands per net, clearance count,
+  current at the narrowest width, pair skew, findings NEW/GONE).
+
+Skills updated for all four (the loop now ends in diff; new features
+documented). 13 new tests (174 in the repo).
+
+
 ## v0.7.0 — 2026-07-17 "the Sight family"
 
 **The four sibling tools** — the solidsight philosophy applied to four

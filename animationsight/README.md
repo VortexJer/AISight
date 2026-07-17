@@ -33,7 +33,7 @@ Everything is deterministic: same clip, byte-identical report.
 ## Quickstart
 
 ```bash
-pip install "git+https://github.com/VortexJer/SolidSight#subdirectory=animationsight"
+pip install "git+https://github.com/VortexJer/AISight#subdirectory=animationsight"
 
 animationsight inspect walk.bvh --unit cm --up y
 # -> out/report.json

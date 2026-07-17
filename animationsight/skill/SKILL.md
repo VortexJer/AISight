@@ -24,6 +24,7 @@ animationsight inspect walk.bvh --up y           # vertical axis (x|y|z; BVH con
 animationsight inspect walk.bvh --floor 0        # declare the floor instead of inferring it
 animationsight inspect walk.bvh --frames 10      # evenly spaced renders (flagged frames always added)
 animationsight inspect walk.bvh --view side      # side|front|top
+animationsight inspect walk.bvh --kind oneshot   # declare intent: oneshot (jump, hit) | loop | auto
 animationsight inspect walk.bvh --json           # full report JSON on stdout
 
 animationsight diff take_a.bvh take_b.bvh        # what changed: peaks, findings appeared/gone
@@ -39,7 +40,7 @@ Exit codes: 0 ok, 1 bad clip / bad argument, 2 a FAIL-level finding
 ### Step 0 - Install
 
 ```bash
-animationsight version || pip install "git+https://github.com/VortexJer/SolidSight#subdirectory=animationsight"
+animationsight version || pip install "git+https://github.com/VortexJer/AISight#subdirectory=animationsight"
 ```
 
 ### Step 1 - Declare the units and the up axis. Do not guess.
@@ -64,20 +65,30 @@ a `try:`. The check ids:
 |---|---|---|
 | `ground-penetration` | FAIL | a joint went through the floor. Never intentional. |
 | `foot-sliding` | warn | a planted foot drifts — "skating". The classic defect, and nearly invisible frame by frame. |
-| `motion-pop` | warn | a single-frame acceleration spike: a bad key, a bad tangent, a splice. |
-| `loop-discontinuity` | warn | the seam jumps much more than a normal frame does. Ignore it for one-shots. |
+| `motion-pop` | warn | discontinuity events, clustered: a "pose snap" hits many joints in one frame (blocking pass, splice — needs inbetweens), a "joint pop" is one bad key. |
+| `floaty-flight` / `heavy-flight` | warn | during flight the COM must fall at 1 g; the report gives the measured ratio and the exact fix (T = 2*sqrt(2h/g)). Nobody can SEE 0.68 g — it just feels off. |
+| `gravity-unit-suspect` | warn | effective gravity ~0.1x or ~10x = the --unit is probably wrong (one metric prefix), not the animation. |
+| `loop-discontinuity` | warn | the seam jumps much more than a normal frame does. Declare `--kind oneshot` to silence it for jumps/hits/gestures. |
 | `com-weights-unknown` | warn | joint names were unrecognisable, so the COM used uniform weights. Balance numbers are then indicative, not exact. |
 
 ### Step 3 - LOOK at the flagged frames
 
 `inspect` renders the evenly spaced frames AND every frame a finding
-points at, with the offending joint circled and the COM drawn. Open them
+points at, with the offending joint circled and the COM drawn. The full
+COM trajectory is in `out/com_trajectory.csv` (report.json keeps the
+summary only — read the CSV when you need per-frame numbers). Open them
 with the Read tool. The tracks (`track_com_height.png`,
 `track_foot_speed.png`) show the time series with the flagged frames
 marked — that is where a defect's shape is visible: one spike vs a
 sustained drift.
 
 ### Step 4 - Interpret honestly
+
+- **Ballistics is the strongest single check for jumps**: during an
+  airborne span the COM has no choice but 1 g. `ballistics.flights[]`
+  gives each flight's effective gravity ratio, apex and duration. 1.0
+  is physical; a deliberate stylised float is fine — but then SAY it is
+  stylised, with the number.
 
 - **Balance**: `com_to_support_mm` is the distance from the COM's ground
   projection to the support base. Big numbers during `airborne_frames`

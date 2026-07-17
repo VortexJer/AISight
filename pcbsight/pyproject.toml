@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pcbsight"
-version = "0.1.0"
+version = "0.2.0"
 description = "PCB review built exclusively for AI agents: a .kicad_pcb in, exact connectivity/clearance/current findings out."
 readme = "README.md"
 license = { text = "MIT" }

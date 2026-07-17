@@ -49,6 +49,11 @@ def main(argv: list[str] | None = None) -> int:
     i.add_argument("--view", default="side",
                    choices=["side", "front", "top"])
     i.add_argument("--size", type=int, default=640)
+    i.add_argument("--kind", default="auto",
+                   choices=["auto", "oneshot", "loop"],
+                   help="declare the intent: 'oneshot' (jump, hit, "
+                        "gesture) silences the loop-seam check, 'loop' "
+                        "keeps it strict, 'auto' reports with a caveat")
     i.add_argument("--json", action="store_true",
                    help="full report JSON on stdout")
 
@@ -105,7 +110,7 @@ def _inspect(args) -> int:
     rep = inspect_clip(args.clip, out_dir=args.out, unit=args.unit,
                        up=args.up, floor_mm=args.floor,
                        n_frames=args.frames, view=args.view,
-                       size=args.size, say=_say)
+                       size=args.size, kind=args.kind, say=_say)
     out = rep.pop("_out_dir")
     if args.json:
         print(json.dumps(rep, indent=2))
@@ -143,6 +148,10 @@ def _inspect(args) -> int:
     _say(f"  smoothness: roughest joint '{s['roughest_joint']}' "
          f"(jerk RMS {s['roughest_jerk_rms_mm_s3']} mm/s3), "
          f"{s['pop_count']} pop(s)")
+    for fl in rep["ballistics"]["flights"]:
+        _say(f"  flight: frames {fl['frames'][0]}..{fl['frames'][1]} "
+             f"({fl['duration_s']}s, apex +{fl['apex_rise_mm']} mm) -> "
+             f"{fl['gravity_ratio']}x gravity")
     lp = rep["loop"]
     _say(f"  loop: {'CLEAN' if lp['loops_cleanly'] else 'DISCONTINUOUS'} "
          f"- {lp['convention']}; seam gap {lp['pose_gap_mm']['max']} mm vs "

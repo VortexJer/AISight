@@ -11,7 +11,7 @@ IPC-2221 arithmetic at the net's narrowest point, and differential-pair
 skew is a subtraction. None of it needs eyes.
 
 ```bash
-pip install "git+https://github.com/VortexJer/SolidSight#subdirectory=pcbsight"
+pip install "git+https://github.com/VortexJer/AISight#subdirectory=pcbsight"
 
 pcbsight inspect board.kicad_pcb --clearance 0.15
 # -> [FAIL] net 'GND' is 2 separate island(s) - unconnected pad(s): J1.2

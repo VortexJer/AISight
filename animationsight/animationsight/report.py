@@ -14,6 +14,7 @@ import numpy as np
 
 from . import metrics as M
 from .bvh import forward_kinematics, parse_bvh
+from .metrics import G_MM_S2 as G
 from .render import render_frames, render_track
 
 
@@ -26,8 +27,14 @@ def _check(id_, level, message, where=None, suggestion=None) -> dict:
     return c
 
 
-def analyze(clip, up: str = "y", floor_mm: float | None = None) -> dict:
-    """Every measurement for one clip. Pure: no files touched."""
+def analyze(clip, up: str = "y", floor_mm: float | None = None,
+            kind: str = "auto") -> dict:
+    """Every measurement for one clip. Pure: no files touched.
+
+    kind: "oneshot" silences the loop check (a jump is not supposed to
+    loop), "loop" keeps it, "auto" reports it with the caveat. The tool
+    cannot know the intent; the caller can, so let them declare it.
+    """
     pos, rot = forward_kinematics(clip)
     names = clip.names
     dt = clip.frame_time
@@ -52,6 +59,7 @@ def analyze(clip, up: str = "y", floor_mm: float | None = None) -> dict:
     smooth = M.smoothness(deriv, names, dt)
     loop = M.loop_continuity(pos, deriv, names, up)
     pk = M.peaks(deriv, ang, names, dt)
+    ball = M.ballistics(com, bal.get("airborne_frames", []), dt, up)
 
     checks: list[dict] = []
     for s in contact.get("sliding", []):
@@ -74,15 +82,55 @@ def analyze(clip, up: str = "y", floor_mm: float | None = None) -> dict:
                        "frames; a floor contact should stop AT the floor"))
     if smooth["pop_count"]:
         w = smooth["pops"][0]
+        snaps = sum(1 for e in smooth["pops"] if e["kind"] == "pose snap")
         checks.append(_check(
             "motion-pop", "warn",
-            f"{smooth['pop_count']} single-frame acceleration spike(s); "
-            f"worst on '{w['joint']}'",
-            where=f"frame {w['frame']} (t={w['t_s']}s), "
-                  f"{w['accel_mm_s2']} mm/s2 (robust z {w['robust_z']})",
-            suggestion="inspect that key's tangents, or the splice point "
-                       "if the clip was assembled from takes"))
-    if not loop["loops_cleanly"]:
+            f"{smooth['pop_count']} discontinuity event(s)"
+            + (f" ({snaps} full pose snap(s) - a blocking pass or splice)"
+               if snaps else "")
+            + f"; worst is a {w['kind']} at frame {w['frames'][0]}",
+            where=f"t={w['t_s']}s, {w['joints_hit']} joint(s) hit, worst "
+                  f"'{w['worst_joint']}' at {w['worst_accel_mm_s2']} mm/s2 "
+                  f"(robust z {w['worst_robust_z']})",
+            suggestion="a pose snap needs inbetweens/easing at that "
+                       "frame; a single joint pop is one bad key or "
+                       "tangent"))
+    for fl in ball["flights"]:
+        r = fl["gravity_ratio"]
+        if r < 0.1 or r > 8.0:
+            checks.append(_check(
+                "gravity-unit-suspect", "warn",
+                f"flight at frames {fl['frames']} decelerates at "
+                f"{r:.2f}x gravity - that is not an animation style, "
+                f"that is probably the wrong --unit",
+                where=f"effective g {fl['effective_gravity_mm_s2']} mm/s2",
+                suggestion="check --unit (mocap is usually cm); a 10x "
+                           "ratio is exactly one metric prefix"))
+        elif r < 0.75:
+            checks.append(_check(
+                "floaty-flight", "warn",
+                f"flight at frames {fl['frames']} falls at {r:.2f}x "
+                f"gravity: it will read as floaty",
+                where=f"apex +{fl['apex_rise_mm']} mm over "
+                      f"{fl['duration_s']}s; at 1 g that apex takes "
+                      f"{2.83 * (max(fl['apex_rise_mm'], 0.1) / G) ** 0.5:.2f}s "
+                      f"of airtime",
+                suggestion="physics fixes it two ways: shorten the "
+                           "airtime to match the apex, or raise the apex "
+                           "to match the airtime (T = 2*sqrt(2h/g)); or "
+                           "accept the stylised float and say so"))
+        elif r > 1.3:
+            checks.append(_check(
+                "heavy-flight", "warn",
+                f"flight at frames {fl['frames']} falls at {r:.2f}x "
+                f"gravity: it will read as heavy/rushed",
+                where=f"apex +{fl['apex_rise_mm']} mm over "
+                      f"{fl['duration_s']}s",
+                suggestion="lengthen the airtime or raise the apex to "
+                           "match 1 g, or accept the stylisation and "
+                           "say so"))
+
+    if not loop["loops_cleanly"] and kind != "oneshot":
         checks.append(_check(
             "loop-discontinuity", "warn",
             f"the seam jumps {loop['pose_gap_mm']['max']} mm, far more "
@@ -117,11 +165,16 @@ def analyze(clip, up: str = "y", floor_mm: float | None = None) -> dict:
         "skeleton": {"root": clip.root.name, "joint_names": names},
         "com": {
             "anthropometric_weights": anthropometric,
-            "trajectory_mm": [[round(float(v), 2) for v in p] for p in com],
+            # the full trajectory goes to com_trajectory.csv, not here: a
+            # 1000-frame clip would put 3000 floats into a report meant
+            # to be READ; the numbers a reader acts on are the summary
+            "trajectory_file": "com_trajectory.csv",
             "height_mm": {"min": round(float(com[:, k].min()), 2),
                           "max": round(float(com[:, k].max()), 2),
                           "mean": round(float(com[:, k].mean()), 2)},
         },
+        "ballistics": ball,
+        "kind": kind,
         "peaks": pk,
         "contacts": {
             "foot_joints": contact.get("foot_joints", []),
@@ -143,14 +196,22 @@ def inspect_clip(path: str | Path, out_dir: Path | None = None,
                  unit: str = "cm", up: str = "y",
                  floor_mm: float | None = None, n_frames: int = 6,
                  view: str = "side", size: int = 640,
-                 say=print) -> dict:
+                 kind: str = "auto", say=print) -> dict:
     """Parse, measure, render the evidence, write report.json."""
     clip = parse_bvh(path, unit=unit)
-    rep = analyze(clip, up=up, floor_mm=floor_mm)
+    rep = analyze(clip, up=up, floor_mm=floor_mm, kind=kind)
     arrays = rep.pop("_arrays")
     out = Path(out_dir) if out_dir else Path(path).parent / "out"
     out.mkdir(parents=True, exist_ok=True)
     frames_dir = out / "frames"
+
+    # the full COM trajectory, exact, one row per frame
+    com_rows = ["frame,t_s,x_mm,y_mm,z_mm"]
+    for f, p in enumerate(arrays["com"]):
+        com_rows.append(f"{f},{f * clip.frame_time:.4f},"
+                        + ",".join(f"{float(v):.2f}" for v in p))
+    (out / "com_trajectory.csv").write_text("\n".join(com_rows) + "\n",
+                                            encoding="utf-8")
 
     pos, com = arrays["pos"], arrays["com"]
     names = clip.names
@@ -168,8 +229,9 @@ def inspect_clip(path: str | Path, out_dir: Path | None = None,
         picks.add(p["worst_frame"])
         marks.setdefault(p["worst_frame"], []).append(idx[p["joint"]])
     for p in rep["smoothness"]["pops"][:3]:
-        picks.add(p["frame"])
-        marks.setdefault(p["frame"], []).append(idx[p["joint"]])
+        f = p["frames"][0]
+        picks.add(f)
+        marks.setdefault(f, []).append(idx[p["worst_joint"]])
 
     written = render_frames(clip, pos, com, frames_dir,
                             sorted(picks), up, arrays["floor"],

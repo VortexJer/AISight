@@ -18,6 +18,7 @@ pcbsight inspect board.kicad_pcb --clearance 0.15 # YOUR fab's minimum
 pcbsight inspect board.kicad_pcb --dt 20          # allowed temp rise, C
 pcbsight inspect board.kicad_pcb --out DIR --json
 pcbsight impedance 0.3 0.2 --er 4.5               # microstrip Z0 estimate
+pcbsight diff before.kicad_pcb after.kicad_pcb    # what the fix changed (proof)
 pcbsight version
 ```
 
@@ -28,7 +29,7 @@ Exit codes: 0 ok, 1 bad input, 2 a FAIL-level finding.
 ### Step 0 - Install
 
 ```bash
-pcbsight version || pip install "git+https://github.com/VortexJer/SolidSight#subdirectory=pcbsight"
+pcbsight version || pip install "git+https://github.com/VortexJer/AISight#subdirectory=pcbsight"
 ```
 
 ### Step 1 - Set the rules to the REAL ones
@@ -61,7 +62,14 @@ circled in red with the measured gap. An open net is usually VISIBLE
 there as a trace that stops short — the render is the fastest way to
 see which fix is right.
 
-### Step 4 - Interpret honestly
+### Step 4 - Prove the fix
+
+After editing the board in KiCad, `pcbsight diff before.kicad_pcb
+after.kicad_pcb`: islands per net, clearance findings, current at the
+narrowest width, pair skew, and findings NEW/GONE. A fix without a diff
+is a claim; with one it is a fact.
+
+### Step 5 - Interpret honestly
 
 - **Current numbers are IPC-2221**, computed at the narrowest point of
   the net. They assume the trace heats alone in still air; planes,

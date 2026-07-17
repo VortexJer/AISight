@@ -7,7 +7,7 @@ is IPC-2221 arithmetic, and pair skew is a subtraction. So compute them.
     from pcbsight import parse_board, analyze
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 from .board import Board, Pad, Track, Via, parse_board
 from .checks import (clearance, connectivity, current_capacity, diff_pairs,

@@ -9,7 +9,7 @@ theory: cycles, dead nodes, per-pixel cost. So compute them.
     from shadersight import Material, analyze_material, analyze_graph
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 from .brdf import Material, energy_conservation, reciprocity
 from .errors import (BadArgumentError, BadGraphError, BadModelError,

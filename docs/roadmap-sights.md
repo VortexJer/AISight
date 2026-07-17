@@ -21,7 +21,7 @@ known-ground-truth examples and regression tests in both directions
 Install any of them:
 
 ```bash
-pip install "git+https://github.com/VortexJer/SolidSight#subdirectory=animationsight"   # or texturesight / shadersight / pcbsight
+pip install "git+https://github.com/VortexJer/AISight#subdirectory=animationsight"   # or texturesight / shadersight / pcbsight
 ```
 
 ## What "built" means here

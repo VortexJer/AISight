@@ -11,7 +11,7 @@ frames the findings point at.
     report = analyze(clip, up="y")
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 from .bvh import Clip, Joint, forward_kinematics, parse_bvh
 from .errors import AnimationSightError, BadArgumentError, BadClipError

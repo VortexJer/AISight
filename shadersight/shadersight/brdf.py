@@ -78,6 +78,33 @@ def f_schlick(f0: np.ndarray, cos_d: np.ndarray) -> np.ndarray:
     return f0 + (1.0 - f0) * np.power(np.clip(1.0 - cos_d, 0.0, 1.0), 5.0)
 
 
+# Measured F0 (linear, normal incidence) for common conductors, and
+# representative base colours for common dielectrics. Sources: the
+# standard tabulations used across PBR pipelines (from spectral n/k
+# data). These exist because "gold-ish yellow from memory" is how every
+# wrong metal ships.
+PRESETS = {
+    # metals: base_color IS F0 (metallic=1)
+    "gold":      {"base_color": (1.000, 0.766, 0.336), "metallic": 1.0},
+    "silver":    {"base_color": (0.972, 0.960, 0.915), "metallic": 1.0},
+    "copper":    {"base_color": (0.955, 0.637, 0.538), "metallic": 1.0},
+    "aluminum":  {"base_color": (0.913, 0.921, 0.925), "metallic": 1.0},
+    "iron":      {"base_color": (0.560, 0.570, 0.580), "metallic": 1.0},
+    "titanium":  {"base_color": (0.542, 0.497, 0.449), "metallic": 1.0},
+    "chromium":  {"base_color": (0.550, 0.556, 0.554), "metallic": 1.0},
+    # dielectrics: representative albedo, F0 comes from specular=0.5 (4%)
+    "plastic":   {"base_color": (0.500, 0.500, 0.500), "metallic": 0.0},
+    "rubber":    {"base_color": (0.100, 0.100, 0.100), "metallic": 0.0,
+                  "roughness": 0.85},
+    "wood":      {"base_color": (0.420, 0.290, 0.170), "metallic": 0.0,
+                  "roughness": 0.75},
+    "skin":      {"base_color": (0.700, 0.520, 0.420), "metallic": 0.0,
+                  "roughness": 0.55},
+    "snow":      {"base_color": (0.900, 0.900, 0.920), "metallic": 0.0,
+                  "roughness": 0.60},
+}
+
+
 class Material:
     """A standard metallic-roughness PBR material.
 

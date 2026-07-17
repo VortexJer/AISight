@@ -15,9 +15,11 @@ problems are graph theory: cycles, dead nodes, per-pixel cost.
 ## Usage
 
 ```
+shadersight material --preset gold --roughness 0.35   # MEASURED F0, not memory
 shadersight material --base-color 0.8,0.2,0.1 --roughness 0.4 --metallic 1
 shadersight material ... --quality fast|normal|high   # integration effort
 shadersight material ... --out DIR --json
+shadersight diff out_v1 out_v2               # what the tweak changed (proof)
 
 shadersight graph shader_graph.json          # cycles, dead nodes, cost
 shadersight version
@@ -37,8 +39,17 @@ Exit codes: 0 ok, 1 bad input, 2 a FAIL-level finding.
 ### Step 0 - Install
 
 ```bash
-shadersight version || pip install "git+https://github.com/VortexJer/SolidSight#subdirectory=shadersight"
+shadersight version || pip install "git+https://github.com/VortexJer/AISight#subdirectory=shadersight"
 ```
+
+### Start metals from a preset, never from memory
+
+`--preset gold|silver|copper|aluminum|iron|titanium|chromium|plastic|
+rubber|wood|skin|snow` loads MEASURED F0/base values (from spectral
+n/k data). "Gold-ish yellow from memory" is how every wrong metal
+ships: real gold F0 is (1.000, 0.766, 0.336) linear — most people's
+guess is too pale. Explicit flags override the preset. Iterate
+roughness on top, and `diff` the runs to see what moved.
 
 ### Materials: read the physics, not the sphere
 

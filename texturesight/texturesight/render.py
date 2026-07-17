@@ -62,6 +62,16 @@ def render_uv_layout(mesh, uv_root: np.ndarray, path: Path,
             d.polygon(pts, fill=STRETCH)
         c = ISLAND[roots[uv_root[f]] % len(ISLAND)]
         d.line(pts + [pts[0]], fill=c, width=1)
+
+    # label each island with its id (the report's island #N) at its
+    # centroid — "scale island #4" is useless if nothing says which
+    # blob IS island #4
+    for r, i in roots.items():
+        faces = [f for f in range(mesh.n_faces) if uv_root[f] == r]
+        pts = mesh.uvs[mesh.tri_uv[faces]].reshape(-1, 2)
+        cx = float(pts[:, 0].mean()) * size
+        cy = top + (1.0 - float(pts[:, 1].mean())) * size
+        d.text((cx - 8, cy - 7), f"#{i}", fill=INK, font=_font(13))
     img.save(path)
 
 

@@ -72,7 +72,7 @@ Follow these steps in order. Do not skip steps.
 ### Step 0 - Ensure solidsight is installed
 
 ```bash
-solidsight version || pip install "git+https://github.com/VortexJer/SolidSight#subdirectory=tool"
+solidsight version || pip install "git+https://github.com/VortexJer/AISight#subdirectory=tool"
 ```
 
 If the user gave you a checkout of the repo instead: `pip install ./tool`.

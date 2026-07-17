@@ -107,6 +107,48 @@ def inspect_material(mat: B.Material, out_dir: Path,
     return rep
 
 
+def diff_reports(a: dict, b: dict) -> list[str]:
+    """What a material tweak actually changed — the proof step."""
+    lines = [f"diff: [{a.get('status')}] -> [{b.get('status')}]"]
+    ma, mb = a.get("material"), b.get("material")
+    if ma and mb:
+        for k in ("base_color", "roughness", "metallic", "specular"):
+            if ma.get(k) != mb.get(k):
+                lines.append(f"  {k}: {ma.get(k)} -> {mb.get(k)}")
+        ea = a["energy_conservation"]
+        eb = b["energy_conservation"]
+        if ea["max_albedo"] != eb["max_albedo"]:
+            lines.append(f"  max albedo: {ea['max_albedo']} (at "
+                         f"{ea['max_at_theta_deg']} deg) -> "
+                         f"{eb['max_albedo']} (at "
+                         f"{eb['max_at_theta_deg']} deg)")
+        fa = a["furnace"]["energy_lost"]
+        fb = b["furnace"]["energy_lost"]
+        if fa != fb:
+            lines.append(f"  furnace loss: {fa * 100:.1f}% -> "
+                         f"{fb * 100:.1f}%")
+    if "cost" in a and "cost" in b:
+        ca, cb = a["cost"], b["cost"]
+        if ca["alu_equivalents"] != cb["alu_equivalents"]:
+            lines.append(f"  cost: ~{ca['alu_equivalents']} -> "
+                         f"~{cb['alu_equivalents']} ALU-equiv "
+                         f"({ca['texture_fetches']} -> "
+                         f"{cb['texture_fetches']} fetches)")
+        if a.get("nodes") != b.get("nodes"):
+            lines.append(f"  nodes: {a.get('nodes')} -> {b.get('nodes')} "
+                         f"(dead: {len(a.get('dead_nodes', []))} -> "
+                         f"{len(b.get('dead_nodes', []))})")
+    ca_ = {(c["id"], c["message"]) for c in a.get("checks", [])}
+    cb_ = {(c["id"], c["message"]) for c in b.get("checks", [])}
+    for cid, msg in sorted(cb_ - ca_, key=str):
+        lines.append(f"  NEW  [{cid}] {msg}")
+    for cid, msg in sorted(ca_ - cb_, key=str):
+        lines.append(f"  GONE [{cid}] {msg}")
+    if len(lines) == 1:
+        lines.append("  no differences worth reporting")
+    return lines
+
+
 def inspect_graph(path: str | Path, out_dir: Path) -> dict:
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)

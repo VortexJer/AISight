@@ -19,11 +19,50 @@ def _check(id_, level, message, where=None, suggestion=None) -> dict:
     return c
 
 
+def _island_detail(mesh, isl: dict, dens: dict) -> list[dict]:
+    """Per-island stats: THE actionable unit for layout fixes. 'Face 8
+    is starved' tells nobody what to grab in the UV editor; 'island #4,
+    the one at uv (0.35,0.35)-(0.45,0.45), needs 3x' does."""
+    import numpy as np
+    roots = isl["uv_root_per_face"]
+    density = dens.get("per_face")
+    uv = mesh.uvs[mesh.tri_uv]                       # (F, 3, 2)
+    a3 = mesh.face_area_3d()
+
+    order = sorted(set(int(r) for r in roots))
+    out = []
+    for i, r in enumerate(order):
+        faces = np.nonzero(roots == r)[0]
+        pts = uv[faces].reshape(-1, 2)
+        d = None
+        if density is not None:
+            dv = density[faces]
+            w = a3[faces]
+            ok = np.isfinite(dv) & (dv > 0)
+            if ok.any():
+                d = float(np.average(dv[ok], weights=np.maximum(w[ok],
+                                                                1e-12)))
+        out.append({
+            "island": i,
+            "faces": [int(f) for f in faces],
+            "face_count": int(len(faces)),
+            "uv_bbox": [round(float(pts[:, 0].min()), 4),
+                        round(float(pts[:, 1].min()), 4),
+                        round(float(pts[:, 0].max()), 4),
+                        round(float(pts[:, 1].max()), 4)],
+            "mean_density_px_per_unit": round(d, 2) if d is not None
+            else None,
+            "surface_mm2": round(float(a3[faces].sum()), 2),
+        })
+    return out
+
+
 def analyze_uv(mesh, texture_px: int = 1024) -> dict:
     dens = U.texel_density(mesh, texture_px)
     dist = U.distortion(mesh)
     isl = U.islands(mesh)
     pack = U.packing(mesh, isl)
+    detail = _island_detail(mesh, isl, dens)
 
     checks: list[dict] = []
     if dist["flipped_face_count"]:
@@ -64,13 +103,30 @@ def analyze_uv(mesh, texture_px: int = 1024) -> dict:
     sr = dens.get("spread_ratio")
     if sr is not None and sr > U.DENSITY_SPREAD_WARN:
         d = dens["px_per_unit"]
+        with_d = [i for i in detail
+                  if i["mean_density_px_per_unit"] is not None]
+        starved = min(with_d,
+                      key=lambda i: i["mean_density_px_per_unit"]) \
+            if with_d else None
+        where = f"lowest at face {dens['worst_face']}"
+        fix = ("scale the sparse islands up in the UV layout; uneven "
+               "density reads as some parts being blurry")
+        if starved:
+            need = d["area_weighted_mean"] / max(
+                starved["mean_density_px_per_unit"], 1e-9)
+            bb = starved["uv_bbox"]
+            where = (f"island #{starved['island']} at uv ({bb[0]}, {bb[1]})"
+                     f"-({bb[2]}, {bb[3]}): "
+                     f"{starved['mean_density_px_per_unit']} px/unit vs "
+                     f"{d['area_weighted_mean']} mesh mean")
+            fix = (f"scale island #{starved['island']} up ~{need:.1f}x in "
+                   f"the UV editor (islands are labelled in "
+                   f"uv_layout.png); repack if it no longer fits")
         checks.append(_check(
             "texel-density-uneven", "warn",
             f"texel density varies {sr}x across the mesh "
             f"({d['p2']}..{d['p98']} px/unit)",
-            where=f"lowest at face {dens['worst_face']}",
-            suggestion="scale the sparse islands up in the UV layout; "
-                       "uneven density reads as some parts being blurry"))
+            where=where, suggestion=fix))
     if pack["utilization"] < 0.5:
         checks.append(_check(
             "uv-packing-loose", "warn",
@@ -90,7 +146,9 @@ def analyze_uv(mesh, texture_px: int = 1024) -> dict:
         "texel_density": {k: v for k, v in dens.items() if k != "per_face"},
         "distortion": {k: v for k, v in dist.items()
                        if k != "per_face_anisotropy"},
-        "islands": {k: v for k, v in isl.items() if k != "uv_root_per_face"},
+        "islands": {**{k: v for k, v in isl.items()
+                       if k != "uv_root_per_face"},
+                    "detail": detail},
         "packing": pack,
         "checks": checks,
         "_arrays": {"density": dens.get("per_face"),
@@ -239,6 +297,47 @@ def analyze_texture(path: str | Path, kind: str = "auto") -> dict:
 
     out["checks"] = checks
     return out
+
+
+def diff_reports(a: dict, b: dict) -> list[str]:
+    """What a layout/texture fix actually changed — the proof step of
+    the loop. Compares two written reports (out dirs)."""
+    lines = [f"diff: [{a.get('status')}] -> [{b.get('status')}]"]
+
+    ua, ub = a.get("uv"), b.get("uv")
+    if ua and ub:
+        da = ua["texel_density"].get("px_per_unit", {})
+        db = ub["texel_density"].get("px_per_unit", {})
+        if da and db:
+            lines.append(
+                f"  density: mean {da['area_weighted_mean']} -> "
+                f"{db['area_weighted_mean']} px/unit; spread "
+                f"{ua['texel_density'].get('spread_ratio')}x -> "
+                f"{ub['texel_density'].get('spread_ratio')}x")
+        aa = ua["distortion"]["anisotropy"].get("max")
+        ab = ub["distortion"]["anisotropy"].get("max")
+        if aa != ab:
+            lines.append(f"  anisotropy max: {aa} -> {ab}")
+        fa = ua["distortion"]["flipped_face_count"]
+        fb = ub["distortion"]["flipped_face_count"]
+        if fa != fb:
+            lines.append(f"  flipped faces: {fa} -> {fb}")
+        pa, pb = ua["packing"]["utilization"], ub["packing"]["utilization"]
+        if abs(pa - pb) > 0.005:
+            lines.append(f"  packing: {pa * 100:.0f}% -> {pb * 100:.0f}%")
+        ia, ib = ua["islands"]["uv_islands"], ub["islands"]["uv_islands"]
+        if ia != ib:
+            lines.append(f"  islands: {ia} -> {ib}")
+
+    ca = {(c["id"], c["message"]) for c in a.get("checks", [])}
+    cb = {(c["id"], c["message"]) for c in b.get("checks", [])}
+    for cid, msg in sorted(cb - ca, key=str):
+        lines.append(f"  NEW  [{cid}] {msg}")
+    for cid, msg in sorted(ca - cb, key=str):
+        lines.append(f"  GONE [{cid}] {msg}")
+    if len(lines) == 1:
+        lines.append("  no differences worth reporting")
+    return lines
 
 
 def inspect(mesh_path: str | Path | None, texture_paths: list[str],

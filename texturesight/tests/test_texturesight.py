@@ -295,3 +295,29 @@ def test_packaged_skill_matches_repo_copy():
     if not src.exists():
         pytest.skip("repo layout not present")
     assert src.read_text(encoding="utf-8") == pkg.read_text(encoding="utf-8")
+
+
+# --- dogfooding round: islands are the actionable unit --------------------
+
+def test_island_detail_names_the_starved_island(broken):
+    """'Lowest at face 8' tells nobody what to grab in the UV editor.
+    The report must name the island, its uv bbox and its density."""
+    rep = analyze_uv(broken, texture_px=1024)
+    rep.pop("_arrays")
+    detail = rep["islands"]["detail"]
+    assert len(detail) == 6
+    dens = [i["mean_density_px_per_unit"] for i in detail]
+    assert min(dens) == pytest.approx(327.68 / 3, abs=1.0)
+    chk = next(c for c in rep["checks"] if c["id"] == "texel-density-uneven")
+    assert "island #" in chk["where"]
+    assert "x in" in chk["try"] or "scale island" in chk["try"]
+
+
+def test_diff_proves_a_layout_fix(tmp_path):
+    from texturesight.report import diff_reports, inspect
+    a = inspect(EX / "cube_broken.obj", [], tmp_path / "a")
+    b = inspect(EX / "cube_clean.obj", [], tmp_path / "b")
+    a.pop("_out_dir"), b.pop("_out_dir")
+    text = "\n".join(diff_reports(a, b))
+    assert "GONE [uv-flipped-faces]" in text
+    assert "spread 3.0x -> 1.0x" in text

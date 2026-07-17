@@ -42,6 +42,11 @@ def main(argv: list[str] | None = None) -> int:
     i.add_argument("--out", default="out", help="output dir (default: ./out)")
     i.add_argument("--json", action="store_true")
 
+    df = sub.add_parser("diff",
+                        help="what changed between two inspect outputs")
+    df.add_argument("a", help="the 'before' out dir (with report.json)")
+    df.add_argument("b", help="the 'after' out dir")
+
     sub.add_parser("install-skill", help="(re)install the Claude Code skill")
     sub.add_parser("uninstall", help="remove the skill AND the package")
     sub.add_parser("version")
@@ -63,10 +68,31 @@ def main(argv: list[str] | None = None) -> int:
         if args.cmd == "uninstall":
             from .skill_install import uninstall
             return uninstall()
+        if args.cmd == "diff":
+            return _diff(args)
         return _inspect(args)
     except TextureSightError as e:
         _say(f"FAILED\n{e.render()}", err=True)
         return 1
+
+
+def _diff(args) -> int:
+    import json as _json
+    from pathlib import Path
+
+    from .report import diff_reports
+    reps = []
+    for d in (args.a, args.b):
+        p = Path(d) / "report.json"
+        if not p.exists():
+            _say(f"FAILED\ndiff-error: no report.json in {d}\n"
+                 f"  try:   run `texturesight inspect ... --out {d}` first",
+                 err=True)
+            return 1
+        reps.append(_json.loads(p.read_text(encoding="utf-8")))
+    for line in diff_reports(*reps):
+        _say(line)
+    return 0
 
 
 def _inspect(args) -> int:

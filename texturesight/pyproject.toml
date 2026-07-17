@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "texturesight"
-version = "0.1.0"
+version = "0.2.0"
 description = "UV and texture review built exclusively for AI agents: a mesh and its maps in, exact measurements + evidence renders out."
 readme = "README.md"
 license = { text = "MIT" }

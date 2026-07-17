@@ -188,3 +188,14 @@ def test_packaged_skill_matches_repo_copy():
     if not src.exists():
         pytest.skip("repo layout not present")
     assert src.read_text(encoding="utf-8") == pkg.read_text(encoding="utf-8")
+
+
+# --- dogfooding round: the proof step --------------------------------------
+
+def test_diff_tells_the_story_of_the_fix(clean, broken):
+    from pcbsight.report import diff_reports
+    text = "\n".join(diff_reports(analyze(broken), analyze(clean)))
+    assert "net 'GND': 2 island(s) -> 1" in text
+    assert "GONE [net-open]" in text
+    assert "clearance findings: 2 -> 0" in text
+    assert "0.745 A -> 2.392 A" in text

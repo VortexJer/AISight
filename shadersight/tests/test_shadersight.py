@@ -246,3 +246,34 @@ def test_packaged_skill_matches_repo_copy():
     if not src.exists():
         pytest.skip("repo layout not present")
     assert src.read_text(encoding="utf-8") == pkg.read_text(encoding="utf-8")
+
+
+# --- dogfooding round: presets and the proof step --------------------------
+
+def test_gold_preset_is_the_measured_value():
+    """'Gold-ish yellow from memory' ships wrong metals; the preset must
+    carry the measured F0 (1.000, 0.766, 0.336 linear)."""
+    from shadersight.brdf import PRESETS
+    assert PRESETS["gold"]["base_color"] == (1.000, 0.766, 0.336)
+    assert PRESETS["gold"]["metallic"] == 1.0
+    m = Material(name="gold", **PRESETS["gold"])
+    assert tuple(round(float(v), 3) for v in m.f0) == (1.0, 0.766, 0.336)
+
+
+def test_all_presets_conserve_energy():
+    from shadersight.brdf import PRESETS
+    for name, p in PRESETS.items():
+        m = Material(name=name, roughness=p.get("roughness", 0.4),
+                     **{k: v for k, v in p.items() if k != "roughness"})
+        rep = analyze_material(m, quality="fast")
+        assert rep["energy_conservation"]["conserves_energy"], name
+
+
+def test_diff_reports_the_tweak():
+    from shadersight.report import diff_reports
+    a = analyze_material(Material(base_color=(1, 0.86, 0.57), metallic=1,
+                                  roughness=0.35), quality="fast")
+    b = analyze_material(Material(base_color=(1, 0.766, 0.336), metallic=1,
+                                  roughness=0.35), quality="fast")
+    text = "\n".join(diff_reports(a, b))
+    assert "base_color" in text

@@ -148,8 +148,62 @@ def test_finds_the_injected_pop(broken):
     rep.pop("_arrays")
     pops = rep["smoothness"]["pops"]
     assert pops, "the one-frame arm pop was not found"
-    assert pops[0]["frame"] == 47
-    assert pops[0]["joint"].startswith("Left")
+    worst = pops[0]
+    assert any(46 <= f <= 48 for f in worst["frames"])
+    assert worst["worst_joint"].startswith("Left")
+
+
+def test_pose_snaps_cluster_into_events():
+    """A blocking pass snaps MANY joints in the same frame; reporting
+    each joint separately buried 5 real snaps under 154 entries (found
+    dogfooding a jump clip). Same-frame spikes must cluster."""
+    import numpy as np
+
+    from animationsight.metrics import derivatives, smoothness
+    rng = np.random.default_rng(3)
+    F, J = 90, 12
+    pos = np.cumsum(rng.normal(0, 0.4, (F, J, 3)), axis=0) + 900.0
+    pos[45:] += 80.0                     # one instantaneous FULL-pose snap
+    names = [f"j{k}" for k in range(J)]
+    s = smoothness(derivatives(pos, 1 / 30), names, 1 / 30)
+    assert s["pop_count"] <= 3           # one event (+ tolerance), not ~12
+    assert s["pops"][0]["kind"] == "pose snap"
+    assert s["pops"][0]["joints_hit"] >= J // 2
+    assert s["raw_spike_count"] >= J // 2
+
+
+def test_ballistics_measures_effective_gravity():
+    """A COM authored to fall at exactly half gravity must read 0.5x —
+    the 'floaty jump' every animator ships and nobody can see."""
+    import numpy as np
+
+    from animationsight.metrics import G_MM_S2, ballistics
+    dt = 1 / 30
+    F = 40
+    com = np.zeros((F, 3))
+    com[:, 1] = 900.0
+    g_eff = 0.5 * G_MM_S2
+    t = (np.arange(10, 30) - 10) * dt
+    com[10:30, 1] = 900.0 + 1200.0 * t - 0.5 * g_eff * t * t
+    b = ballistics(com, list(range(10, 30)), dt, "y")
+    assert len(b["flights"]) == 1
+    assert b["flights"][0]["gravity_ratio"] == pytest.approx(0.5, abs=0.02)
+
+
+def test_oneshot_kind_silences_the_loop_check():
+    """Cut a walk mid-cycle: the seam is genuinely discontinuous, so
+    'auto' reports it — and 'oneshot' silences it, because a jump or a
+    cut take is not supposed to loop and the warning is pure noise."""
+    clip = parse_bvh(CLEAN, unit="cm")
+    clip.frames = clip.frames[:90]           # 2.25 cycles: seam mismatch
+
+    rep = analyze(clip, up="y", kind="auto")
+    rep.pop("_arrays")
+    assert any(c["id"] == "loop-discontinuity" for c in rep["checks"])
+
+    rep2 = analyze(clip, up="y", kind="oneshot")
+    rep2.pop("_arrays")
+    assert not any(c["id"] == "loop-discontinuity" for c in rep2["checks"])
 
 
 def test_finds_the_injected_sliding(broken):

@@ -85,6 +85,54 @@ def analyze(board, min_clearance: float = C.CLEARANCE_DEFAULT,
     }
 
 
+def diff_reports(a: dict, b: dict) -> list[str]:
+    """What a layout fix actually changed — the proof step."""
+    lines = [f"diff: {a['board']['source']} [{a.get('status')}] -> "
+             f"{b['board']['source']} [{b.get('status')}]"]
+    ba, bb = a["board"], b["board"]
+    for k in ("nets", "tracks", "vias", "pads"):
+        if ba[k] != bb[k]:
+            lines.append(f"  {k}: {ba[k]} -> {bb[k]}")
+
+    conn_a = {n["net"]: n for n in a["connectivity"]}
+    conn_b = {n["net"]: n for n in b["connectivity"]}
+    for net in sorted(set(conn_a) | set(conn_b)):
+        ia = conn_a.get(net, {}).get("islands")
+        ib = conn_b.get(net, {}).get("islands")
+        if ia != ib:
+            lines.append(f"  net '{net}': {ia} island(s) -> {ib}")
+
+    na, nb = len(a["clearance_findings"]), len(b["clearance_findings"])
+    if na != nb:
+        lines.append(f"  clearance findings: {na} -> {nb}")
+
+    cur_a = {c["net"]: c for c in a["current_capacity"]}
+    cur_b = {c["net"]: c for c in b["current_capacity"]}
+    for net in sorted(set(cur_a) & set(cur_b)):
+        va, vb = cur_a[net]["i_max_a"], cur_b[net]["i_max_a"]
+        if abs(va - vb) > 0.01:
+            lines.append(f"  current '{net}': {va} A -> {vb} A "
+                         f"(min width {cur_a[net]['min_width_mm']} -> "
+                         f"{cur_b[net]['min_width_mm']} mm)")
+
+    pa = {p["pair"]: p for p in a["diff_pairs"]}
+    pb = {p["pair"]: p for p in b["diff_pairs"]}
+    for pr in sorted(set(pa) & set(pb)):
+        if pa[pr]["skew_mm"] != pb[pr]["skew_mm"]:
+            lines.append(f"  pair {pr}: skew {pa[pr]['skew_mm']} -> "
+                         f"{pb[pr]['skew_mm']} mm")
+
+    ca = {(c["id"], c["message"]) for c in a.get("checks", [])}
+    cb = {(c["id"], c["message"]) for c in b.get("checks", [])}
+    for cid, msg in sorted(cb - ca, key=str):
+        lines.append(f"  NEW  [{cid}] {msg}")
+    for cid, msg in sorted(ca - cb, key=str):
+        lines.append(f"  GONE [{cid}] {msg}")
+    if len(lines) == 1:
+        lines.append("  no differences worth reporting")
+    return lines
+
+
 def inspect(path: str | Path, out_dir: Path,
             min_clearance: float = C.CLEARANCE_DEFAULT,
             dt_c: float = C.DT_DEFAULT) -> dict:

@@ -45,6 +45,14 @@ def main(argv: list[str] | None = None) -> int:
     z.add_argument("--er", type=float, default=4.5,
                    help="relative permittivity (FR4 ~4.2-4.7; default 4.5)")
 
+    df = sub.add_parser("diff",
+                        help="what changed between two boards (runs "
+                             "inspect on both)")
+    df.add_argument("a", help="the 'before' .kicad_pcb")
+    df.add_argument("b", help="the 'after' .kicad_pcb")
+    df.add_argument("--clearance", type=float, default=0.2, metavar="MM")
+    df.add_argument("--dt", type=float, default=10.0, metavar="C")
+
     sub.add_parser("install-skill", help="(re)install the Claude Code skill")
     sub.add_parser("uninstall", help="remove the skill AND the package")
     sub.add_parser("version")
@@ -67,10 +75,22 @@ def main(argv: list[str] | None = None) -> int:
             return uninstall()
         if args.cmd == "impedance":
             return _impedance(args)
+        if args.cmd == "diff":
+            return _diff(args)
         return _inspect(args)
     except PCBSightError as e:
         _say(f"FAILED\n{e.render()}", err=True)
         return 1
+
+
+def _diff(args) -> int:
+    from .board import parse_board
+    from .report import analyze, diff_reports
+    reps = [analyze(parse_board(p), args.clearance, args.dt)
+            for p in (args.a, args.b)]
+    for line in diff_reports(*reps):
+        _say(line)
+    return 0
 
 
 def _impedance(args) -> int:

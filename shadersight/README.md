@@ -17,7 +17,7 @@ them. And a node graph's problems are graph theory: cycles, dead nodes,
 per-pixel cost.
 
 ```bash
-pip install "git+https://github.com/VortexJer/SolidSight#subdirectory=shadersight"
+pip install "git+https://github.com/VortexJer/AISight#subdirectory=shadersight"
 
 shadersight material --base-color 0.7,0.4,0.15 --roughness 0.35 --metallic 1
 # -> energy: max albedo 0.72 at 85 deg -> CONSERVES (grid 64x128, 12 views)

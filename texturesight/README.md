@@ -34,7 +34,7 @@ Findings carry `where` and a `try:`. Everything is deterministic.
 ## Quickstart
 
 ```bash
-pip install "git+https://github.com/VortexJer/SolidSight#subdirectory=texturesight"
+pip install "git+https://github.com/VortexJer/AISight#subdirectory=texturesight"
 
 texturesight inspect --mesh model.obj --texture-px 2048
 # -> out/report.json

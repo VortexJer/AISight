@@ -13,7 +13,9 @@ Jacobian, a seam is an edge whose faces land in different islands, and a
 normal map is either unit-length vectors or it is broken.
 
 The loop is: inspect -> read the checks -> LOOK at `uv_layout.png` and
-`uv_density.png` -> fix in the DCC tool -> inspect again.
+`uv_density.png` -> fix in the DCC tool -> inspect again into a NEW out
+dir -> `diff` the two to prove the fix did what you meant and nothing
+else.
 
 ## Usage
 
@@ -24,6 +26,7 @@ texturesight inspect --mesh m.obj --texture t.png --texture n_normal.png
 texturesight inspect --mesh m.obj --texture-px 2048       # density target (default 1024)
 texturesight inspect --texture rough.png --kind roughness # declare the map type
 texturesight inspect --mesh m.obj --out DIR --json
+texturesight diff out_before out_after           # what the fix changed (proof)
 texturesight version
 ```
 
@@ -35,7 +38,7 @@ broken normal map).
 ### Step 0 - Install
 
 ```bash
-texturesight version || pip install "git+https://github.com/VortexJer/SolidSight#subdirectory=texturesight"
+texturesight version || pip install "git+https://github.com/VortexJer/AISight#subdirectory=texturesight"
 ```
 
 ### Step 1 - The mesh must be unwrapped, and the map type must be right
@@ -74,9 +77,14 @@ Quote it whenever you quote a density: "327 px/unit at 1024" is a fact;
 
 ### Step 4 - LOOK at the renders
 
-- `uv_layout.png` — the islands, one colour each; **red = flipped
+- `uv_layout.png` — the islands, one colour each and **labelled #N**
+  (the same ids as `islands.detail[]` in the report); **red = flipped
   winding, orange = stretched >2:1**. Findings are painted onto the
   layout, so the defect and its location are the same picture.
+- `islands.detail[]` in report.json is the actionable unit: per island
+  its id, uv bbox, face count and mean texel density. Density findings
+  name the starved island and the scale factor it needs — quote those,
+  not face numbers.
 - `uv_density.png` — texel density painted per face: dark = starved,
   light = oversampled. Uneven density is invisible on a model and
   obvious here.

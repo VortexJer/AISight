@@ -1,20 +1,49 @@
-# solidsight
+# AISight
 
-![ci](https://github.com/VortexJer/SolidSight/actions/workflows/ci.yml/badge.svg)
+![ci](https://github.com/VortexJer/AISight/actions/workflows/ci.yml/badge.svg)
+
+**Sight for AI agents.** An agent cannot look at a screen — and almost
+everything creative software asks a human to *look at* is actually a
+measurable property of the data. AISight is a family of five
+independent tools, one per domain, that replace looking with measuring:
+deterministic builds, exact reports with `where` and `try:` on every
+finding, and renders only as evidence for what the numbers found.
+
+| tool | domain | replaces |
+|---|---|---|
+| [**solidsight**](#solidsight) | 3D design / CAD / printing | eyes on a viewport |
+| [**animationsight**](animationsight/) | animation clips, mocap (.bvh) | watching the take |
+| [**texturesight**](texturesight/) | UVs + texture maps | squinting at a checker |
+| [**shadersight**](shadersight/) | materials/BRDFs + node graphs | rendering a sphere |
+| [**pcbsight**](pcbsight/) | PCB layouts (.kicad_pcb) | eyeballing copper |
+
+**Install only what you need** — each is its own pip package with its
+own CLI and its own self-installing Claude Code skill (first run drops
+it into `~/.claude/skills/`; `<tool> uninstall` removes both):
+
+```bash
+pip install "git+https://github.com/VortexJer/AISight#subdirectory=tool"            # solidsight (3D)
+pip install "git+https://github.com/VortexJer/AISight#subdirectory=animationsight"
+pip install "git+https://github.com/VortexJer/AISight#subdirectory=texturesight"
+pip install "git+https://github.com/VortexJer/AISight#subdirectory=shadersight"
+pip install "git+https://github.com/VortexJer/AISight#subdirectory=pcbsight"
+```
+
+Every tool holds itself to the same standard: known-ground-truth
+examples (defects injected at exact magnitudes; tests assert the right
+answer AND that the clean reference stays clean), determinism, honest
+scope statements, and a full loop — inspect → fix → **diff to prove the
+fix did what you meant and nothing else**. The family overview and the
+bugs each tool caught in its own reference:
+[docs/roadmap-sights.md](docs/roadmap-sights.md).
+
+---
+
+# solidsight
 
 **A 3D design tool built exclusively for AI agents.** Parametric Python in;
 deterministic geometry, multi-angle PNG renders, and a machine-readable
 validation report out.
-
-solidsight is also the head of the ***Sight family*** — the same
-philosophy (the agent is blind; give it exact numbers, with renders only
-as evidence) applied to four more domains that were built for human
-eyes: [animationsight](animationsight/) (motion clips),
-[texturesight](texturesight/) (UVs and texture maps),
-[shadersight](shadersight/) (materials and node graphs) and
-[pcbsight](pcbsight/) (board layouts). Each is its own pip package in
-this repo, with its own self-installing Claude Code skill and
-known-ground-truth examples. See [docs/roadmap-sights.md](docs/roadmap-sights.md).
 
 An LLM writing CAD code is blind: it can reason about geometry but cannot see
 what it made. Human CAD tools assume eyes on a screen and a hand on a mouse.
@@ -53,7 +82,7 @@ with **0 crossings**.
 ## Quickstart (30 seconds)
 
 ```bash
-pip install "git+https://github.com/VortexJer/SolidSight#subdirectory=tool"
+pip install "git+https://github.com/VortexJer/AISight#subdirectory=tool"
 # or from a checkout:  pip install ./tool
 
 cat > model.py <<'EOF'
