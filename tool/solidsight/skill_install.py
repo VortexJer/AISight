@@ -1,10 +1,10 @@
 """Self-hosting of the Claude Code skill.
 
-The SKILL.md + references ship inside the pip package (skill_data/). On the
-first CLI run on a machine that has Claude Code (~/.claude exists), the
-skill installs itself into ~/.claude/skills/solidsight and keeps itself
-up to date on version changes. `solidsight uninstall` removes the skill
-AND the pip package.
+The SKILL.md + references/ + domains/ ship inside the pip package
+(skill_data/). On the first CLI run on a machine that has Claude Code
+(~/.claude exists), the skill installs itself into
+~/.claude/skills/solidsight and keeps itself up to date on version
+changes. `solidsight uninstall` removes the skill AND the pip package.
 """
 
 from __future__ import annotations
@@ -18,6 +18,7 @@ from pathlib import Path
 from . import __version__
 
 MARKER = ".installed-version"
+SUBDIRS = ("references", "domains")
 
 
 def default_skill_dir() -> Path:
@@ -29,7 +30,8 @@ def _source() -> Path:
 
 
 def install_skill(target: Path | None = None, quiet: bool = False) -> Path:
-    """Copy SKILL.md + references/ into the Claude Code skills directory."""
+    """Copy SKILL.md + references/ + domains/ into the Claude Code skills
+    directory."""
     dst = Path(target) if target else default_skill_dir()
     src = _source()
     if not (src / "SKILL.md").exists():
@@ -37,10 +39,12 @@ def install_skill(target: Path | None = None, quiet: bool = False) -> Path:
             f"packaged skill data missing at {src} — reinstall solidsight")
     dst.mkdir(parents=True, exist_ok=True)
     shutil.copy2(src / "SKILL.md", dst / "SKILL.md")
-    ref_dst = dst / "references"
-    if ref_dst.exists():
-        shutil.rmtree(ref_dst)
-    shutil.copytree(src / "references", ref_dst)
+    for sub in SUBDIRS:
+        sub_dst = dst / sub
+        if sub_dst.exists():
+            shutil.rmtree(sub_dst)
+        if (src / sub).is_dir():
+            shutil.copytree(src / sub, sub_dst)
     (dst / MARKER).write_text(__version__, encoding="utf-8")
     if not quiet:
         print(f"solidsight skill v{__version__} installed at {dst}")

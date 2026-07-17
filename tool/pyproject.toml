@@ -27,4 +27,4 @@ solidsight = "solidsight.cli:main"
 include = ["solidsight*"]
 
 [tool.setuptools.package-data]
-solidsight = ["skill_data/SKILL.md", "skill_data/references/*.md", "viewer_assets/*"]
+solidsight = ["skill_data/SKILL.md", "skill_data/references/*.md", "skill_data/domains/*.md", "viewer_assets/*"]

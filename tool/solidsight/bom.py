@@ -13,6 +13,26 @@ each step listing what it registers against.
 from __future__ import annotations
 
 import hashlib
+import re
+
+# a catalog/primitive descriptor worth printing as the BOM item, e.g.
+# "bearing_608(bore=8)" or "spur_gear(teeth=20, m=2)". Composed solids
+# carry their whole construction tree in .desc — useful in errors,
+# useless (and unreadable) as a line item.
+_CLEAN_DESC = re.compile(r"^[a-z_][a-z0-9_]*\([^()]*\)$", re.I)
+
+
+def _item_label(solid) -> str:
+    """The BOM identity of a solid: its catalog provenance when it has
+    one, else 'custom part' (the part NAME is what identifies it then —
+    a construction tree is not a line item)."""
+    desc = (solid.desc or "").strip()
+    if _CLEAN_DESC.match(desc) and not desc.startswith(("union(",
+                                                        "difference(",
+                                                        "intersection(",
+                                                        "hull(")):
+        return desc
+    return "custom part"
 
 
 def bom(scene) -> list[dict]:
@@ -32,14 +52,17 @@ def bom(scene) -> list[dict]:
             f"{len(tm.vertices)}|{len(tm.faces)}|{tm.volume:.2f}|"
             f"{tm.area:.2f}|{ext}|{com_off:.3f}".encode()).hexdigest()[:12]
         g = groups.setdefault(key, {
-            "item": p.solid.desc, "count": 0, "names": [],
+            "item": _item_label(p.solid), "count": 0, "names": [],
             "ghost": p.ghost,
+            "size_mm": [round(float(v), 2) for v in tm.extents],
             "volume_mm3": round(p.solid.volume, 3),
             "grams_pla_each": round(p.solid.volume * 0.00124, 1),
+            "desc": p.solid.desc,   # full construction tree, for tracing
         })
         g["count"] += 1
         g["names"].append(p.name)
-    rows = sorted(groups.values(), key=lambda g: (-g["count"], g["item"]))
+    rows = sorted(groups.values(),
+                  key=lambda g: (-g["count"], g["names"][0]))
     return rows
 
 

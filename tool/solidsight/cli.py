@@ -903,9 +903,10 @@ def _assembly(args) -> int:
     _say("BILL OF MATERIALS")
     for r in rows:
         ghost = "  (ghost/reference)" if r["ghost"] else ""
-        _say(f"  {r['count']} x {r['item']}  "
-             f"[{', '.join(r['names'])}]  "
-             f"{r['grams_pla_each']} g PLA each{ghost}")
+        sz = " x ".join(str(v) for v in r["size_mm"])
+        item = "" if r["item"] == "custom part" else f"  {r['item']}"
+        _say(f"  {r['count']} x {', '.join(r['names'])}{item}  "
+             f"| {sz} mm | {r['grams_pla_each']} g PLA each{ghost}")
     _say("AXIS PLAY (bbox gaps between consecutive parts)")
     for axis, d in play.items():
         gaps = "; ".join(f"{g['after']} -> {g['before']}: {g['gap_mm']} mm"

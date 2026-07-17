@@ -343,7 +343,18 @@ def test_skill_install_and_remove(tmp_path):
     dst = install_skill(tmp_path / "solidsight", quiet=True)
     assert (dst / "SKILL.md").exists()
     assert (dst / "references" / "design-language.md").exists()
+    assert (dst / "domains" / "enclosures.md").exists()
     assert (dst / MARKER).read_text(encoding="utf-8").strip()
+
+
+def test_skill_install_refreshes_removed_files(tmp_path):
+    # installing over an older skill must not leave orphans behind
+    from solidsight.skill_install import install_skill
+    dst = install_skill(tmp_path / "solidsight", quiet=True)
+    stale = dst / "domains" / "obsolete-playbook.md"
+    stale.write_text("from a previous version", encoding="utf-8")
+    install_skill(tmp_path / "solidsight", quiet=True)
+    assert not stale.exists()
 
 
 def test_packaged_skill_matches_repo_copy():
@@ -354,11 +365,20 @@ def test_packaged_skill_matches_repo_copy():
     skill, pkg = repo / "skill", repo / "tool" / "solidsight" / "skill_data"
     if not (skill / "SKILL.md").exists():
         pytest.skip("repo layout not present (installed package only)")
-    for rel in ["SKILL.md"] + [f"references/{p.name}"
-                               for p in (skill / "references").glob("*.md")]:
+    rels = ["SKILL.md"]
+    for sub in ("references", "domains"):
+        rels += [f"{sub}/{p.name}" for p in (skill / sub).glob("*.md")]
+    for rel in rels:
+        assert (pkg / rel).exists(), f"skill_data/{rel} is missing"
         a = (skill / rel).read_text(encoding="utf-8")
         b = (pkg / rel).read_text(encoding="utf-8")
         assert a == b, f"skill_data/{rel} is out of sync with skill/{rel}"
+    # and nothing extra shipped that the repo no longer has
+    for sub in ("references", "domains"):
+        shipped = {p.name for p in (pkg / sub).glob("*.md")}
+        source = {p.name for p in (skill / sub).glob("*.md")}
+        assert shipped == source, f"skill_data/{sub} has orphans: " \
+                                  f"{shipped - source}"
 
 
 # --- event streaming ---------------------------------------------------------
@@ -880,3 +900,28 @@ def test_motion_finds_the_blocked_arc():
           limits=(0, 90))
     with pytest.raises(SolidsightError, match="principal"):
         inspect_motion(sc2)
+
+
+# --- BOM rows must identify parts, not dump construction trees ------------
+# `solidsight assembly` printed 300-char nested desc() strings as line
+# items ("difference(difference(rounded_box(... minus snap_slot(w=8))").
+
+def test_bom_item_is_a_label_not_a_construction_tree():
+    from solidsight.bom import bom
+    sc = make_scene()
+    from solidsight import rounded_box
+    composed = (rounded_box(50, 34, 24, r=3)
+                - box(44, 28, 21).translate(0, 0, 2)
+                - cylinder(h=30, d=6))
+    sc.emit(composed, name="box")
+    sc.emit(parts.bearing(name="608"), name="brg")
+    rows = {r["names"][0]: r for r in bom(sc)}
+
+    # a user-composed solid is identified by its NAME + size, not its tree
+    assert rows["box"]["item"] == "custom part"
+    assert rows["box"]["size_mm"] == [50.0, 34.0, 24.0]
+    assert "difference(" in rows["box"]["desc"]      # tree still traceable
+
+    # catalog provenance survives as the item label
+    assert rows["brg"]["item"].startswith("bearing")
+    assert "(" in rows["brg"]["item"]

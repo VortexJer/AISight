@@ -291,12 +291,33 @@ Do not report the task complete until ALL of these hold for the final code:
 - `references/platform.md` — the platform commands beyond build/query:
   watch, view, formats/convert, components, drawing, robot, motion,
   assembly/BOM, fit, explain, critique, cost, bench, plugins, events.
-- `references/domains.md` — choosing a modeling strategy per domain
-  (enclosures, mechanisms, furniture, architecture, organic/artistic,
-  terrain, jewelry, miniatures) and which validation mode fits each.
 - `references/from-image.md` — modeling from a photo or drawing:
   size estimation with anchors, `image_outline()` / `image_heightfield()`,
   and the `--ref` comparison-sheet loop.
+
+## Domain playbooks — load the ONE that matches (`domains/`)
+
+Each is a full method for its domain: the numbers you may assume, the
+build order, recipes, the specific failure modes, and its definition of
+done. Load it right after the bill of parts. Do not load the others.
+
+| load | when the request is |
+|---|---|
+| `domains/enclosures.md` | a box, PCB housing, bracket, jig, wall mount, adapter |
+| `domains/mechanisms.md` | gears, linkages, robot joints, anything that moves |
+| `domains/product-design.md` | a handheld/consumer shell, grip, ergonomics |
+| `domains/furniture.md` | tables, shelves, chairs, frames, joinery, T-slot |
+| `domains/architecture.md` | buildings, rooms, plans, massing, interiors |
+| `domains/vehicles.md` | cars, bikes, boats, hulls, aircraft, drones |
+| `domains/organic.md` | vases, sculpture, characters, props, flowing forms |
+| `domains/terrain.md` | landscapes, heightmaps, procedural environments |
+| `domains/jewelry-miniatures.md` | rings, pendants, miniatures, scale models |
+| `domains/game-ready.md` | assets for a game engine (GLB, budgets, LODs) |
+| `domains/toys.md` | toys, puzzles, board-game inserts (safety standards) |
+| `domains/scientific.md` | molecules, lab fixtures, data made physical |
+
+A playbook says WHAT to build and what to check; it never overrides the
+loop above or the honesty rules below.
 
 Worked examples with real reports and renders: `examples/01-mounting-bracket`
 (simple), `02-snap-box` (booleans + snap fit), `03-gear-train` (catalog),
