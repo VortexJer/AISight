@@ -1,5 +1,5 @@
 {
-  "tool": "solidsight 0.5.0",
+  "tool": "solidsight 0.8.0",
   "model": "audit.py",
   "mode": "print-safe",
   "units": "mm",
@@ -8,87 +8,87 @@
     "part_count": 1,
     "bbox": {
       "min": [
-        -6.0,
-        -136.0,
-        -60.0
+        -212.0,
+        -96.0,
+        -50.0
       ],
       "max": [
-        420.0,
-        132.0,
+        212.0,
+        96.0,
         220.0
       ]
     },
     "size": [
-      426.0,
-      268.0,
-      280.0
+      424.0,
+      192.0,
+      270.0
     ],
-    "total_volume_mm3": 8243493.534
+    "total_volume_mm3": 5719416.693
   },
   "parts": {
     "blind_block": {
-      "volume_mm3": 8243493.534,
-      "surface_area_mm2": 1280234.449,
+      "volume_mm3": 5719416.693,
+      "surface_area_mm2": 1026854.787,
       "bbox": {
         "min": [
-          -6.0,
-          -136.0,
-          -60.0
+          -212.0,
+          -96.0,
+          -50.0
         ],
         "max": [
-          420.0,
-          132.0,
+          212.0,
+          96.0,
           220.0
         ],
         "size": [
-          426.0,
-          268.0,
-          280.0
+          424.0,
+          192.0,
+          270.0
         ]
       },
       "center_of_mass": [
-        212.181,
-        -1.015,
-        78.93
+        -0.0,
+        0.166,
+        100.08
       ],
-      "triangles": 19360,
+      "triangles": 15790,
       "shells": 1,
       "watertight": true,
-      "genus": 59,
+      "genus": null,
       "wall_thickness": {
-        "min_mm": 0.439,
+        "min_mm": 1.881,
         "at": [
-          273.774,
-          -75.0,
-          92.438
+          -190.0,
+          25.29,
+          16.111
         ],
         "samples": 600,
         "method": "inward-normal-ray"
       },
       "overhangs": {
         "max_deg": 90.0,
-        "area_mm2": 58074.56,
+        "area_mm2": 62813.09,
         "worst_at": [
-          17.248,
-          -103.762,
-          -42.0
+          -187.833,
+          -78.833,
+          -45.0
         ],
         "threshold_deg": 50.0
       },
       "internal_voids": {
-        "count": 0,
-        "res_mm": null,
+        "count": 8,
+        "res_mm": 8.8333,
         "voids": []
       },
       "print_estimate": {
-        "material_g_pla": 10221.9,
-        "material_g_petg": 10469.2,
-        "rough_time_min": 13739,
+        "material_g_pla": 7092.1,
+        "material_g_petg": 7263.7,
+        "rough_time_min": 9532,
         "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
       },
       "stability": {
         "standing": true,
-        "com_margin_mm": 116.63
+        "com_margin_mm": 6.36
       },
       "color": "#8b8b88"
     }
@@ -96,28 +96,54 @@
   "pairs": [],
   "checks": [
     {
-      "id": "thin-wall",
+      "id": "internal-cavity",
       "level": "fail",
       "part": "blind_block",
-      "message": "part \"blind_block\" has a 0.439 mm wall \u2014 below the 1.2 mm print-safe minimum",
-      "where": "thinnest point near (273.774, -75, 92.438)",
-      "suggestion": "thicken that region, or lower --min-wall if your printer really handles it. Inspect: solidsight build <model> --views iso,iso_back --focus 273.8,-75.0,92.4,8.0 --slice z=92.4 --out out_focus"
+      "message": "part \"blind_block\" contains 8 sealed internal cavities (smaller than the inspection voxel grid) that no opening reaches \u2014 the outside render looks solid",
+      "where": "run `solidsight query <model> voxels --res 0.3` to locate it",
+      "suggestion": "resin/powder cannot drain and FDM cannot print a sealed roof; add a drain hole or remove the void. Inspect it with: solidsight query <model> section z=85 \u2014 if the void is intentional, build with --free"
     },
     {
       "id": "overhang",
       "level": "warn",
       "part": "blind_block",
-      "message": "part \"blind_block\" has 58074.6 mm2 of faces steeper than 50 deg overhang (worst: 90 deg)",
-      "where": "worst face near (17.248, -103.762, -42)",
-      "suggestion": "reorient the part, chamfer the underside (45 deg cones under bosses), or accept support material. Flat roofs spanning an opening wall-to-wall (port slots, windows) are BRIDGES and usually print fine despite this warning. Inspect: solidsight build <model> --views iso,iso_back --focus 17.2,-103.8,-42.0,12.0 --slice z=-42.0 --out out_focus"
+      "message": "part \"blind_block\" has 62813.1 mm2 of faces steeper than 50 deg overhang (worst: 90 deg)",
+      "where": "worst face near (-187.833, -78.833, -45)",
+      "suggestion": "reorient the part, chamfer the underside (45 deg cones under bosses), or accept support material. Flat roofs spanning an opening wall-to-wall (port slots, windows) are BRIDGES and usually print fine despite this warning. Inspect: solidsight build <model> --views iso,iso_back --focus -187.8,-78.8,-45.0,12.0 --slice z=-45.0 --out out_focus"
+    },
+    {
+      "id": "barely-stable",
+      "level": "warn",
+      "part": "blind_block",
+      "message": "part \"blind_block\" is barely stable: the center of mass sits only 6.36 mm inside the footprint edge",
+      "where": null,
+      "suggestion": "a nudge will tip it; widen the base or lower the center of mass"
     },
     {
       "id": "below-plate",
       "level": "warn",
       "part": "blind_block",
-      "message": "part \"blind_block\" extends 60 mm below Z=0 (the build plate)",
+      "message": "part \"blind_block\" extends 50 mm below Z=0 (the build plate)",
       "where": null,
       "suggestion": "finish the part with .on_ground() or translate it up"
+    }
+  ],
+  "bom": [
+    {
+      "item": "from_stl(engine_blind.stl)",
+      "count": 1,
+      "names": [
+        "blind_block"
+      ],
+      "ghost": false,
+      "size_mm": [
+        424.0,
+        192.0,
+        270.0
+      ],
+      "volume_mm3": 5719416.693,
+      "grams_pla_each": 7092.1,
+      "desc": "from_stl(engine_blind.stl)"
     }
   ],
   "files": {

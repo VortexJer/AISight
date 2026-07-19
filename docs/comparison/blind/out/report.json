@@ -1,107 +1,142 @@
 {
-  "tool": "solidsight 0.5.0",
+  "tool": "solidsight 0.8.0",
   "model": "audit.py",
   "mode": "free",
   "units": "mm",
-  "status": "ok",
+  "status": "warnings",
   "scene": {
     "part_count": 1,
     "bbox": {
       "min": [
-        -6.0,
-        -136.0,
-        -60.0
+        -212.0,
+        -96.0,
+        -50.0
       ],
       "max": [
-        420.0,
-        132.0,
+        212.0,
+        96.0,
         220.0
       ]
     },
     "size": [
-      426.0,
-      268.0,
-      280.0
+      424.0,
+      192.0,
+      270.0
     ],
-    "total_volume_mm3": 8243493.534
+    "total_volume_mm3": 5719416.693
   },
   "parts": {
     "blind_block": {
-      "volume_mm3": 8243493.534,
-      "surface_area_mm2": 1280234.449,
+      "volume_mm3": 5719416.693,
+      "surface_area_mm2": 1026854.787,
       "bbox": {
         "min": [
-          -6.0,
-          -136.0,
-          -60.0
+          -212.0,
+          -96.0,
+          -50.0
         ],
         "max": [
-          420.0,
-          132.0,
+          212.0,
+          96.0,
           220.0
         ],
         "size": [
-          426.0,
-          268.0,
-          280.0
+          424.0,
+          192.0,
+          270.0
         ]
       },
       "center_of_mass": [
-        212.181,
-        -1.015,
-        78.93
+        -0.0,
+        0.166,
+        100.08
       ],
-      "triangles": 19360,
+      "triangles": 15790,
       "shells": 1,
       "watertight": true,
-      "genus": 59,
+      "genus": null,
       "wall_thickness": {
-        "min_mm": 0.439,
+        "min_mm": 1.881,
         "at": [
-          273.774,
-          -75.0,
-          92.438
+          -190.0,
+          25.29,
+          16.111
         ],
         "samples": 600,
         "method": "inward-normal-ray"
       },
       "overhangs": {
         "max_deg": 90.0,
-        "area_mm2": 58074.56,
+        "area_mm2": 62813.09,
         "worst_at": [
-          17.248,
-          -103.762,
-          -42.0
+          -187.833,
+          -78.833,
+          -45.0
         ],
         "threshold_deg": 50.0
       },
       "internal_voids": {
-        "count": 0,
-        "res_mm": null,
+        "count": 8,
+        "res_mm": 8.8333,
         "voids": []
       },
       "print_estimate": {
-        "material_g_pla": 10221.9,
-        "material_g_petg": 10469.2,
-        "rough_time_min": 13739,
+        "material_g_pla": 7092.1,
+        "material_g_petg": 7263.7,
+        "rough_time_min": 9532,
         "note": "solid part at 100% infill; time is +-50%, slicer-dependent"
       },
       "stability": {
         "standing": true,
-        "com_margin_mm": 116.63
+        "com_margin_mm": 6.36
       },
       "color": "#8b8b88"
     }
   },
   "pairs": [],
-  "checks": [],
+  "checks": [
+    {
+      "id": "internal-cavity",
+      "level": "warn",
+      "part": "blind_block",
+      "message": "part \"blind_block\" contains 8 sealed internal cavities (smaller than the inspection voxel grid) that no opening reaches \u2014 the outside render looks solid",
+      "where": "run `solidsight query <model> voxels --res 0.3` to locate it",
+      "suggestion": "resin/powder cannot drain and FDM cannot print a sealed roof; add a drain hole or remove the void. Inspect it with: solidsight query <model> section z=85 \u2014 if the void is intentional, build with --free"
+    },
+    {
+      "id": "barely-stable",
+      "level": "warn",
+      "part": "blind_block",
+      "message": "part \"blind_block\" is barely stable: the center of mass sits only 6.36 mm inside the footprint edge",
+      "where": null,
+      "suggestion": "a nudge will tip it; widen the base or lower the center of mass"
+    }
+  ],
+  "bom": [
+    {
+      "item": "from_stl(engine_blind.stl)",
+      "count": 1,
+      "names": [
+        "blind_block"
+      ],
+      "ghost": false,
+      "size_mm": [
+        424.0,
+        192.0,
+        270.0
+      ],
+      "volume_mm3": 5719416.693,
+      "grams_pla_each": 7092.1,
+      "desc": "from_stl(engine_blind.stl)"
+    }
+  ],
   "files": {
     "report": "report.json",
     "renders": [
       "renders/01_iso.png",
       "renders/02_iso_back.png",
-      "renders/slice_x_163p5.png",
-      "renders/slice_z_160.png"
+      "renders/slice_x_47.png",
+      "renders/slice_z_150.png"
     ],
     "exports": []
   }

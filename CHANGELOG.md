@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-19 — the engine blind baseline, regenerated under a fully traced protocol
+
+The same-prompt comparison's blind side was regenerated once more at
+the owner's request, this time with the complete tool trace in the
+methodology note: fresh-context agent, empty directory outside the
+repo, numpy+trimesh only, four tool calls total, zero crash reruns.
+The new audit found a different (and better) defect story: eight
+sealed water-jacket pockets (two of ~37 cm³ — coolant can never reach
+them), main-cap bolt drillings 1.881 mm from the crank tunnel, the
+pressurized oil gallery 3.0 mm from the jacket for the block's full
+length, and a 2 mm sliver below the cap face that the blind author
+itself PREDICTED sight unseen — it could reason about its likely
+failures, it just had no way to check them. docs/comparison and the
+root README updated with verbatim query evidence.
+
 ## 2026-07-19 — every Sight can EDIT, and every Sight can SHOW
 
 Two family-wide capabilities (animationsight 0.7.0, texturesight 0.5.0,

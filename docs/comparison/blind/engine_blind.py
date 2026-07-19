@@ -1,174 +1,172 @@
-"""
-Blind one-shot 3D model of an inline-4 engine block.
-Built purely from numpy + trimesh primitives and booleans.
+"""Inline-4 engine block, generated blind from engineering knowledge.
 
-Coordinate system (mm):
-  X = crank axis, 0 at front face, 420 at rear face
-  Y = lateral, 0 on crank centerline (+Y = intake side, -Y = exhaust/filter side)
-  Z = up, 0 at crank centerline, deck face at +220, pan rail at -60
+Units: mm.  Coordinate system:
+  X = crank axis (front of engine at -X, rear at +X)
+  Y = transverse (thrust axis)
+  Z = vertical, crank centerline at Z=0, deck face at Z=+220
 
-Design basis: ~2.0 L four, bore 86 mm, bore spacing 93 mm, deck height 220 mm.
+Nominal engine: 2.0 L four -- 86 mm bore, 94 mm bore spacing, closed deck.
+
+Only numpy + trimesh are used.  Booleans run on trimesh's manifold engine.
 """
 
 import numpy as np
 import trimesh
+from trimesh.creation import box, cylinder
+from trimesh.transformations import translation_matrix, rotation_matrix
 
+ENGINE = "manifold"
 
-# ---------------------------------------------------------------- helpers
-def box(x0, x1, y0, y1, z0, z1):
+# ----------------------------------------------------------------- helpers
+def T(x, y, z):
+    return translation_matrix([x, y, z])
+
+def BX(x0, x1, y0, y1, z0, z1):
+    """Axis-aligned box from min/max corners."""
     ext = [x1 - x0, y1 - y0, z1 - z0]
-    T = np.eye(4)
-    T[:3, 3] = [(x0 + x1) / 2.0, (y0 + y1) / 2.0, (z0 + z1) / 2.0]
-    return trimesh.creation.box(extents=ext, transform=T)
+    ctr = [(x0 + x1) / 2.0, (y0 + y1) / 2.0, (z0 + z1) / 2.0]
+    return box(extents=ext, transform=T(*ctr))
 
+def CZ(r, z0, z1, x=0.0, y=0.0, sec=64):
+    """Cylinder along Z."""
+    return cylinder(radius=r, height=z1 - z0, sections=sec,
+                    transform=T(x, y, (z0 + z1) / 2.0))
 
-def cyl(p1, p2, r, sec=64):
-    """Cylinder from point p1 to p2, radius r."""
-    return trimesh.creation.cylinder(
-        radius=r, segment=[list(p1), list(p2)], sections=sec)
+def CX(r, x0, x1, y=0.0, z=0.0, sec=64):
+    """Cylinder along X."""
+    m = T((x0 + x1) / 2.0, y, z) @ rotation_matrix(np.pi / 2.0, [0, 1, 0])
+    return cylinder(radius=r, height=x1 - x0, sections=sec, transform=m)
 
+def CY(r, y0, y1, x=0.0, z=0.0, sec=64):
+    """Cylinder along Y."""
+    m = T(x, (y0 + y1) / 2.0, z) @ rotation_matrix(-np.pi / 2.0, [1, 0, 0])
+    return cylinder(radius=r, height=y1 - y0, sections=sec, transform=m)
 
-def cylz(x, y, z0, z1, r, sec=64):
-    return cyl([x, y, z0], [x, y, z1], r, sec)
+def union(meshes):
+    return trimesh.boolean.union(meshes, engine=ENGINE)
 
+def difference(meshes):
+    return trimesh.boolean.difference(meshes, engine=ENGINE)
 
-# ---------------------------------------------------------------- layout
-L = 420.0                      # block length
-DECK = 220.0                   # deck face height above crank CL
-RAIL = -60.0                   # oil pan rail
-BORE_R = 43.0                  # 86 mm bore
-LINER_R = 49.0                 # 6 mm liner wall, siamesed (spacing 93 < 98)
-XC = [70.5, 163.5, 256.5, 349.5]          # cylinder centers, 93 mm spacing
-XB = [12.0, 117.0, 210.0, 303.0, 408.0]   # main bearing bulkhead centers
-BULK = [(0.0, 24.0), (106.0, 128.0), (199.0, 221.0),
-        (292.0, 314.0), (396.0, 420.0)]   # bulkhead material x-ranges
-BAYS = [(24.0, 106.0), (128.0, 199.0), (221.0, 292.0), (314.0, 396.0)]
-XH = [25.0, 117.0, 210.0, 303.0, 395.0]   # head bolt columns (2 rows, y=+-52)
+# ------------------------------------------------------------- parameters
+BORE_D      = 86.0                      # cylinder bore
+BORE_R      = BORE_D / 2.0
+PITCH       = 94.0                      # bore spacing
+BORE_X      = [-1.5 * PITCH, -0.5 * PITCH, 0.5 * PITCH, 1.5 * PITCH]
+MAIN_X      = [-2 * PITCH, -PITCH, 0.0, PITCH, 2 * PITCH]   # 5 main bearings
 
-# ---------------------------------------------------------------- positives
-upper = box(0, L, -75, 75, 60, DECK)              # cylinder bank
-crankcase = box(0, L, -110, 110, RAIL, 80)        # wider crankcase / skirt
-rearplate = box(412, L, -125, 125, RAIL, 170)     # bellhousing flange
+DECK_Z      = 220.0                     # deck face height above crank CL
+BLOCK_XEND  = 205.0                     # front/rear faces at +/-205
+UPPER_HW    = 65.0                      # upper block half width
+CASE_HW     = 85.0                      # crankcase half width
+PAN_Z       = -45.0                     # oil pan rail face
+CASE_TOP    = 95.0                      # crankcase casting top (overlaps upper)
+UPPER_BOT   = 85.0                      # upper block bottom (overlap for union)
 
-base = trimesh.boolean.union([upper, crankcase, rearplate])
+LINER_R     = 50.0                      # cylinder wall outer radius (siamese)
+JACKET_R    = 58.0                      # water jacket outer radius
+JACKET_Z0   = 110.0                     # jacket floor
+JACKET_Z1   = 212.0                     # jacket roof -> 8 mm closed deck plate
 
-# closed-deck water jacket cavity (deck plate 10 mm thick above it)
-jacket = box(12.5, 407.5, -59, 59, 110, 210)
-base = trimesh.boolean.difference([base, jacket])
+BULK_T      = 18.0                      # main bearing bulkhead thickness
+SKIRT_IN    = 73.0                      # crankcase inner wall (12 mm skirts)
+TUNNEL_R    = 30.0                      # crank tunnel / main bearing bore
 
+# ------------------------------------------------------ 1. base castings
+parts = []
+
+# Upper block (cylinder barrel section)
+parts.append(BX(-BLOCK_XEND, BLOCK_XEND, -UPPER_HW, UPPER_HW, UPPER_BOT, DECK_Z))
+# Crankcase
+parts.append(BX(-BLOCK_XEND, BLOCK_XEND, -CASE_HW, CASE_HW, PAN_Z, CASE_TOP))
+
+# Engine mount bosses: 3 per side on the crankcase walls at Z=60
+MOUNT_X = [-120.0, 0.0, 120.0]
+for mx in MOUNT_X:
+    parts.append(CY(15.0, 70.0, 96.0, x=mx, z=60.0))     # right side
+    parts.append(CY(15.0, -96.0, -70.0, x=mx, z=60.0))   # left side
+
+# Front nose boss and rear main seal boss on the crank axis
+parts.append(CX(50.0, -212.0, -193.0, y=0.0, z=0.0, sec=96))
+parts.append(CX(50.0, 193.0, 212.0, y=0.0, z=0.0, sec=96))
+
+solid = union(parts)
+
+# ----------------------------------------------- 2. carve the water jacket
+jackets = [CZ(JACKET_R, JACKET_Z0, JACKET_Z1, x=bx, sec=96) for bx in BORE_X]
+solid = difference([solid] + jackets)
+
+# ------------------------- 3. add back cylinder walls + head-bolt columns
 adds = []
-for xc in XC:                                     # siamesed cylinder liners
-    adds.append(cylz(xc, 0, 100, 215, LINER_R, sec=96))
-for xh in XH:                                     # head-bolt columns in jacket
-    for s in (1, -1):
-        adds.append(cylz(xh, 52 * s, 100, 215, 12.0))
-adds.append(box(130, 200, 105, 132, -25, 35))     # engine mount boss +Y
-adds.append(box(130, 200, -132, -105, -25, 35))   # engine mount boss -Y
-adds.append(cyl([303, -136, 30], [303, -104, 30], 38.0))   # oil filter pad
-adds.append(cyl([187, 73, 95], [187, 86, 95], 14.0))       # knock sensor boss
-adds.append(cyl([250, -82, 95], [250, -73, 95], 10.0))     # oil pressure boss
-adds.append(cyl([-6, 42, 160], [1, 42, 160], 20.0))        # water inlet boss
+# Siamese cylinder walls standing in the jacket, tied into deck and base
+for bx in BORE_X:
+    adds.append(CZ(LINER_R, 102.0, 218.0, x=bx, sec=96))
+# 10 head-bolt bosses (columns through the jacket) at the bulkhead stations
+HB_Y = 34.0
+hb_xy = [(mx, s * HB_Y) for mx in MAIN_X for s in (+1, -1)]
+for hx, hy in hb_xy:
+    adds.append(CZ(11.0, 100.0, 216.0, x=hx, y=hy, sec=48))
+solid = union([solid] + adds)
 
-block = trimesh.boolean.union([base] + adds)
+# ------------------------------------------------------------ 4. cutters
+cuts = []
 
-# ---------------------------------------------------------------- negatives
-negs = []
+# Cylinder bores (through deck, opening into the crankcase)
+for bx in BORE_X:
+    cuts.append(CZ(BORE_R, 83.0, 235.0, x=bx, sec=128))
 
-# cylinder bores (open into crankcase)
-for xc in XC:
-    negs.append(cylz(xc, 0, 70, 230, BORE_R, sec=96))
+# Crankcase bays between the five bulkheads
+h = BULK_T / 2.0
+bays = [(MAIN_X[i] + h, MAIN_X[i + 1] - h) for i in range(4)]
+for x0, x1 in bays:
+    cuts.append(BX(x0, x1, -SKIRT_IN, SKIRT_IN, -60.0, 90.0))
 
-# crank tunnel (main bearing line bore, dia 59) + rear main seal counterbore
-negs.append(cyl([-5, 0, 0], [425, 0, 0], 29.5, sec=96))
-negs.append(cyl([412, 0, 0], [426, 0, 0], 44.0, sec=96))
+# Main-cap parting face: everything below Z=0 between the skirts is cap territory
+cuts.append(BX(-BLOCK_XEND - 5, BLOCK_XEND + 5, -72.5, 72.5, -60.0, 0.0))
 
-# crankcase bays between bulkheads, open to the pan rail
-for a, b in BAYS:
-    negs.append(box(a, b, -95, 95, -66, 85))
+# Crank tunnel: half-bores in the bulkheads, seal openings front and rear
+cuts.append(CX(TUNNEL_R, -220.0, 220.0, y=0.0, z=0.0, sec=96))
 
-# main bearing cap pockets (register faces at crank CL)
-for a, b in BULK:
-    negs.append(box(a - 1, b + 1, -40, 40, -66, 0))
+# Head-bolt holes, blind into the bosses
+for hx, hy in hb_xy:
+    cuts.append(CZ(6.0, 130.0, 235.0, x=hx, y=hy, sec=32))
 
-# main cap bolt holes, thread up into the bulkheads (M10, 2 per main)
-XMB = [12.0, 117.0, 210.0, 303.0, 405.0]
-for xb in XMB:
-    for s in (1, -1):
-        negs.append(cylz(xb, 37 * s, -6, 45, 5.5, sec=32))
+# Main bearing cap bolt holes, up into each bulkhead from the cap face
+for mx in MAIN_X:
+    for s in (+1, -1):
+        cuts.append(CZ(5.5, -70.0, 45.0, x=mx, y=s * 32.0, sec=32))
 
-# head bolt holes, blind tapped 90 mm from deck (M12 class)
-for xh in XH:
-    for s in (1, -1):
-        negs.append(cylz(xh, 52 * s, 130, 226, 5.4, sec=32))
+# Engine mount tapped holes (blind, do not break into the crankcase)
+for mx in MOUNT_X:
+    cuts.append(CY(5.0, 77.0, 100.0, x=mx, z=60.0, sec=32))
+    cuts.append(CY(5.0, -100.0, -77.0, x=mx, z=60.0, sec=32))
 
-# deck coolant transfer holes through the closed deck into the jacket
-for xc in XC:
-    for s in (1, -1):
-        negs.append(cylz(xc, 54 * s, 198, 226, 4.5, sec=24))
-for xm in (117.0, 210.0, 303.0):
-    for s in (1, -1):
-        negs.append(cylz(xm, 34 * s, 198, 226, 4.5, sec=24))
+# Coolant transfer holes through the closed deck into the jacket (2 per bore)
+for bx in BORE_X:
+    for s in (+1, -1):
+        cuts.append(CZ(4.0, 205.0, 235.0, x=bx, y=s * 54.0, sec=32))
 
-# main oil gallery (dia 16, full length, exhaust side) + drillings
-negs.append(cyl([-5, -67, 95], [425, -67, 95], 8.0, sec=48))
-for xb in XB:                                    # diagonal feeds to each main
-    negs.append(cyl([xb, -67, 95], [xb, -8, 4], 4.0, sec=24))
-negs.append(cylz(410, -68, 90, 226, 4.0, sec=24))          # oil riser to head
-negs.append(cylz(90, 66, 68, 226, 6.0, sec=24))            # head oil drain 1
-negs.append(cylz(330, 66, 68, 226, 6.0, sec=24))           # head oil drain 2
+# Longitudinal oil galleries, drilled full length below the jacket floor
+for gy in (-52.0, 52.0):
+    cuts.append(CX(7.0, -220.0, 220.0, y=gy, z=100.0, sec=48))
 
-# oil filter: thread bore + drilling up to the main gallery
-negs.append(cyl([303, -142, 30], [303, -100, 30], 9.0, sec=32))
-negs.append(cyl([303, -102, 30], [303, -67, 95], 5.0, sec=24))
+# Vertical main-bearing oil feed drillings from the left gallery down each bulkhead
+for mx in MAIN_X:
+    cuts.append(CZ(4.0, 20.0, 106.0, x=mx, y=-52.0, sec=32))
 
-# coolant ports: front inlet into jacket, rear heater return
-negs.append(cyl([-12, 42, 160], [24, 42, 160], 13.0, sec=32))
-negs.append(cyl([385, 45, 160], [426, 45, 160], 8.0, sec=24))
+# Oil pan rail bolt holes (blind, up into the rails)
+for px in (-150.0, -50.0, 50.0, 150.0):
+    for s in (+1, -1):
+        cuts.append(CZ(3.5, -55.0, -25.0, x=px, y=s * 79.0, sec=32))
 
-# core (freeze) plug holes, dia 34, both sides into the jacket
-for xp in (163.5, 256.5):
-    negs.append(cyl([xp, 52, 160], [xp, 82, 160], 17.0, sec=48))
-    negs.append(cyl([xp, -82, 160], [xp, -52, 160], 17.0, sec=48))
+solid = difference([solid] + cuts)
 
-# bellhousing flange: 8 bolt holes + 2 dowels
-for y, z in [(118, 80), (-118, 80), (118, -40), (-118, -40),
-             (80, 150), (-80, 150), (60, -50), (-60, -50)]:
-    negs.append(cyl([404, y, z], [426, y, z], 5.5, sec=24))
-for s in (1, -1):
-    negs.append(cyl([404, 118 * s, 20], [426, 118 * s, 20], 6.5, sec=24))
+# ------------------------------------------------------------- 5. export
+import os
+out_dir = os.path.dirname(os.path.abspath(__file__))
+out_path = os.path.join(out_dir, "engine_blind.stl")
+solid.export(out_path)
 
-# engine mount bolt holes (M10, blind, 2 per boss)
-for xm in (145.0, 185.0):
-    negs.append(cyl([xm, 112, 5], [xm, 136, 5], 5.5, sec=24))
-    negs.append(cyl([xm, -136, 5], [xm, -112, 5], 5.5, sec=24))
-
-# knock sensor tap (blind) and oil pressure sender tap (into gallery)
-negs.append(cyl([187, 64, 95], [187, 92, 95], 4.0, sec=24))
-negs.append(cyl([250, -88, 95], [250, -60, 95], 5.0, sec=24))
-
-# oil pan rail bolt holes (M8, blind, 7 per side)
-for xp in (20, 85, 150, 215, 280, 345, 400):
-    for s in (1, -1):
-        negs.append(cylz(xp, 102 * s, -66, -42, 4.2, sec=24))
-
-# front (timing) cover bolt holes, blind into front face
-for y, z in [(68, 195), (-68, 195), (68, 100), (-68, 100),
-             (95, -10), (-95, -10), (60, -55), (-60, -55)]:
-    negs.append(cyl([-6, y, z], [15, y, z], 3.5, sec=24))
-
-# head locating ring-dowel counterbores on the deck
-negs.append(cylz(14, 30, 214, 226, 8.0, sec=32))
-negs.append(cylz(406, -30, 214, 226, 8.0, sec=32))
-
-block = trimesh.boolean.difference([block] + negs)
-
-# ---------------------------------------------------------------- export
-block.process(validate=True)
-out = r"C:\Users\Joaquin ERE\.claude\jobs\5c31aa11\tmp\blind\engine_blind.stl"
-block.export(out)
-
-print("exported:", out)
-print("is_watertight:", block.is_watertight)
-print("volume (mm^3): %.1f" % block.volume)
-print("bounds (mm):", np.round(block.bounds, 1).tolist())
-print("faces:", len(block.faces), " vertices:", len(block.vertices))
+print("watertight:", solid.is_watertight)
+print("volume_mm3:", solid.volume)
+print("bounds:", solid.bounds.tolist())
