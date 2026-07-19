@@ -45,6 +45,59 @@ class Part:
     color: str
     ghost: bool = False
     features: list = field(default_factory=list)
+    material: dict = field(default_factory=dict)
+
+
+# PBR finish presets for emit(material=...). Purely visual: they drive
+# the live viewer and GLB export; the deterministic evidence renders and
+# all measurements ignore them.
+MATERIALS = {
+    "steel":    {"metallic": 1.0, "roughness": 0.35},
+    "aluminum": {"metallic": 1.0, "roughness": 0.25},
+    "chrome":   {"metallic": 1.0, "roughness": 0.08},
+    "brass":    {"metallic": 1.0, "roughness": 0.30},
+    "metal":    {"metallic": 1.0, "roughness": 0.40},
+    "plastic":  {"metallic": 0.0, "roughness": 0.55},
+    "glossy":   {"metallic": 0.0, "roughness": 0.12},
+    "matte":    {"metallic": 0.0, "roughness": 0.95},
+    "rubber":   {"metallic": 0.0, "roughness": 0.90},
+    "glass":    {"metallic": 0.0, "roughness": 0.05, "opacity": 0.35},
+}
+_MAT_KEYS = {"metallic", "roughness", "opacity"}
+
+
+def _resolve_material(name: str, material) -> dict:
+    if material is None:
+        return {}
+    if isinstance(material, str):
+        if material not in MATERIALS:
+            raise SceneError(
+                f'part "{name}": unknown material preset {material!r}',
+                suggestion="one of: " + ", ".join(sorted(MATERIALS))
+                           + '; or a dict like {"metallic": 1.0, '
+                             '"roughness": 0.3, "opacity": 1.0}')
+        return dict(MATERIALS[material])
+    if isinstance(material, dict):
+        bad = set(material) - _MAT_KEYS
+        if bad:
+            raise SceneError(
+                f'part "{name}": unknown material key(s) '
+                f'{", ".join(sorted(bad))}',
+                suggestion="allowed keys: metallic, roughness, opacity "
+                           "(each 0..1)")
+        out = {}
+        for k, v in material.items():
+            try:
+                out[k] = min(1.0, max(0.0, float(v)))
+            except (TypeError, ValueError):
+                raise SceneError(
+                    f'part "{name}": material {k} must be a number 0..1, '
+                    f"got {v!r}")
+        return out
+    raise SceneError(
+        f'part "{name}": material must be a preset name or a dict',
+        suggestion="e.g. material=\"steel\" or material={\"metallic\": 1, "
+                   "\"roughness\": 0.3}")
 
 
 @dataclass
@@ -55,7 +108,8 @@ class Scene:
     joints: list[dict] = field(default_factory=list)
 
     def emit(self, solid: Solid, name: str, color: str | None = None,
-             ghost: bool = False, features: list | None = None) -> Solid:
+             ghost: bool = False, features: list | None = None,
+             material: str | dict | None = None) -> Solid:
         if not isinstance(solid, Solid):
             got = type(solid).__name__
             hint = ("call .extrude(height) on the Sketch first"
@@ -82,7 +136,8 @@ class Scene:
                     else _resolve_color(color, len(self.parts)))
         feats = _validate_features(name, features)
         self.parts.append(Part(name=name, solid=solid, color=resolved,
-                               ghost=ghost, features=feats))
+                               ghost=ghost, features=feats,
+                               material=_resolve_material(name, material)))
         return solid
 
     def warn(self, code: str, message: str, where: str | None = None,
@@ -175,7 +230,8 @@ def deactivate() -> None:
 
 
 def emit(solid: Solid, name: str, color: str | None = None,
-         ghost: bool = False, features: list | None = None) -> Solid:
+         ghost: bool = False, features: list | None = None,
+         material: str | dict | None = None) -> Solid:
     """Register a finished part under a name. Call once per part, at the end
     of the model file. Returns the solid unchanged so it can be reused.
 
@@ -188,7 +244,13 @@ def emit(solid: Solid, name: str, color: str | None = None,
     [{"type": "hole", "d": 5, "at": [10, 0, 0], "thru": True},
      {"type": "boss", "d": 8, "at": [0, 0, 12]}]. Stored verbatim in
     report.json parts[].features so downstream consumers reason about
-    named features instead of raw triangles."""
+    named features instead of raw triangles.
+
+    material=... sets the part's visual FINISH for the live viewer and
+    GLB export (measurements and the deterministic evidence renders are
+    unaffected). A preset name — "steel", "aluminum", "chrome", "brass",
+    "metal", "plastic", "glossy", "matte", "rubber", "glass" — or a dict
+    {"metallic": 0..1, "roughness": 0..1, "opacity": 0..1}."""
     sc = current()
     if sc is None:
         raise SceneError(
@@ -196,4 +258,4 @@ def emit(solid: Solid, name: str, color: str | None = None,
             suggestion="run the model through `solidsight build model.py`; "
                        "for ad-hoc scripts create a Scene and call scene.emit()")
     return sc.emit(solid, name=name, color=color, ghost=ghost,
-                   features=features)
+                   features=features, material=material)

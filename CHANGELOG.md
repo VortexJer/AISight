@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-19 — solidsight 0.10.0: cars stop being boxes with cabins
+
+A user asked for a 2024 Vantage coupe and got a greenhouse welded onto
+a body — the toolbox had no way to loft the concave cross-section of
+real bodywork, and the skill had no automotive knowledge. Researched
+(design vocabulary, real dimensions, station-loft method), then fixed
+at all three levels:
+
+- **`parts.loft_sections()`** — ruled loft through same-count closed
+  polylines, NON-convex sections welcome (a car section is concave at
+  the shoulder), exact triangulated end caps, one watertight solid.
+  Exact-volume + mismatch-rejection tests.
+- **`references/car-bodies.md`** — the one-piece rule (hood, fenders,
+  greenhouse, decklid are ONE surface), automotive vocabulary
+  (beltline, shoulder, tumblehome, DLO, haunch, Kamm tail), the
+  12-station template method, and the measured pitfalls from the pilot
+  build (tent roof, floating wheels, arch punch-through). SKILL.md
+  routes every vehicle/styled-shell commission through it.
+- **`emit(material=...)`** — visual finish (presets or
+  metallic/roughness/opacity) rendered live by the browser viewer and
+  carried into GLB export; measurements and evidence renders ignore it.
+- Example `09-coupe-body`: the validated recipe with committed renders,
+  Vantage-2024 proportions [researched].
+
 ## 2026-07-19 — solidsight 0.9.0: the live preview is a screen FIRST
 
 `solidsight view` now opens the browser immediately (auto-open, with

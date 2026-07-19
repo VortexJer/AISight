@@ -146,6 +146,16 @@ emit(solid, name="base_plate")            # snake_case, unique
 emit(other, name="lid", color="amber")    # optional color (steel, amber,
                                           # sage, clay, slate, olive, teal,
                                           # mauve, gray, dark, light, #hex)
+emit(body, name="shell", color="#b01020",
+     material="glossy")                   # visual FINISH for the live
+                                          # viewer + GLB: "steel",
+                                          # "aluminum", "chrome", "brass",
+                                          # "metal", "plastic", "glossy",
+                                          # "matte", "rubber", "glass" or
+                                          # {"metallic":0..1,
+                                          #  "roughness":0..1,
+                                          #  "opacity":0..1}. Measurements
+                                          # and evidence renders ignore it.
 ```
 
 Only emitted parts exist in the output. `--part lid` builds one of them;

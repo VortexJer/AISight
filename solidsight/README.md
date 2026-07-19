@@ -230,6 +230,7 @@ metric. Each real bug is pinned by a regression test in `tool/tests/`
 | [`06-hidden-cavity`](skill/examples/06-hidden-cavity) | a sealed cavity invisible in renders, caught by the report and provable via `query ray`/`voxels` |
 | [`07-engine-block`](skill/examples/07-engine-block) | **detail mode**: a faithful inline-4 block (bores, liner steps, head-bolt matrix, water jacket, cam tunnel, oil galleries, pan rail, gussets, filter pad, inclined mounts) built region-by-region from a feature specification |
 | [`08-from-image`](skill/examples/08-from-image) | **from an image**: a user's emblem traced with `image_outline` and engraved, built with the `--ref` comparison sheet |
+| [`09-coupe-body`](skill/examples/09-coupe-body) | **styled bodywork**: a 2024-coupe-proportioned one-piece body by station lofting (`loft_sections`, concave shoulder sections, carved arches) — the car-bodies.md recipe, proven |
 
 ## Stack and why
 

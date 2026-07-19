@@ -181,4 +181,13 @@ design-language.md).
 | snap-fit working clearance | 0.25 mm |
 | M3/M4 clearance holes      | 3.4 / 4.5 mm |
 | unsupported overhang limit | ~50 deg from vertical |
-| emboss/engrave depth       | 0.8-1.5 mm, stroke >= 1.2 mm |
+| emboss/engrave depth       | 0.8-1.5 mm, stroke >= 1.2 mm |### loft_sections(sections, stations, axis="x") — styled bodies
+
+Ruled loft through closed 2D polylines with the SAME point count —
+non-convex sections welcome (a car section is concave at the shoulder).
+Corresponding points weld station to station, like boat-buck stations;
+generate every section from ONE parametric template so they line up.
+End caps are triangulated exactly. This is the tool `references/
+car-bodies.md` is built on; `loft()` below is for CONVEX funnels only.
+
+

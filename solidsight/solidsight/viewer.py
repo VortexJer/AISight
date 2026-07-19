@@ -40,6 +40,7 @@ def scene_payload(scene, report: dict) -> dict:
             "name": p.name,
             "color": p.color,
             "ghost": bool(p.ghost),
+            "material": p.material or {},
             "positions": [round(float(v), 3)
                           for xyz in tm.vertices for v in xyz],
             "indices": [int(i) for tri in tm.faces for i in tri],

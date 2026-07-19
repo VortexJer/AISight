@@ -13,7 +13,7 @@ from .enclosures import (box_with_lid, container, hex_grid, honeycomb_panel,
                          standoff)
 from .features import bolt_circle, hole
 from .gears import spur_gear
-from .lofts import loft, wrapped_text
+from .lofts import loft, loft_sections, wrapped_text
 from .mechanisms import hinge, snap_clip, snap_slot
 from .paths import swept, tube_path
 from .patterns import circular_pattern, grid_pattern, linear_pattern
@@ -36,6 +36,7 @@ CATALOG = {
     "tube_path": tube_path,
     "swept": swept,
     "loft": loft,
+    "loft_sections": loft_sections,
     "wrapped_text": wrapped_text,
     "honeycomb_panel": honeycomb_panel,
     "linear_pattern": linear_pattern,

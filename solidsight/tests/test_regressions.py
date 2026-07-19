@@ -1046,3 +1046,68 @@ def test_view_starts_before_the_model_exists(tmp_path):
         assert [p["name"] for p in d["parts"]] == ["late"]
     finally:
         proc.kill()
+
+
+def test_emit_material_reaches_viewer_and_glb(tmp_path):
+    """emit(material=...) is the part's visual finish: preset resolved,
+    carried in the viewer payload and the GLB's PBR material."""
+    from solidsight.scene import MATERIALS, Scene, activate, deactivate
+    from solidsight.geom import box
+    from solidsight.viewer import scene_payload
+    import pytest as _pytest
+    from solidsight.errors import SceneError
+
+    sc = Scene()
+    activate(sc)
+    try:
+        sc.emit(box(10, 10, 5), name="body", material="chrome")
+        sc.emit(box(5, 5, 5), name="window",
+                material={"opacity": 0.4, "roughness": 0.05})
+        with _pytest.raises(SceneError):
+            sc.emit(box(2, 2, 2), name="bad", material="vibranium")
+    finally:
+        deactivate()
+    assert sc.parts[0].material == MATERIALS["chrome"]
+    assert sc.parts[1].material["opacity"] == 0.4
+
+    report = {"model": "m", "mode": "free", "status": "ok",
+              "scene": {"bbox": {"min": [0, 0, 0], "max": [1, 1, 1]},
+                        "size": [1, 1, 1]},
+              "parts": {}, "checks": []}
+    pay = scene_payload(sc, report)
+    assert pay["parts"][0]["material"]["metallic"] == 1.0
+
+    from solidsight.report import _export_glb_scene
+    import trimesh
+    glb = tmp_path / "s.glb"
+    _export_glb_scene(sc.parts, glb)
+    back = trimesh.load(glb)
+    mats = {g.visual.material.name: g.visual.material
+            for g in back.geometry.values()}
+    assert float(mats["body"].metallicFactor) == 1.0
+    alpha = float(mats["window"].baseColorFactor[3])
+    if alpha > 1.0:                       # GLTF loaders return uint8 0..255
+        alpha /= 255.0
+    assert alpha < 1.0
+
+
+def test_loft_sections_handles_concave_stations():
+    """The car-body tool: a concave (shoulder-notched) section lofted
+    straight must keep its concavity exactly — hull-based loft() would
+    bloat across it. Volume is exact for a prism."""
+    from solidsight.parts import loft_sections
+    sec = [(-50, 0), (50, 0), (50, 40), (20, 40), (20, 60), (-20, 60),
+           (-20, 40), (-50, 40)]
+    s = loft_sections([sec, sec], [0.0, 100.0])
+    assert abs(s.volume - 480000.0) < 1.0
+    assert s.to_trimesh().is_watertight
+
+
+def test_loft_sections_rejects_mismatched_point_counts():
+    from solidsight.parts import loft_sections
+    from solidsight.errors import BadArgumentError
+    import pytest as _pytest
+    tri = [(0, 0), (10, 0), (0, 10)]
+    quad = [(0, 0), (10, 0), (10, 10), (0, 10)]
+    with _pytest.raises(BadArgumentError):
+        loft_sections([tri, quad], [0.0, 10.0])

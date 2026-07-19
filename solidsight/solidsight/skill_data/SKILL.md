@@ -80,6 +80,22 @@ The first run self-installs this skill into `~/.claude/skills/solidsight`
 and keeps it updated; `solidsight uninstall` removes the skill and the
 package together.
 
+### Step 0.5 - Working for a human? Their screen comes up FIRST
+
+Before the detail question, before any code, before the model file
+exists: launch the live viewer in the background as the FIRST action
+of the commission —
+
+```bash
+solidsight view model.py &        # opens their browser immediately
+```
+
+The page shows a loading spinner until the first successful build,
+then hot-switches to the model and updates on every save. An edit
+commission shows the existing model from second one. Not optional;
+they should never have to ask. The viewer is theirs — you keep working
+from renders and report.json.
+
 ### Step 1 - Write the bill of parts BEFORE any geometry code
 
 Decompose the request into a short list of named functional parts and key
@@ -131,6 +147,14 @@ The rules:
 - Detail lives in features (holes, bosses, flanges, tunnels, pockets):
   `parts.hole` (counterbore/countersink/chamfer/drill-point), `.aim()`
   for drilling into any face, `parts.bolt_circle`, patterns.
+
+**If the object is a STYLED BODY — a car, boat hull, fuselage,
+appliance shell, helmet — load `references/car-bodies.md` BEFORE any
+geometry.** A modern car body is ONE continuous lofted skin (hood,
+fenders, greenhouse and decklid are the same surface); building it as
+a box with a cabin on top fails the commission. The reference gives
+the station-template method (`parts.loft_sections`), the automotive
+vocabulary, and the measured pitfalls.
 
 **If the user supplied a photo or drawing**, load `references/from-image.md`
 first: LOOK at the image, estimate real dimensions with named anchors,
@@ -325,6 +349,10 @@ Do not report the task complete until ALL of these hold for the final code:
 - `references/from-image.md` — modeling from a photo or drawing:
   size estimation with anchors, `image_outline()` / `image_heightfield()`,
   and the `--ref` comparison-sheet loop.
+- `references/car-bodies.md` — cars and styled shells: the one-piece
+  rule, station templates + `parts.loft_sections`, automotive
+  vocabulary, stance checklist. Load for ANY vehicle/styled-body
+  commission.
 
 ## Domain playbooks — load the ONE that matches (`domains/`)
 

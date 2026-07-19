@@ -141,7 +141,8 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
                     st.tick(f"{part.name}.{ext} (reused, unchanged)")
                 else:
                     _export_mesh(part.solid.to_trimesh(), target,
-                                 name=part.name, color=part.color)
+                                 name=part.name, color=part.color,
+                                 material=part.material)
                     st.tick(f"{part.name}.{ext}")
                 export_files.append(f"{ext}/{part.name}.{ext}")
             if len(solid_parts) > 1:
@@ -214,14 +215,31 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
     return report
 
 
-def _export_mesh(tm, target: Path, name: str, color: str) -> None:
-    """Single-mesh export by extension; GLB carries the name + color."""
+def _pbr(name: str, color: str, material: dict | None):
+    """A PBR material from a part's color + emit(material=...) finish."""
+    import trimesh
+    m = material or {}
+    rgba = _rgba(color)
+    if m.get("opacity") is not None:
+        rgba[3] = float(m["opacity"])
+    kw = {"name": name, "baseColorFactor": rgba}
+    if m.get("metallic") is not None:
+        kw["metallicFactor"] = float(m["metallic"])
+    if m.get("roughness") is not None:
+        kw["roughnessFactor"] = float(m["roughness"])
+    if rgba[3] < 1.0:
+        kw["alphaMode"] = "BLEND"
+    return trimesh.visual.material.PBRMaterial(**kw)
+
+
+def _export_mesh(tm, target: Path, name: str, color: str,
+                 material: dict | None = None) -> None:
+    """Single-mesh export by extension; GLB carries name/color/finish."""
     if target.suffix == ".glb":
         import trimesh
         tm = tm.copy()
         tm.visual = trimesh.visual.TextureVisuals(
-            material=trimesh.visual.material.PBRMaterial(
-                name=name, baseColorFactor=_rgba(color)))
+            material=_pbr(name, color, material))
         sc = trimesh.Scene({name: tm})
         sc.export(target)
     else:
@@ -234,8 +252,7 @@ def _export_glb_scene(parts, target: Path) -> None:
     for p in parts:
         tm = p.solid.to_trimesh()
         tm.visual = trimesh.visual.TextureVisuals(
-            material=trimesh.visual.material.PBRMaterial(
-                name=p.name, baseColorFactor=_rgba(p.color)))
+            material=_pbr(p.name, p.color, p.material))
         sc.add_geometry(tm, node_name=p.name, geom_name=p.name)
     sc.export(target)
 

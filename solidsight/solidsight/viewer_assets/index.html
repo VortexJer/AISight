@@ -223,10 +223,15 @@ function rebuild(payload) {
       new THREE.Float32BufferAttribute(p.positions, 3));
     g.setIndex(p.indices);
     g.computeVertexNormals();
+    // emit(material=...) drives the finish: metallic/roughness/opacity
+    const fin = p.material || {};
+    const op = p.ghost ? 0.18 : (fin.opacity !== undefined ? fin.opacity : 1);
     const mat = new THREE.MeshStandardMaterial({
-      color: p.color || '#8f9aa6', flatShading: true, metalness: 0.05,
-      roughness: 0.85, side: THREE.DoubleSide,
-      transparent: p.ghost, opacity: p.ghost ? 0.18 : 1 });
+      color: p.color || '#8f9aa6', flatShading: true,
+      metalness: fin.metallic !== undefined ? fin.metallic : 0.05,
+      roughness: fin.roughness !== undefined ? fin.roughness : 0.85,
+      side: THREE.DoubleSide,
+      transparent: p.ghost || op < 1, opacity: op });
     const mesh = new THREE.Mesh(g, mat);
     mesh.name = p.name;
     sceneGL.add(mesh);
