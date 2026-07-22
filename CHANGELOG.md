@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-22 — solidsight 0.11.4: close the window, free the port
+
+A viewer whose window is gone is a process holding a port for nothing —
+and it is exactly how a machine ends up with four servers, three stale
+windows and a human looking at the wrong model.
+
+- The page beacons `/bye` on `pagehide`; the server then stops and
+  releases its port. Every request is a heartbeat, so a **reload** (which
+  fires `pagehide` too) cancels the shutdown inside a 4 s grace.
+- A window killed outright leaves no beacon: a 150 s silence stops the
+  server as a backup. Nothing is ever stopped before a browser has
+  connected at least once, so `--no-open` and the spinner-before-the-
+  model-exists case keep working.
+- `--keep-alive` opts out for a server that must outlive every window.
+- The skill now says it: do not close the human's window to "free" it,
+  and `state: closed` in `status.json` means it shut itself down.
+
 ## 2026-07-22 — solidsight 0.11.3: the viewer is a window, not a report
 
 0.11.2 made the payload light and the page still crawled, because the

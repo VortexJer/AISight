@@ -72,6 +72,10 @@ def main(argv: list[str] | None = None) -> int:
                         "renders, pair analysis). Default is light: "
                         "geometry only, so a heavy model reloads in "
                         "about a second")
+    v.add_argument("--keep-alive", action="store_true",
+                   help="keep serving after the last viewer window is "
+                        "closed (default: the server stops and frees its "
+                        "port, so closed windows leave no orphans)")
     v.add_argument("--tab", action="store_true",
                    help="open as a normal browser tab; the default is an "
                         "app window (Chromium --app: no tab strip, no "
@@ -677,7 +681,8 @@ def _view(args) -> int:
         return run_view(Path(args.model), kwargs, say=_say, port=args.port,
                         watch=not args.no_watch, poll_s=args.poll,
                         open_browser=not args.no_open,
-                        app_mode=not args.tab, light=not args.full)
+                        app_mode=not args.tab, light=not args.full,
+                        keep_alive=args.keep_alive)
     except SolidsightError as e:
         _say(f"VIEW FAILED\n{e.render()}", err=True)
         return 1

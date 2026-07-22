@@ -17,6 +17,7 @@ import os
 import shutil
 import socket
 import threading
+import time
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -111,9 +112,40 @@ class _Quiet(SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         super().end_headers()
 
+    # --- liveness: every request is a heartbeat from an open window ---
+    def _touch(self) -> None:
+        srv = self.server
+        srv.last_seen = time.monotonic()
+        srv.had_client = True
+        srv.bye_at = None            # a live request cancels a pending bye
+
+    def do_GET(self):
+        self._touch()
+        super().do_GET()
+
+    def do_HEAD(self):
+        self._touch()
+        super().do_HEAD()
+
+    def do_POST(self):
+        # the page beacons here when its window closes (pagehide)
+        if self.path.rstrip("/") == "/bye":
+            try:
+                self.rfile.read(int(self.headers.get("Content-Length") or 0))
+            except (ValueError, OSError):
+                pass
+            self.server.bye_at = time.monotonic()
+            self.send_response(204)
+            self.end_headers()
+            return
+        self.send_error(404)
+
 
 class _Server(ThreadingHTTPServer):
     daemon_threads = True
+    last_seen = 0.0        # monotonic time of the last request
+    had_client = False     # a browser has connected at least once
+    bye_at = None          # when the page said its window was closing
     # HTTPServer sets allow_reuse_address, and on Windows SO_REUSEADDR
     # lets a second process bind a port another server is ACTIVELY
     # listening on: the bind succeeds, two viewers answer one URL and the
@@ -162,6 +194,39 @@ def serve_viewer(viewer_dir: Path, port: int, say) -> ThreadingHTTPServer:
     t.start()
     say(f"viewer:  http://127.0.0.1:{got}/  (serving {viewer_dir})")
     return httpd
+
+
+BYE_GRACE_S = 4.0      # a reload also fires pagehide: wait it out
+IDLE_EXIT_S = 150.0    # backup for a window killed without a beacon
+
+
+def watch_for_window_close(httpd, say, on_exit) -> threading.Thread:
+    """Close the server when the last viewer window goes away.
+
+    Otherwise every closed window leaves a process holding its port, and
+    the next `view` lands on 8378, 8379 ... while the human keeps
+    looking at whichever stale window answered first. The page beacons
+    /bye on pagehide; a reload beacons too, so a bye only counts if no
+    request arrives during the grace. A window killed outright (crash,
+    task manager) leaves no beacon — the idle timeout catches that.
+    """
+    def loop() -> None:
+        while True:
+            time.sleep(1.0)
+            if not httpd.had_client:
+                continue          # nobody ever opened it: keep serving
+            now = time.monotonic()
+            quiet = now - httpd.last_seen
+            said_bye = httpd.bye_at is not None
+            if (said_bye and quiet > BYE_GRACE_S) or quiet > IDLE_EXIT_S:
+                port = httpd.server_address[1]
+                say(f"viewer window closed - freeing port {port} and "
+                    "stopping (use --keep-alive to stay up)")
+                on_exit()
+                return
+    t = threading.Thread(target=loop, daemon=True)
+    t.start()
+    return t
 
 
 # ---------------------------------------------------------------------------
@@ -236,8 +301,7 @@ def open_viewer_window(url: str, say, app_mode: bool = True) -> None:
 def run_view(model_path: Path, build_kwargs: dict, say,
              port: int = 8377, watch: bool = True, poll_s: float = 0.5,
              open_browser: bool = True, app_mode: bool = True,
-             light: bool = True) -> int:
-    import time
+             light: bool = True, keep_alive: bool = False) -> int:
 
     from .errors import SolidsightError
     from .report import build_model
@@ -296,6 +360,14 @@ def run_view(model_path: Path, build_kwargs: dict, say,
     say("alive:   this command stays in the foreground until ctrl-c — "
         "that is not a hang. Liveness: GET /status.json (or read "
         f"{viewer_dir / 'status.json'})")
+    if not keep_alive:
+        import _thread
+
+        def _stop() -> None:
+            note_state(state="closed")
+            httpd.shutdown()
+            _thread.interrupt_main()   # unwinds the watch loop cleanly
+        watch_for_window_close(httpd, say, _stop)
     if open_browser:
         open_viewer_window(f"http://127.0.0.1:{httpd.server_address[1]}/",
                            say, app_mode=app_mode)
@@ -319,6 +391,8 @@ def run_view(model_path: Path, build_kwargs: dict, say,
         report = build_model(model_path, scene=scene, **build_kwargs)
         rebuild_payload(scene, report)
         say(f"build: {report['status'].upper()} ({report['model']})")
+    except KeyboardInterrupt:        # window closed mid-build, or ctrl-c
+        return 0
     except SolidsightError as e:
         note_state(state="build-failed", last_error=str(e).split("\n")[0])
         say("initial build FAILED - the viewer keeps its spinner and "
@@ -341,6 +415,9 @@ def run_view(model_path: Path, build_kwargs: dict, say,
             note_state(state="build-failed",
                        last_error=str(error).split("\n")[0])
 
-    return run_watch(model_path, build_kwargs, say=say, poll_s=poll_s,
-                     on_build=on_build,
-                     on_start=lambda reason: note_state(state="building"))
+    try:
+        return run_watch(model_path, build_kwargs, say=say, poll_s=poll_s,
+                         on_build=on_build,
+                         on_start=lambda reason: note_state(state="building"))
+    except KeyboardInterrupt:
+        return 0

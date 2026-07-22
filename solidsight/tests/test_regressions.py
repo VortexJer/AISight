@@ -1264,3 +1264,45 @@ def test_declared_opacity_survives_the_xray_toggle():
     pkg = (Path(__file__).parents[1] / "solidsight" / "viewer_assets"
            / "index.html")
     assert pkg.exists()
+
+
+def test_closing_the_window_frees_the_port(tmp_path):
+    """A closed viewer window used to leave a process holding its port
+    forever, so the next `view` landed on 8378 while the human stared at
+    a stale window. The page beacons /bye on pagehide; the server stops
+    and releases the port. A RELOAD also beacons, so a request inside
+    the grace period must cancel the shutdown.
+    User: 'si yo cierro una ventana del viewer libere el port y tal'."""
+    import socket
+    import time as _t
+    import urllib.request as _u
+    from solidsight.viewer import serve_viewer, watch_for_window_close, \
+        write_viewer
+    d = tmp_path / "v"
+    write_viewer(d, {"status": "waiting", "parts": []}, "waiting-0")
+    stopped = []
+    httpd = serve_viewer(d, 0, lambda *_: None)
+    port = httpd.server_address[1]
+    watch_for_window_close(httpd, lambda *_: None,
+                           lambda: (stopped.append(True), httpd.shutdown()))
+    url = f"http://127.0.0.1:{port}"
+    _u.urlopen(f"{url}/version.txt", timeout=3).read()      # a window opens
+    # a reload: bye, then a poll inside the grace -> must survive
+    _u.urlopen(_u.Request(f"{url}/bye", data=b"", method="POST"), timeout=3)
+    _t.sleep(1.0)
+    _u.urlopen(f"{url}/version.txt", timeout=3).read()
+    _t.sleep(2.0)
+    assert not stopped, "a reload must not stop the viewer"
+    # now the window really closes
+    _u.urlopen(_u.Request(f"{url}/bye", data=b"", method="POST"), timeout=3)
+    for _ in range(120):
+        if stopped:
+            break
+        _t.sleep(0.25)
+    assert stopped, "closing the window must stop the server"
+    httpd.server_close()
+    probe = socket.socket()
+    try:
+        probe.bind(("127.0.0.1", port))        # the port is really free
+    finally:
+        probe.close()

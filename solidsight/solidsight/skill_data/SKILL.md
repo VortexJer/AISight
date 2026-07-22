@@ -259,6 +259,13 @@ instead of 42 s. It is a window, not a report: keep using `solidsight
 build` for checks (or `view --full` if you really want the whole
 pipeline on every save).
 
+**Closing the window stops the server.** The page beacons the server
+when it goes away, so a closed viewer frees its port instead of
+lingering as an orphan (a reload does not: the grace period covers it).
+That also means you must not close the human's window to "free" it, and
+if you want a headless server that outlives every window, pass
+`--keep-alive`.
+
 `state: build-failed` means the server is fine and your code isn't —
 fix the model, the page hot-reloads by itself. It opens as an app
 window (no tabs, no address bar); `--tab` forces a normal tab, and it

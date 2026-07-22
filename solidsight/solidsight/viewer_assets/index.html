@@ -537,6 +537,14 @@ async function pollVersion() {
 }
 setInterval(pollVersion, 1000);
 
+// tell the server when this window goes away, so it stops and frees its
+// port instead of lingering as an orphan holding 8377. A reload fires
+// pagehide too — the server waits out a grace period, and our next poll
+// (a second later) cancels the shutdown.
+addEventListener('pagehide', () => {
+  try { navigator.sendBeacon('/bye', ''); } catch (e) { /* closing */ }
+});
+
 resize();
 pollVersion();
 (function animate() {
