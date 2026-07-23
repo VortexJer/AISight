@@ -23,6 +23,29 @@ findings toggles; explode slider; section plane per axis; two-point
 measurement (prints distance + per-axis deltas); findings list — click
 one to fly the camera to its location. Ghost parts render translucent.
 
+The viewer is a window, not a report. `view` builds are **light** by
+default — geometry only, no metrics, no renders, no pair analysis (a
+138k-triangle model reloads in ~1.8 s instead of 42 s); `--full` runs
+the whole pipeline on every save.
+
+It never returns: it holds the terminal until ctrl-c. Liveness without
+touching it:
+
+```bash
+cat out/viewer/status.json      # or GET http://127.0.0.1:<port>/status.json
+# {"pid":…, "state":"serving"|"waiting"|"building"|"build-failed",
+#  "builds":3, "last_build":"ok", "last_error":null,
+#  "url":"http://127.0.0.1:8377/"}
+```
+
+It opens as an app window (no tabs, no address bar); `--tab` forces a
+normal tab. If the port you asked for is busy it takes the next free one
+and prints which — if it says 8378 and the human sees an old model, they
+are looking at a different window, so send them the printed URL. Closing
+the window beacons the server, which then stops and releases its port
+(a reload does not: a grace period covers it). `--keep-alive` keeps a
+headless server up regardless.
+
 Progress + machine events on any build:
 ```
 solidsight build model.py --progress                 # live stage lines on stderr

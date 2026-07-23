@@ -6,6 +6,30 @@ shells, helmets. Load this BEFORE writing any geometry for such an
 object. The generic box-and-cylinder toolbox produces "a box with a
 cabin glued on", and a modern car is nothing like that.
 
+## Say what you can deliver BEFORE you start
+
+A styled body is where this tool is weakest, and the user must hear it
+from you at the start, not discover it after twenty builds. State it in
+one or two plain sentences and let them decide:
+
+- there is **no surface modelling** here — no NURBS, no sub-D, no
+  class-A blends, no 3D fillet across arbitrary edges. Booleans and
+  station lofts give correct proportions and a clean single shell; they
+  do not give a finished exterior.
+- the report measures **manufacturability, not likeness**: watertight,
+  0 findings and every spec met can still look nothing like the
+  referent. `--ref` compares, but nothing scores resemblance — that
+  judgement is the user's eye.
+- every non-body piece (lights, glass, grille, mirrors, trim) is its own
+  little commission carved out of the body shell, and one bad piece
+  ruins the whole. A faithful car is dozens of them, minutes per build.
+
+So offer the honest deal: **a well-proportioned massing** is realistic;
+a photo-faithful car is not. If they want the real exterior, say a
+sub-D/NURBS modeller is the right tool and offer solidsight for the
+parts around it. If they accept the massing, do exactly that and don't
+promise likeness later.
+
 ## The one rule that matters most
 
 **A modern car body is ONE piece.** Hood, fenders, greenhouse, haunches
