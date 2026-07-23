@@ -13,6 +13,12 @@ authors = [{ name = "solidsight contributors" }]
 keywords = ["pcb", "kicad", "drc", "ai-agent", "electronics"]
 dependencies = ["pillow>=10.0"]
 
+
+[project.urls]
+Homepage = "https://github.com/VortexJer/AISight/tree/main/pcbsight"
+Source = "https://github.com/VortexJer/AISight"
+Changelog = "https://github.com/VortexJer/AISight/blob/main/CHANGELOG.md"
+
 [project.scripts]
 pcbsight = "pcbsight.cli:main"
 

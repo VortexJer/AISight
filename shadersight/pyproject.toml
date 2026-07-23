@@ -13,6 +13,12 @@ authors = [{ name = "solidsight contributors" }]
 keywords = ["shader", "brdf", "pbr", "ai-agent", "gamedev"]
 dependencies = ["numpy>=1.24", "pillow>=10.0"]
 
+
+[project.urls]
+Homepage = "https://github.com/VortexJer/AISight/tree/main/shadersight"
+Source = "https://github.com/VortexJer/AISight"
+Changelog = "https://github.com/VortexJer/AISight/blob/main/CHANGELOG.md"
+
 [project.scripts]
 shadersight = "shadersight.cli:main"
 

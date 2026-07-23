@@ -1,0 +1,46 @@
+name: release
+
+# One repo, five packages. A tag says which one goes out and at which
+# version: `solidsight-v0.11.6`, `pcbsight-v0.5.1`, ...
+#
+# No API token lives anywhere: PyPI trusted publishing (OIDC) checks that
+# the release really came from this repo and this workflow file. Set it up
+# once per package at pypi.org -> Publishing -> Add a pending publisher.
+on:
+  push:
+    tags: ['*-v*']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write        # this is what trusted publishing signs with
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Read the package and version out of the tag
+        run: |
+          pkg="${GITHUB_REF_NAME%-v*}"
+          ver="${GITHUB_REF_NAME##*-v}"
+          test -f "$pkg/pyproject.toml" || {
+            echo "::error::no package named '$pkg' in this repo"; exit 1; }
+          # a tag that disagrees with the file would publish the wrong thing
+          grep -qx "version = \"$ver\"" "$pkg/pyproject.toml" || {
+            echo "::error::tag says $ver, $pkg/pyproject.toml says $(
+              grep -m1 '^version = ' "$pkg/pyproject.toml")"; exit 1; }
+          echo "PKG=$pkg" >> "$GITHUB_ENV"
+
+      - name: Tests must pass before anything is published
+        run: |
+          pip install -e "./$PKG" pytest
+          (cd "$PKG" && python -m pytest tests -q)
+
+      - run: pip install build && python -m build "$PKG"
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: ${{ env.PKG }}/dist
