@@ -140,6 +140,8 @@ the board outline there to check the enclosure fit),
 [texturesight](../texturesight/README.md),
 [shadersight](../shadersight/README.md).
 
+`pcbsight install-skill` (re)installs the Claude Code skill explicitly.
+
 Leaving: `pcbsight uninstall` removes this tool's skill and package.
 `pip install aisight && aisight uninstall` removes the whole family —
 every skill, every package and the plugin marketplace. See

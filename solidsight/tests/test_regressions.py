@@ -1359,3 +1359,23 @@ def test_uninstall_also_drops_the_aisight_umbrella(tmp_path, monkeypatch):
     assert "aisight" in removed
     assert not [r for r in removed
                 if r not in ("solidsight", "aisight", "-y", "uninstall")]
+
+
+def test_tab_mode_says_what_it_did(monkeypatch):
+    """`view --tab` opened a tab and said nothing. If the browser was
+    already running the tab landed behind another window, so "nothing
+    happened" and "it worked" looked identical — and webbrowser.open's
+    return value was thrown away, so a failure was silent too.
+    User: 'al hacer view --tab deberia aparecer en una ventana y tal'."""
+    import webbrowser
+
+    from solidsight.viewer import open_viewer_window
+    said = []
+    monkeypatch.setattr(webbrowser, "open", lambda *a, **k: True)
+    open_viewer_window("http://127.0.0.1:8377/", said.append, app_mode=False)
+    assert any("window:" in s and "8377" in s for s in said)
+
+    said.clear()
+    monkeypatch.setattr(webbrowser, "open", lambda *a, **k: False)
+    open_viewer_window("http://127.0.0.1:8377/", said.append, app_mode=False)
+    assert any("could not open a browser" in s and "8377" in s for s in said)

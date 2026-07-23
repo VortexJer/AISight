@@ -209,6 +209,8 @@ judge whether a texture is beautiful, only whether it is correct.
 Siblings, same philosophy: [solidsight](../solidsight/README.md) (3D geometry),
 [animationsight](../animationsight/README.md) (motion clips).
 
+`texturesight install-skill` (re)installs the Claude Code skill explicitly.
+
 Leaving: `texturesight uninstall` removes this tool's skill and package.
 `pip install aisight && aisight uninstall` removes the whole family —
 every skill, every package and the plugin marketplace. See

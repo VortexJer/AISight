@@ -174,6 +174,8 @@ philosophy with.
 `skills/animationsight/SKILL.md` ships inside the pip package and installs itself into
 `~/.claude/skills/animationsight` on the first run.
 
+`animationsight install-skill` (re)installs the Claude Code skill explicitly.
+
 Leaving: `animationsight uninstall` removes this tool's skill and package.
 `pip install aisight && aisight uninstall` removes the whole family —
 every skill, every package and the plugin marketplace. See

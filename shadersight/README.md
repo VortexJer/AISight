@@ -178,6 +178,8 @@ Siblings, same philosophy: [solidsight](../solidsight/README.md) (geometry),
 [animationsight](../animationsight/README.md) (motion),
 [texturesight](../texturesight/README.md) (UVs/textures).
 
+`shadersight install-skill` (re)installs the Claude Code skill explicitly.
+
 Leaving: `shadersight uninstall` removes this tool's skill and package.
 `pip install aisight && aisight uninstall` removes the whole family —
 every skill, every package and the plugin marketplace. See

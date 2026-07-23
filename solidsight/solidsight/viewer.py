@@ -301,7 +301,15 @@ def open_viewer_window(url: str, say, app_mode: bool = True) -> None:
     elif app_mode:
         say("note:    no Chromium-family browser found for app mode "
             "(set SOLIDSIGHT_BROWSER=<path>); opening a normal tab")
-    webbrowser.open(url)
+    # --tab used to end here in silence: webbrowser.open lands in whatever
+    # window the browser already had, which can be behind everything else,
+    # and its return value was thrown away — so a browser that never opened
+    # looked exactly like one that did.
+    if webbrowser.open(url, new=2):
+        say("window:  browser tab (--tab); if you cannot see it, the tab "
+            f"opened behind another window — the URL is {url}")
+    else:
+        say(f"note:    could not open a browser - open {url} yourself")
 
 
 # ---------------------------------------------------------------------------
