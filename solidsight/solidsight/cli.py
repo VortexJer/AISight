@@ -694,6 +694,16 @@ def _view(args) -> int:
 def _print_summary(report: dict) -> None:
     _say(f"solidsight build: {report['status'].upper()}  "
           f"(mode: {report['mode']})")
+    if report.get("model_unchanged"):
+        _say("  NOTE: this build produced exactly the same geometry as the "
+             "previous one.\n"
+             "        If you just edited the model, the edit did NOT reach "
+             "the geometry —\n"
+             "        wrong file, a pattern that never matched (CRLF line "
+             "endings?), or a\n"
+             "        change with no geometric effect. Re-reading the same "
+             "warnings is not\n"
+             "        a failed fix, it is an unapplied one.")
     sc = report["scene"]
     _say(f"  scene: {sc['part_count']} part(s), "
           f"{sc['size'][0]} x {sc['size'][1]} x {sc['size'][2]} mm, "

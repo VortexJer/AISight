@@ -45,9 +45,16 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
     if scene is None:
         with BUS.stage("model", f"executing {model_path.name}"):
             scene = run_model(model_path)
+    # triangle counts up front: a part with 800k triangles explains a slow
+    # render before anyone starts bisecting stages to find out why
+    def _named(p):
+        # num_tri() is O(1) on the manifold — no mesh conversion here
+        n = p.solid.manifold.num_tri()
+        return f"{p.name} ({n // 1000}k tris)" if n >= 50_000 else p.name
+
     BUS.emit("model", "info",
              f"{len(scene.parts)} part(s): "
-             + ", ".join(p.name for p in scene.parts))
+             + ", ".join(_named(p) for p in scene.parts))
 
     if only_parts:
         keep = [scene.get(name) for name in only_parts]  # errors on bad names
@@ -210,6 +217,16 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
             "exports": [str(out_dir / e) for e in export_files],
         },
     }
+
+    # A patch that silently did not apply (a \n pattern against a CRLF file,
+    # the wrong path, an edit to a file nobody imports) looks exactly like a
+    # fix that did not work: same warnings, next build. The geometry knows.
+    from .watch import scene_fingerprint
+    fp, _ = scene_fingerprint(scene, {})
+    stamp = out_dir / ".build-fingerprint"
+    was = stamp.read_text(encoding="utf-8").strip() if stamp.exists() else ""
+    report["model_unchanged"] = bool(was) and was == fp
+    stamp.write_text(fp, encoding="utf-8")
 
     on_disk = dict(report)
     on_disk["files"] = {"report": "report.json", "renders": render_files,

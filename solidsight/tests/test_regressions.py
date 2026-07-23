@@ -1379,3 +1379,31 @@ def test_tab_mode_says_what_it_did(monkeypatch):
     monkeypatch.setattr(webbrowser, "open", lambda *a, **k: False)
     open_viewer_window("http://127.0.0.1:8377/", said.append, app_mode=False)
     assert any("could not open a browser" in s and "8377" in s for s in said)
+
+
+def test_a_build_that_changed_nothing_says_so(tmp_path):
+    """An edit that silently did not apply (a \n pattern against a CRLF
+    file, the wrong path) looks exactly like a fix that did not work: the
+    same warnings, one build later. The geometry knows — say it.
+    From the B58 commission: 'parches que fallaron en silencio ... gaste
+    un ciclo entero en balde'."""
+    from solidsight.report import build_model
+    model = tmp_path / "model.py"
+    model.write_text("from solidsight import *\n"
+                     "emit(box(10, 10, 10), name='b')\n", encoding="utf-8")
+    out = tmp_path / "out"
+    first = build_model(model, out, views=[], light=True, skip_pairs=True)
+    assert first["model_unchanged"] is False      # nothing to compare against
+
+    # "edit" that changes no geometry at all: the classic failed patch
+    model.write_text("from solidsight import *\n"
+                     "# a comment that changes nothing\n"
+                     "emit(box(10, 10, 10), name='b')\n", encoding="utf-8")
+    again = build_model(model, out, views=[], light=True, skip_pairs=True)
+    assert again["model_unchanged"] is True
+
+    # a real edit clears it
+    model.write_text("from solidsight import *\n"
+                     "emit(box(12, 10, 10), name='b')\n", encoding="utf-8")
+    third = build_model(model, out, views=[], light=True, skip_pairs=True)
+    assert third["model_unchanged"] is False
