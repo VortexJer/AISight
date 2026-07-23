@@ -1353,6 +1353,8 @@ def test_uninstall_also_drops_the_aisight_umbrella(tmp_path, monkeypatch):
                         lambda a, **k: (calls.append(a), 0)[1])
     monkeypatch.setattr(si, "_installed", lambda name: name == "aisight")
     monkeypatch.setattr(si, "default_skill_dir", lambda: tmp_path / "gone")
+    monkeypatch.setattr(si, "memory_file",
+                        lambda: tmp_path / "CLAUDE.md")
     assert si.uninstall() == 0
     removed = [c[-1] for c in calls]
     assert "solidsight" in removed
@@ -1435,3 +1437,62 @@ def test_the_fast_raster_path_draws_the_same_pixels():
         R.BANDS = bands
     assert np.array_equal(fast, loop), (
         f"{int((fast != loop).any(axis=2).sum())} pixels differ")
+
+
+def test_the_routing_note_is_written_and_taken_back(tmp_path):
+    """A skill on disk does nothing unless the global instructions route
+    requests to it, so the package writes that block itself — and must
+    take it back out on uninstall, touching nothing else in a file that
+    belongs to the user.
+    User: 'quiero que eso lo escriba y lo borre la herramienta'."""
+    from solidsight.skill_install import BEGIN, END, drop_memory, write_memory
+    md = tmp_path / "CLAUDE.md"
+    mine = "# graphify\nWhen the user types /graphify, use it.\n"
+    md.write_text(mine, encoding="utf-8")
+
+    assert write_memory(md) is True
+    body = md.read_text(encoding="utf-8")
+    assert mine.strip() in body and BEGIN in body and END in body
+    assert write_memory(md) is False          # idempotent, never duplicated
+    assert body.count(BEGIN) == 1
+
+    assert drop_memory(md) is True
+    assert md.read_text(encoding="utf-8").strip() == mine.strip()
+    assert drop_memory(md) is False           # nothing of ours left
+
+
+def test_a_hand_written_mention_is_not_ours_to_delete(tmp_path):
+    """Without our fence it is the user's own text, however much it looks
+    like ours. An uninstaller that edits a file it never wrote is how you
+    lose someone's notes."""
+    from solidsight.skill_install import drop_memory
+    md = tmp_path / "CLAUDE.md"
+    theirs = "# solidsight\nAlways use solidsight for 3D, my own note.\n"
+    md.write_text(theirs, encoding="utf-8")
+    assert drop_memory(md) is False
+    assert md.read_text(encoding="utf-8") == theirs
+
+
+def test_no_claude_code_means_no_file_is_created(tmp_path):
+    """~/.claude does not exist: write nothing, anywhere."""
+    from solidsight.skill_install import write_memory
+    md = tmp_path / "nonexistent" / "CLAUDE.md"
+    assert write_memory(md) is False
+    assert not md.exists() and not md.parent.exists()
+
+
+def test_parts_can_be_ghosted_one_by_one_in_the_viewer():
+    """Ghosting used to be a build-time property (emit(ghost=True)) or an
+    all-or-nothing x-ray. Seeing through the cover while the rest stays
+    solid meant editing the model and rebuilding. The panel now carries a
+    GHOST toggle per part, any number of them at once.
+    User: 'que en el viewer se pueda hacer solo algunas piezas ghost,
+    pudiendo ser 1 o varias'."""
+    from pathlib import Path
+    html = (Path(__file__).parents[1] / "solidsight" / "viewer_assets"
+            / "index.html").read_text(encoding="utf-8")
+    assert "const ghosted = new Set()" in html      # several, not one
+    assert "ghosted.has(name)" in html              # honoured when shading
+    assert "e.stopPropagation()" in html            # the row still isolates
+    # and it must not clobber the opacity the model declared for glass
+    assert "declaredOpacity" in html

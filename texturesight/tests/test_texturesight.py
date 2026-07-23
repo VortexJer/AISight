@@ -408,9 +408,41 @@ def test_uninstall_also_drops_the_aisight_umbrella(tmp_path, monkeypatch):
                         lambda a, **k: (calls.append(a), 0)[1])
     monkeypatch.setattr(si, "_installed", lambda name: name == "aisight")
     monkeypatch.setattr(si, "default_skill_dir", lambda: tmp_path / "gone")
+    monkeypatch.setattr(si, "memory_file",
+                        lambda: tmp_path / "CLAUDE.md")
     assert si.uninstall() == 0
     removed = [c[-1] for c in calls]
     assert "texturesight" in removed
     assert "aisight" in removed
     assert not [r for r in removed
                 if r not in ("texturesight", "aisight", "-y", "uninstall")]
+
+
+def test_the_routing_note_is_written_and_taken_back(tmp_path):
+    """A skill on disk does nothing unless the global instructions route
+    requests to it, so the package writes that block itself — and takes it
+    back out on uninstall, touching nothing else in a file that belongs to
+    the user. A hand-written mention has no fence and is never ours.
+    User: 'quiero que eso lo escriba y lo borre la herramienta'."""
+    from texturesight.skill_install import BEGIN, END, drop_memory, write_memory
+    md = tmp_path / "CLAUDE.md"
+    mine = "# my own notes\nkeep this line.\n"
+    md.write_text(mine, encoding="utf-8")
+
+    assert write_memory(md) is True
+    body = md.read_text(encoding="utf-8")
+    assert mine.strip() in body and BEGIN in body and END in body
+    assert write_memory(md) is False          # idempotent, never duplicated
+    assert body.count(BEGIN) == 1
+
+    assert drop_memory(md) is True
+    assert md.read_text(encoding="utf-8").strip() == mine.strip()
+    assert drop_memory(md) is False
+
+    md.write_text("# texturesight\nmy own hand-written note.\n", encoding="utf-8")
+    assert drop_memory(md) is False           # no fence: not ours to delete
+    assert "hand-written" in md.read_text(encoding="utf-8")
+
+    gone = tmp_path / "no-claude-code" / "CLAUDE.md"
+    assert write_memory(gone) is False        # never create it from nothing
+    assert not gone.parent.exists()

@@ -38,6 +38,13 @@
   .part .nm { flex: 1; overflow: hidden; text-overflow: ellipsis;
               white-space: nowrap; }
   .part .vol { color: var(--dim); font-size: 10px; }
+  /* per-part x-ray: see through this one, keep the rest solid */
+  .part .gh {
+    font-size: 9px; letter-spacing: .12em; color: var(--dim);
+    border: 1px solid var(--hair); padding: 0 3px; line-height: 13px;
+  }
+  .part .gh.on { color: var(--ink); border-color: var(--ink); }
+  .part .gh:hover { color: var(--ink); }
   button {
     font: inherit; font-size: 10px; letter-spacing: .1em;
     text-transform: uppercase; color: var(--ink);
@@ -78,7 +85,7 @@
 <div id="panel">
   <h1>SOLIDSIGHT <small id="model-name"></small></h1>
   <div class="sec"><div class="cap">Scene</div><div id="scene-info"></div></div>
-  <div class="sec"><div class="cap">Parts — click to isolate</div>
+  <div class="sec"><div class="cap">Parts — click to isolate, GHOST to see through</div>
     <div id="parts"></div></div>
   <div class="sec"><div class="cap">Display</div>
     <div class="btns">
@@ -150,6 +157,7 @@ let explode = 0;
 let sceneSpan = 100;             // largest scene dimension, drives near/far
 let clipPlane = null, clipAxis = '';
 let isolated = null;             // part name or null
+const ghosted = new Set();       // parts the human x-rayed by hand
 let version = '';
 
 // ---- orbit controls (own implementation, ~60 lines) ------------------------
@@ -348,11 +356,21 @@ function buildPanel(p) {
     const row = document.createElement('div');
     row.className = 'row part' + (isolated && isolated !== part.name
       ? ' dim' : '');
+    const on = ghosted.has(part.name) ? ' on' : '';
     row.innerHTML = `<span class="sw" style="background:${part.color}"></span>` +
       `<span class="nm">${part.name}${part.ghost ? ' (ghost)' : ''}</span>` +
-      `<span class="vol">${part.volume ?? ''}</span>`;
+      `<span class="vol">${part.volume ?? ''}</span>` +
+      (part.ghost ? '' : `<span class="gh${on}" title="see through this` +
+        ` part (x-ray just this one)">GHOST</span>`);
     row.onclick = () => {
       isolated = isolated === part.name ? null : part.name;
+      buildPanel(data); applyOptions();
+    };
+    const gh = row.querySelector('.gh');
+    if (gh) gh.onclick = e => {
+      e.stopPropagation();          // the row click isolates; this does not
+      ghosted.has(part.name) ? ghosted.delete(part.name)
+                             : ghosted.add(part.name);
       buildPanel(data); applyOptions();
     };
     pl.appendChild(row);
@@ -413,8 +431,12 @@ function applyOptions() {
       // x-ray is a temporary override; when it is off, go back to the
       // opacity the model DECLARED (glass, tinted lenses...), not to 1 —
       // this line used to wipe every emit(material={'opacity':...})
+      // GHOST per part is the same idea aimed at one piece: see through
+      // the cover without turning the whole assembly to glass, as many
+      // pieces at a time as you like.
       const dec = mat.userData.declaredOpacity;
-      const o = opts.xray ? Math.min(0.35, dec) : dec;
+      const o = ghosted.has(name) ? Math.min(0.22, dec)
+        : opts.xray ? Math.min(0.35, dec) : dec;
       mat.transparent = o < 1;
       mat.opacity = o;
       mat.depthWrite = !(o < 1);
