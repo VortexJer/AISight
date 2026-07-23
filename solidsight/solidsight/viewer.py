@@ -156,10 +156,20 @@ class _Server(ThreadingHTTPServer):
 
 
 def _port_is_free(port: int) -> bool:
-    """True if a server can really own this port right now."""
+    """True if a server can really own this port right now.
+
+    The probe has to use the same options the real server does or it lies.
+    On Windows SO_REUSEADDR would let it bind a port somebody is actively
+    listening on, so the honest answer there is SO_EXCLUSIVEADDRUSE. On
+    macOS/Linux the server sets SO_REUSEADDR, and without it here the port
+    of the viewer you just closed reads as busy for the whole TIME_WAIT
+    (~60 s) and the next `view` walks off to 8378 for nothing.
+    """
     with socket.socket() as s:
         if os.name == "nt":     # exclusive = the honest answer on Windows
             s.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        else:                   # matches _Server.allow_reuse_address
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
             s.bind(("127.0.0.1", port))
         except OSError:

@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-23 — solidsight 0.11.6: the port really does come back
+
+CI caught it on macOS and Linux: after a viewer closes, its port sits in
+TIME_WAIT for ~60 s. The free-port probe used a plain `bind()`, which
+calls that port busy — so the viewer you just closed pushed the next one
+to 8378 for no reason. The probe now sets the same option the server
+does (`SO_REUSEADDR` off Windows, `SO_EXCLUSIVEADDRUSE` on it), so it
+answers the real question: can a server own this port right now.
+
 ## 2026-07-23 — solidsight 0.11.5: no more flickering seams
 
 Two parts that touch share a face, and a shared face rasterises to the

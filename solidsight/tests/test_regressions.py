@@ -1273,11 +1273,10 @@ def test_closing_the_window_frees_the_port(tmp_path):
     and releases the port. A RELOAD also beacons, so a request inside
     the grace period must cancel the shutdown.
     User: 'si yo cierro una ventana del viewer libere el port y tal'."""
-    import socket
     import time as _t
     import urllib.request as _u
-    from solidsight.viewer import serve_viewer, watch_for_window_close, \
-        write_viewer
+    from solidsight.viewer import _port_is_free, serve_viewer, \
+        watch_for_window_close, write_viewer
     d = tmp_path / "v"
     write_viewer(d, {"status": "waiting", "parts": []}, "waiting-0")
     stopped = []
@@ -1301,11 +1300,10 @@ def test_closing_the_window_frees_the_port(tmp_path):
         _t.sleep(0.25)
     assert stopped, "closing the window must stop the server"
     httpd.server_close()
-    probe = socket.socket()
-    try:
-        probe.bind(("127.0.0.1", port))        # the port is really free
-    finally:
-        probe.close()
+    # "free" = a new viewer can take it back. Probe exactly the way
+    # serve_viewer does: a raw bind() calls a TIME_WAIT port busy on
+    # macOS/Linux even though the server (SO_REUSEADDR) can have it.
+    assert _port_is_free(port), "the port must be usable again"
 
 
 def test_touching_transparent_parts_do_not_z_fight():
