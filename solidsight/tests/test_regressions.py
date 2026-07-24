@@ -1533,3 +1533,37 @@ def test_the_turntable_gif_spins_once_and_frames_tight(tmp_path):
                float(np.abs(rel @ cam.up).max()))
     diag = float(np.linalg.norm(pts.max(0) - pts.min(0))) / 2
     assert proj < diag * 0.95, "projected extent must be tighter than the diagonal"
+
+
+def test_a_correction_loop_is_detected(tmp_path):
+    """The real 'stuck': the agent keeps editing, the geometry keeps
+    changing, but the SAME finding survives build after build (a
+    union-touching warn on parts meant to touch). solidsight now tracks a
+    short build history and flags the finding as not-converging, so the
+    loop ends instead of running forever.
+    User: 'entra en un bucle de correcciones la IA y no acaba'."""
+    from solidsight.report import build_model
+    out = tmp_path / "out"
+    reports = []
+    for i in range(1, 5):
+        model = tmp_path / "model.py"
+        model.write_text(
+            "from solidsight import *\n"
+            "a = box(10, 10, 5)\n"
+            f"b = box({i}0, 10, 5).translate(0, 0, 5)\n"   # changes each build
+            "emit(a + b, name='stack')\n", encoding="utf-8")
+        reports.append(build_model(model, out, views=[], light=True,
+                                   skip_pairs=True))
+
+    # geometry changed every build, so it is never 'unchanged'
+    assert all(not r["model_unchanged"] for r in reports)
+    # but the touching warn persists, so by the 3rd distinct build it is flagged
+    assert not reports[0]["not_converging"]
+    assert "union-touching" in reports[2]["not_converging"]
+
+    # and a genuinely fixed finding clears the flag: overlap the boxes
+    model = tmp_path / "model.py"
+    model.write_text("from solidsight import *\n"
+                     "emit(box(10, 10, 9), name='stack')\n", encoding="utf-8")
+    fixed = build_model(model, out, views=[], light=True, skip_pairs=True)
+    assert "union-touching" not in fixed["not_converging"]

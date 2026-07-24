@@ -225,10 +225,14 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
     # fix that did not work: same warnings, next build. The geometry knows.
     from .watch import scene_fingerprint
     fp, _ = scene_fingerprint(scene, {})
-    stamp = out_dir / ".build-fingerprint"
-    was = stamp.read_text(encoding="utf-8").strip() if stamp.exists() else ""
-    report["model_unchanged"] = bool(was) and was == fp
-    stamp.write_text(fp, encoding="utf-8")
+
+    # And the deeper trap: the agent keeps editing, the geometry keeps
+    # changing, but the SAME finding survives build after build (or blinks
+    # on and off). That is a correction loop — the finding is usually
+    # intended (parts meant to touch) or needs a different approach, not one
+    # more tweak. Keep a short history and call it out so the loop ends.
+    report["model_unchanged"], report["not_converging"] = _loop_watch(
+        out_dir, fp, checks)
 
     on_disk = dict(report)
     on_disk["files"] = {"report": "report.json", "renders": render_files,
@@ -236,6 +240,47 @@ def build_model(model_path: Path, out_dir: Path, mode: str = "free",
     (out_dir / "report.json").write_text(
         json.dumps(on_disk, indent=2) + "\n", encoding="utf-8")
     return report
+
+
+def _loop_watch(out_dir: Path, fp: str, checks: list) -> tuple:
+    """Track builds in this out dir to catch a correction loop.
+
+    Returns (model_unchanged, not_converging). `model_unchanged` is True
+    when this build's geometry equals the previous one (an edit that did
+    not apply). `not_converging` lists finding ids that have survived
+    several DIFFERENT builds — the agent is editing but the finding stays,
+    so it is likely intended or needs a new approach, not another tweak.
+    """
+    import json as _json
+    hist_path = out_dir / ".build-history.json"
+    try:
+        history = _json.loads(hist_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        history = []
+
+    ids = sorted({c["id"] for c in checks
+                  if c.get("level") in ("fail", "warn")})
+    prev_fp = history[-1]["fp"] if history else ""
+    model_unchanged = bool(prev_fp) and prev_fp == fp
+
+    # only count builds where the geometry actually changed — otherwise a
+    # no-op rebuild would look like "progress" or inflate the streak
+    changed = [h for h in history if h["fp"] != fp]
+    not_converging = []
+    if len(changed) >= 2:
+        recent = changed[-3:]                 # last 3 distinct builds
+        for cid in ids:
+            survived = sum(1 for h in recent if cid in h["ids"])
+            if survived >= 2:                 # present in 2+ recent + now
+                not_converging.append(cid)
+
+    history.append({"fp": fp, "ids": ids})
+    history = history[-8:]                     # keep it short
+    try:
+        hist_path.write_text(_json.dumps(history), encoding="utf-8")
+    except OSError:
+        pass
+    return model_unchanged, sorted(not_converging)
 
 
 def _pbr(name: str, color: str, material: dict | None):

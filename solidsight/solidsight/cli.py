@@ -742,7 +742,31 @@ def _print_summary(report: dict) -> None:
         _say(f"  render:  {r}")
     for r in report["files"].get("exports", []):
         _say(f"  export:  {r}")
-    _say("  NEXT: open the renders and LOOK at them (Read tool), then read "
+
+    stuck = report.get("not_converging") or []
+    if stuck:
+        _say("\n  STOP — CORRECTION LOOP DETECTED.\n"
+             f"        These findings have survived several of your edits: "
+             f"{', '.join(stuck)}.\n"
+             "        You are changing the geometry but they are not going "
+             "away. That almost\n"
+             "        always means the finding is INTENDED (parts meant to "
+             "touch, a supported\n"
+             "        overhang, a deliberate thin rib) or needs a DIFFERENT "
+             "approach — not one\n"
+             "        more small tweak. Do NOT keep editing to chase them. "
+             "Instead: accept them\n"
+             "        and say why, change the approach, or ask the user. In "
+             "--free mode a `warn`\n"
+             "        is informational; it does not have to reach zero.")
+    elif not fails:
+        _say("\n  DONE-CHECK: 0 fails. In --free mode warnings are "
+             "informational — if the\n"
+             "        dimensions match your spec and the renders look right, "
+             "you are finished.\n"
+             "        Do not keep polishing warnings that don't matter.")
+
+    _say("\n  NEXT: open the renders and LOOK at them (Read tool), then read "
           "report.json checks.")
 
 
